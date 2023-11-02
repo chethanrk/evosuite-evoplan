@@ -60,7 +60,14 @@ sap.ui.define([
 				if (mParameters.hasOwnProperty("bFromNewGantt") && aSelectedPaths.length === 1) {
 					if (mParameters.bFromNewGantt) {
 						if(aSelectedPaths[0]){
-							oDialog.bindElement(aSelectedPaths[0].sPath);
+							if(aSelectedPaths[0].hasOwnProperty("sPath")){
+								// this case is for assign new from the demands table toolbar.
+								oDialog.bindElement(aSelectedPaths[0].sPath);
+							}else{
+								// this case is the assign new by right clicking demands on the gantt chart.
+								oDialog.bindElement(aSelectedPaths[0]);
+							}
+							
 						}
 						
 					}
@@ -94,7 +101,7 @@ sap.ui.define([
 
 				//Global Error Msg Popup shows Description of discarded assignments
 				sMsg = this._oView.getController().getResourceBundle().getText("xmsg.findResourceNotAllowed");
-				this._showAssignErrorDialog(oDemandsPaths.oNotAllowedPaths, null, sMsg);
+				this.showAssignErrorDialog(oDemandsPaths.oNotAllowedPaths, null, sMsg);
 			}
 		},
 
@@ -256,15 +263,18 @@ sap.ui.define([
 			if (this._assignPath) {
 				//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
 				if (this._oView) {
-					this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._assignPath));
+					//Storing updated Resource info for refreshing only the updated Resources in Gantt
+					this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel().getProperty(this._assignPath));
 					if (this._bulkReAssign) {
 						this._updatedAssignmentsPath(this._aSelectedPaths);
 					} else {
 						if (this._isToolReAssign) {
-							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel("assignment").getData());
+							//Storing updated Resource info for refreshing only the updated Resources in Gantt
+							this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel("assignment").getData());
 						} else {
 							if (!this._aSelectedPaths[0].sPath) {
-							this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
+							//Storing updated Resource info for refreshing only the updated Resources in Gantt
+							this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel().getProperty(this._aSelectedPaths[0]));
 							}
 						}
 					}

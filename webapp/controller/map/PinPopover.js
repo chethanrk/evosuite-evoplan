@@ -252,7 +252,7 @@ sap.ui.define([
 					}.bind(this)
 				});
 			} else {
-				this.oController._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
+				this.oController.showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 			}
 		},
 

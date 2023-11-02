@@ -7,7 +7,6 @@ sap.ui.define([
 ], function (DemandTableOperations, MessageBox, formatter, Constants, Fragment) {
 
 	return DemandTableOperations.extend("com.evorait.evoplan.controller.common.AssignmentsController", {
-
 		onInit: function () {
 			// call super class onInit
 			DemandTableOperations.prototype.onInit.apply(this, arguments);
@@ -263,7 +262,7 @@ sap.ui.define([
 			this.aFixedAppointmentDemands = [];
 			this.clearMessageModel();
 			//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
-			this._updatedDmdResources(this.getModel("viewModel"), targetObj);
+			this.updatedResources(this.getModel("viewModel"), this.getModel("user"), targetObj);
 
 			for (var i = 0; i < aItems.length; i++) {
 				oParams = {};
@@ -435,7 +434,7 @@ sap.ui.define([
 
 			if (isReassign && !oData.AllowReassign) {
 				sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
+				this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 				//when from new gantt shape busy state needs removed
 				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
 					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
@@ -528,14 +527,14 @@ sap.ui.define([
 					ResourceGroupGuid: oResource.ResourceGroupGuid,
 					ResourceGuid: oResource.ResourceGuid
 				};
-			
-						oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
-							ms: oAssignment.DateFrom.getTime()
-						}, oAssignment.DateTo, {
-							ms: oAssignment.DateTo.getTime()
-						});
-					
-				
+
+				oParams = this.setDateTimeParams(oParams, oAssignment.DateFrom, {
+					ms: oAssignment.DateFrom.getTime()
+				}, oAssignment.DateTo, {
+					ms: oAssignment.DateTo.getTime()
+				});
+
+
 				oDemandObj = this.getModel().getProperty("/DemandSet('" + oAssignment.DemandGuid + "')");
 
 				//Conditon for PS Demand Network Assignments Update
@@ -593,7 +592,7 @@ sap.ui.define([
 				sPath, sAssignmentGuid, oParams;
 			this.clearMessageModel();
 
-			this.checkToolExists(aContexts).then(function (resolve) {
+			this.oPRTActions.checkToolExists(aContexts).then(function (resolve) {
 				for (var i in aContexts) {
 					sPath = aContexts[i].getPath();
 					sAssignmentGuid = oModel.getProperty(sPath + "/Guid");
@@ -603,7 +602,9 @@ sap.ui.define([
 					if (parseInt(i, 10) === aContexts.length - 1) {
 						bIsLast = true;
 					}
-					oEventBus.publish("GanttChart", "refreshResourceOnDelete");
+					//Storing Updated Resources Information for Refreshing only the selected resources in Gantt View
+					this.updatedResources(this.getModel("viewModel"), this.getModel("user"), oModel.getProperty(sPath));
+					//oEventBus.publish("GanttChart", "refreshResourceOnDelete");
 					this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, bIsLast);
 				}
 			}.bind(this));
@@ -614,7 +615,7 @@ sap.ui.define([
 		 * @param sPath
 		 */
 		deleteAssignment: function (sId, mParameters) {
-			this.checkToolExists([{
+			this.oPRTActions.checkToolExists([{
 				AssignmentGUID: sId
 			}]).then(function (resolve) {
 				var oParams = {
@@ -782,14 +783,14 @@ sap.ui.define([
 				var bIsPRT = oContext.IS_PRT !== undefined ? oContext.IS_PRT : oContext.getObject().IS_PRT;
 				var sObjectSourceType = oContext.OBJECT_SOURCE_TYPE ? oContext.OBJECT_SOURCE_TYPE : oContext.getObject().OBJECT_SOURCE_TYPE;
 				if (bIsPRT) {
-					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
 					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				}
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
 				if (oDemandContext.IS_PRT) {
-					this.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
 					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				}
@@ -1149,7 +1150,7 @@ sap.ui.define([
 		 */
 		_updatedAssignmentsPath: function (aContexts) {
 			for (var a in aContexts) {
-				this._updatedDmdResources(this._oView.getModel("viewModel"), this._oView.getModel().getProperty(aContexts[a].getPath()));
+				this.updatedResources(this._oView.getModel("viewModel"), this._oView.getModel("user"), this._oView.getModel().getProperty(aContexts[a].getPath()));
 			}
 		}
 

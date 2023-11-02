@@ -42,15 +42,14 @@ sap.ui.define([
 		 * Function to validate auto-scheduling button
 		 */
 		validateScheduleButtons: function () {
-			var oScheduling;
-			oScheduling = this.oViewModel.getProperty("/Scheduling"),
-				oResourceDataModel = this.oDataModel;
+			var oScheduling = this.oViewModel.getProperty("/Scheduling");
+
+			// check if global config is enabled for Auto-Schedule operation
 			if (!this.oUserModel.getProperty("/ENABLE_AUTO_SCHEDULE_BUTTON")) {
 				return;
 			}
-			if (this.oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
-				oResourceDataModel = this.oGanttModel;
-			}
+			
+			// check if atleast 1 resource and  1 demand is selected the ennable the Auto-Scheduling button 
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && oScheduling.selectedResources.length > 0) {
 				this.oViewModel.setProperty("/Scheduling/bEnableAutoschedule", true);
 				return;
@@ -68,6 +67,8 @@ sap.ui.define([
 			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
 				oResourceDataModel = this.oDataModel,
 				sRoute = this.oViewModel.getProperty("/sViewRoute");
+
+			// setting model for Gantt view 
 			if (sRoute === "NEWGANTT") {
 				oResourceDataModel = this.oGanttModel;
 			}
@@ -87,15 +88,14 @@ sap.ui.define([
 		 * Function to validate rescheduling button
 		 */
 		validateReScheduleButton: function () {
-			var oSelectedDemandItem,
-				oScheduling = this.oViewModel.getProperty("/Scheduling"),
-				oResourceDataModel = this.oDataModel;
+			var oScheduling = this.oViewModel.getProperty("/Scheduling");
+
+			// check if global config is enabled for Re-Schedule operation
 			if (!this.oUserModel.getProperty("/ENABLE_RESCHEDULE_BUTTON")) {
 				return;
 			}
-			if (this.oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
-				oResourceDataModel = this.oGanttModel;
-			}
+
+			// check if atleast 1 resource and  1 demand is selected the ennable the Auto-Scheduling button 
 			if (oScheduling.selectedDemandPath && oScheduling.selectedResources && oScheduling.selectedResources.length > 0 && oScheduling.aSelectedDemandPath.length === 1) {
 				this.oViewModel.setProperty("/Scheduling/bEnableReschedule", true);
 				return;
@@ -113,6 +113,8 @@ sap.ui.define([
 			var oScheduling = this.oViewModel.getProperty("/Scheduling"),
 				oResourceDataModel = this.oDataModel,
 				sRoute = this.oViewModel.getProperty("/sViewRoute");
+
+			// setting model for Gantt view
 			if (sRoute === "NEWGANTT") {
 				oResourceDataModel = this.oGanttModel;
 			}
@@ -127,12 +129,12 @@ sap.ui.define([
 				return false;
 			}
 
-			// check if the allow re-schedule flag is enabled or not.
 			oSelectedDemandItem = this.oDataModel.getProperty(oScheduling.selectedDemandPath);
+			// check if the allow re-schedule flag is enabled or not.
 			if (!oSelectedDemandItem.ALLOW_RESCHEDULE) {
 				var aNonAssignableDemands = [];
 				aNonAssignableDemands.push(this.getMessageDescWithOrderID(oSelectedDemandItem, null, null, true));
-				this._showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+				this.showAssignErrorDialog(aNonAssignableDemands, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 				return false;
 			}
 			return true;
@@ -143,11 +145,11 @@ sap.ui.define([
 		 *   @returns  Promise - String if the selected resource is already assigned to the selected demand
 		 **/
 		checkAssignedResource: function () {
-			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
-			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
-			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
-			aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
+			var sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath"), 
+				sSelectedDemand = this.oDataModel.getProperty(sDemandPath), 
+				aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				aFilterResource = [];
+
 			for (var x in aResourceList) {
 				aFilterResource.push(new Filter("ResourceGuid", FilterOperator.EQ, aResourceList[x].ResourceGuid));
 			}
@@ -166,69 +168,30 @@ sap.ui.define([
 		 * @return {boolean} - 'true' if no duplicate found | 'false' if duplicate found
 		 */
 		checkDuplicateResource: function () {
-			var oViewModel = this.oViewModel,
-				oAppViewModel = this.oAppViewModel,
-				oDataModel = this.oDataModel,
-				oGanttModel = this.oGanttModel,
-				aResourcePath = oViewModel.getProperty("/Scheduling/selectedResources"),
+			var aResourcePath = this.oViewModel.getProperty("/Scheduling/selectedResources"),
 				aResourceData = [],
 				oResourceObj = {},
 				aResourceGroupPromise = [],
 				aFilters = [],
-				aResourceFilters = oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
+				aResourceFilters = this.oViewModel.getProperty("/Scheduling/aResourceTblFilters"),
 				aPoolResource = [],
 				bIsPoolExist = false;
 
-
-			//method will check for the duplicate resource
-			var checkDuplicate = function (aResourceList) {
-				var bValidateState = true,
-					aResourceNameList = [],
-					oUniqueResourceList = {};
-				sResourceGroupName = "";
-				sResourceFullName = "";
-				sResourceFullNameOld = "";
-				aResourceList.forEach(function (oResource) {
-					if (oResource.ResourceGuid) {
-						if (oUniqueResourceList[oResource.ResourceGuid]) {
-							//to check for the existing resource
-							sResourceFullNameOld = oResource.Description + " : " + oUniqueResourceList[oResource.ResourceGuid].Group;
-							aResourceNameList.indexOf(sResourceFullNameOld) === -1 && aResourceNameList.push(sResourceFullNameOld);
-							bValidateState = false;
-							sResourceGroupName = this.getResourceGroupName(oResource.ParentNodeId);
-							//to check the current resource
-							sResourceFullName = oResource.Description + " : " + sResourceGroupName;
-							aResourceNameList.indexOf(sResourceFullName) === -1 && aResourceNameList.push(sResourceFullName);
-
-						} else {
-							oUniqueResourceList[oResource.ResourceGuid] = {
-								Group: this.getResourceGroupName(oResource.ParentNodeId)
-							};
-						}
-					}
-				}.bind(this));
-				if (bValidateState) {
-					//storing the final resource list into viewModel>/Scheduling/resourceList
-
-					oViewModel.setProperty("/Scheduling/resourceList", aResourceList);
-				}
-				//sorting the list
-				aResourceNameList.sort();
-				return {
-					bNoDuplicate: bValidateState,
-					resourceNames: aResourceNameList.join("\n"),
-					bIsPoolExist: bIsPoolExist,
-					poolResource: aPoolResource.join("\n")
-				};
-			}.bind(this);
 			//Read all resource selected
 			aResourcePath.forEach(function (sPath) {
-				if (sPath.indexOf("children") === -1) {
-					oResourceObj = _.clone(oDataModel.getProperty(sPath));
-				} else {
-					oResourceObj = _.clone(oGanttModel.getProperty(sPath));
-				}
 				aFilters = [];
+
+				// check if selected resource is from gantt or demands view to get resource object from respective
+				if (sPath.indexOf("children") === -1) {
+					oResourceObj = _.clone(this.oDataModel.getProperty(sPath));
+				} else {
+					oResourceObj = _.clone(this.oGanttModel.getProperty(sPath));
+				}
+
+				// check if selected node is resource or group
+				// if resource is selected the adding the object
+				// if its pool then adding the object in pool array to show in error message
+				// if its resource group then read all the resources from the group
 				if (oResourceObj.ResourceGuid) {
 					aResourceData.push(oResourceObj);
 				} else if (oResourceObj.NodeId.indexOf("POOL") >= 0) {
@@ -244,27 +207,30 @@ sap.ui.define([
 					aResourceGroupPromise.push(this._controller.getOwnerComponent()._getData("/ResourceHierarchySet", aFilters));
 				}
 			}.bind(this));
+
+			this.oAppViewModel.setProperty("/busy", true);
+
 			//Read all resource selected
 			//Read all Resource from Resource group
-			oAppViewModel.setProperty("/busy", true);
 			return Promise.all(aResourceGroupPromise).then(function (aResult) {
-				oAppViewModel.setProperty("/busy", false);
+				this.oAppViewModel.setProperty("/busy", false);
 				aResult.forEach(function (oResult) {
 					aResourceData = aResourceData.concat(oResult.results);
 					aResourceData = aResourceData.filter(function (oParam1) {
 						return oParam1.NodeId.indexOf("POOL") < 0;
 					});
 				});
-				return checkDuplicate(aResourceData);
-			});
-			//Read all Resource from Resource group
-
+				// return a method call which further checks for duplicate selected resources to show in error message
+				return this._fnGetDuplicateResources(aResourceData, bIsPoolExist, aPoolResource);
+			}.bind(this));
 		},
+
 		/**
 		 * This method will reset the scheduling json model
+		 * Same properties are maintained in Component.js file
 		 */
 		resetSchedulingJson: function () {
-			var oBj = {
+			var oSchedulingData = {
 				sType: "",
 				sScheduleDialogTitle: "",
 				sScheduleTableTitle: "",
@@ -282,12 +248,15 @@ sap.ui.define([
 				aResourceTblFilters: [],
 				demandList: [],
 				demandData: {},
+				DateFrom: moment().startOf("day").toDate(),
+				DateTo: moment().add(14, "days").endOf("day").toDate(),
 				minDate: moment().startOf("day").toDate(),
 				maxDate: moment().add(14, "days").endOf("day").toDate(),
 				startDate: "",
 				endDate: "",
 				startDateValue: "",
 				endDateValue: "",
+				sUtilizationSlider: null,
 				initialFocusedDateValue: moment().toDate(),
 				bInvalidDateRange: false,
 				sInvalidDateRangeMsg: "",
@@ -301,9 +270,15 @@ sap.ui.define([
 				bSchedBtnBusy: false,
 				bReSchedBtnBusy: false,
 				sReSchAssignGuid: null,
-				oReSchResourceObj: null
+				oReSchResourceObj: null,
+				PTVResponse: {},
+				InputDataChanged: "",
+				aListOfAssignments: [],
+				aViolatedAssignments: [],
+				aDemandLocationIds: [],
+				aExistingDemandQualification: []
 			};
-			this.oViewModel.setProperty("/Scheduling", oBj);
+			this.oViewModel.setProperty("/Scheduling", oSchedulingData);
 		},
 
 		/**
@@ -316,15 +291,18 @@ sap.ui.define([
 				oMsgParam = {};
 
 			this.checkDuplicateResource().then(function (oResult) {
+				// check if no duplicate flag is true
 				if (oResult.bNoDuplicate) {
 					oMsgParam.bIsPoolExist = oResult.bIsPoolExist;
 					oMsgParam.sPoolNames = oResult.poolResource;
+
+					// check for non assignable demands, display error
 					if (oSelectedPaths.aNonAssignable.length > 0) {
 						//show popup with list of demands who are not allow for assign
-						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+						this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 
 					} else if (oSelectedPaths.aPathsData.length > 0) {
-						//open auto schedule wizard with selected demands
+						//open auto schedule wizard with selected demands if any of demands are assignable
 						this.oViewModel.setProperty("/Scheduling/demandList", oSelectedPaths.aPathsData);
 						this.oViewModel.setProperty("/Scheduling/sType", Constants.SCHEDULING.AUTOSCHEDULING);
 						var mParams = {
@@ -334,9 +312,10 @@ sap.ui.define([
 					}
 
 				} else {
+					// show error message in case of duplicate resources selected
 					this._showErrorMessage(this.oResourceBundle.getText("ymsg.DuplicateResource", oResult.resourceNames));
 					if (oSelectedPaths.aNonAssignable.length > 0) {
-						this._showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
+						this.showAssignErrorDialog(oSelectedPaths.aNonAssignable, null, this.oResourceBundle.getText("ymsg.invalidSelectedDemands"));
 					}
 				}
 				this.oViewModel.setProperty("/Scheduling/bSchedBtnBusy", false);
@@ -344,9 +323,10 @@ sap.ui.define([
 		},
 
 		/**
+		 * collecting all the data for selected resource to use further in the process
 		 * Method read the Qualification, WorkSchedule, Break, Absense, Project Blocker, Assignment and store in a model
 		 * Method returns the promise, and the promise will return the data
-		 * @return {object}
+		 * @return {object} return promise which further returns object containing all the selected resouce with data in Hash map from using Resource Guid as key
 		 */
 		createScheduleData: function () {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
@@ -358,8 +338,9 @@ sap.ui.define([
 				aAvailibilityFilter = [],
 				aAllPromise = [],
 				oResourceData = {};
+
+			// filter creation for the resources to read Assignments and availability data 
 			aResourceList.forEach(function (oResource) {
-				//Read Assignment
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
 					new Filter("DateFrom", "GE", oStartDate),
@@ -367,7 +348,7 @@ sap.ui.define([
 				];
 				aAssignmentPromise.push(this._controller.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilter, {}, "idAssignmentSet"));
 
-				//Read WorkSchedule, Break, Absense, Project Blocker
+				//Filter creation to read WorkSchedule, Break, Absense, Project Blocker
 				//AvailibilityTypeGroup - A --WorkSchedule, -B --Break, -L --ProjectBlocker, -[N,O] --Absenses
 				aAvailibilityFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
@@ -376,8 +357,11 @@ sap.ui.define([
 				];
 				aAvailabilityPromise.push(this._controller.getOwnerComponent().readData("/ResourceAvailabilitySet", aAvailibilityFilter, {}, "idResourceAvailabilitySet"));
 			}.bind(this));
+
 			aAllPromise = aAssignmentPromise.concat(aAvailabilityPromise);
 			this.oAppViewModel.setProperty("/busy", true);
+
+			// reading resource data based on created filter
 			return Promise.all(aAllPromise).then(function (oResult) {
 				this.oAppViewModel.setProperty("/busy", false);
 				oResourceData = this.modelResourceData(oResult);
@@ -392,7 +376,7 @@ sap.ui.define([
 		/**
 		 * 
 		 * @param {object} aResourceData - will contain assignment, availability data
-		 * @returns {object} 
+		 * @returns {object} containing all the selected resouce with data in Hash map from using Resource Guid as key
 		 */
 		modelResourceData: function (aResourceData) {
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
@@ -403,6 +387,7 @@ sap.ui.define([
 				aAvailabilityData = aResourceData.slice(iResourceLength, iResourceLength * 2), //reading availibility data
 				aAssignmentDemandFilter = [],
 				aExistingDemandQualification = [];
+
 			//looping resource list to create data
 			aResourceList.forEach(function (oResource, i) {
 				oTempResourceData = {
@@ -414,6 +399,7 @@ sap.ui.define([
 					absenses: [],
 					qualifications: oResource.QUALIFICATION_DESCRIPTION ? oResource.QUALIFICATION_DESCRIPTION.split(",") : [] //qualification added from ResourcehierarchySet
 				};
+
 				//looping availibility data of resource to segragate based on AvailabilityTypeGroup
 				aAvailabilityData[i].results.forEach(function (oAvail) {
 					if (oAvail.AvailabilityTypeGroup === "A") {
@@ -435,22 +421,28 @@ sap.ui.define([
 					aAssignmentDemandFilter.push(new Filter("Guid", "EQ", aAssignmentData[i].results[j].DemandGuid));
 				}
 			}
-			// reading existing Demands for qualifications
-			return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function(oDemands){
-				for (i in oDemands.results){
-					oDemands.results[i].Guid;
-					aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
-				}
-				this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+
+			// check if existing asssgnments filter is available
+			if (aAssignmentDemandFilter.length) {
+				// reading existing Demands for qualifications
+				return this._controller.getOwnerComponent().readData("/DemandSet", aAssignmentDemandFilter, "$top=" + aAssignmentDemandFilter.length, "idAssignmentDemand").then(function (oDemands) {
+					for (i in oDemands.results) {
+						oDemands.results[i].Guid;
+						aExistingDemandQualification[oDemands.results[i].Guid] = oDemands.results[i].QUALIFICATION_DESCRIPTION ? oDemands.results[i].QUALIFICATION_DESCRIPTION.split(",") : [];
+					}
+					this.oViewModel.setProperty("/Scheduling/aExistingDemandQualification", aExistingDemandQualification);
+					return oResourceData;
+				}.bind(this));
+			} else {
 				return oResourceData;
-			}.bind(this));
+			}
 		},
 		/**
-		 * Method will create and return hash map data fro seleted demand for Auto/Re-schedule
+		 * Method will create and return hash map data froM seleted demand for Auto/Re-schedule
 		 * Hash map will have demand guid as key
 		 * Hash map will have object with location, qualification, priority, serviceTime as value
 		 * Method returns propmise, promise will return hash map
-		 * @returns {object} 
+		 * @returns {object} containing all the demands data like qualification, priority and location in an object with Demand Guid as key 
 		 */
 		createDemandScheduleData: function () {
 			var aDemandList = this.oViewModel.getProperty("/Scheduling/demandList"),
@@ -501,6 +493,7 @@ sap.ui.define([
 				this.oViewModel.setProperty("/Scheduling/maxDate", moment(oStartDate).add(14, "days").endOf("day").toDate());
 			}
 
+			// loop on demand list to compare the dates with planning horizon dates
 			for (var i = 0, len = aDemands.length; i < len; i++) {
 				var demandStartDate = moment(aDemands[i].DateFrom),
 					demandEndDate = moment(aDemands[i].DateTo);
@@ -545,21 +538,26 @@ sap.ui.define([
 			var oMinDate = this.oViewModel.getProperty("/Scheduling/minDate");
 			var oMaxDate = this.oViewModel.getProperty("/Scheduling/maxDate");
 			var bValidate = true;
+
+			// check if start date in no entered for planning horizon
 			if (!startDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sStartDateValueState", "Error");
 				return bValidate;
 			}
+			// check if start date in no entered for planning horizon
 			if (!endDate) {
 				bValidate = false;
 				this.oViewModel.setProperty("/Scheduling/sEndDateValueState", "Error");
 				return bValidate;
 			}
+			// check if start date and end date are not as per defined MIN and MAX dates
 			if (startDate.toDate() < oMinDate || startDate.toDate() > oMaxDate) {
 				bValidate = false;
 				this.showMessageToast(this.oResourceBundle.getText("ymsg.ValidateDateStart"));
 				return bValidate;
 			}
+			// proceed if Start and End date is entered correct for planning horizon
 			if (startDate && endDate) {
 				//check if endDate before startDate
 				//check if end date bigger than 14 days
@@ -605,15 +603,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * This method to handle payload creation
+		 * This method to handle payload creation and PTV API call for Auto-scheduling and re-schedule both
 		 * @return {Object} - Payload object
 		 */
 		handleScheduleDemands: function () {
 			var aResourceData, aDemandsData,
 				sDialogMsg = this.oResourceBundle.getText("ymsg.fetchingData");
+			
+			// udpating progress bar text
 			this.oOwnerComponent.ProgressBarDialog.setProgressData({
 				description: sDialogMsg
 			});
+
+			// Promise to collect Resource and demands data and create the payload to pass to PTV API
 			return Promise.all([this.createScheduleData(), this.createDemandScheduleData()]).then(function (aResult) {
 				this.oOwnerComponent.ProgressBarDialog.setProgressData({
 					progress: "10"
@@ -631,7 +633,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * 
+		 * Method to get resource group name to display in error display dialog
 		 * @param {string} sResourceGuid - Resource guid of the child node of which group name is required
 		 * @returns {string} sResourceGroupName - Resource Group name of the child node
 		 */
@@ -644,18 +646,17 @@ sap.ui.define([
 		},
 		/**
 		 * This method is used to handle the create assignment for the PTV selected Demands.
-		 * @param {object} oDialog - This has the referrence of the scheduling dialog.
+		 * @param {object} oDialog - This has the referrence of the scheduling dialog containing the dataset of scheduled demands.
+		 * @returns {object} returns promise which further return the response of created assignment
 		 */
 		handleCreateAssignment: function (oModelDialog) {
 			//1. get the existing data from the model.
 			//2.send the call for the assignemnt.
-
-			var iArraySize = 100;
 			var sViewRoute = this.oViewModel.getProperty("/sViewRoute"),
 				mRefreshParam = {},
 				oAssignment = this.oViewModel.getProperty("/Scheduling/selectedAssignment"),
 				oPlanData = oModelDialog.getProperty("/step2/dataSet")[0],
-				sMessage;
+				sMessage, oDataArr;
 
 			if (oModelDialog.getProperty("/isReschuduling") && oAssignment.length && oPlanData.ResourceGuid === oAssignment[0].NODE_ID.split("//")[0] && oAssignment[0].DateFrom.toString().substr(0, 21) === oPlanData.DateFrom.toString().substr(0, 21)) {
 				sMessage = this.oResourceBundle.getText("ymsg.alreadyAssigned", oPlanData.ORDERID) + oAssignment[0].FIRSTNAME + " " + oAssignment[0].LASTNAME ;
@@ -663,6 +664,7 @@ sap.ui.define([
 				return Promise.all([]);
 			} 
 
+			// set parameter to use further to identify which view to refresh
 			if (sViewRoute === "NEWGANTT") {
 				mRefreshParam.bFromNewGantt = true;
 				//this is written to fetch the details of the resource containing the assignment
@@ -674,42 +676,38 @@ sap.ui.define([
 			} else {
 				mRefreshParam.bFromHome = true;
 			}
+
 			//this is written to store the updated resources data so that we can refresh it inside the gantt view
 			this._fnStoreUpdatedDemandResources(oModelDialog);
-
-			var oDataArr = this._getDemandsDataForAssignment(oModelDialog);
-
+			oDataArr = this._getDemandsDataForAssignment(oModelDialog);
 			return Promise.all(oDataArr).then(function (oResponse) {
 				this.afterUpdateOperations(mRefreshParam);
 				return oResponse;
 			}.bind(this));
-
 		},
 		/**
 		 * This method is used to call the assignment to get the assignment guid which will be required for the 
-		 * update assignment call at the time of re-schedule functionality.
-		 * @param {object} mParam model to ge the 
-		 * @param mParam {object} this is the parmeter from the last function and this is used to reuturn on sucessfull retrival of the assignment guid.
 		 * @return {boolean} true.
 		 */
 		getAssignmentIdForReschedule: function () {
-			var sDemandPath, sSelectedDemand, aResourceList, aAssignedList = [];
-			sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath");
-			sSelectedDemand = this.oDataModel.getProperty(sDemandPath);
-			aFilterResource = [];
-			aFilterResource.push(new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid));
-			
+			var sDemandPath = this.oViewModel.getProperty("/Scheduling/selectedDemandPath"),
+				sSelectedDemand = this.oDataModel.getProperty(sDemandPath),
+				aFilterResource = [new Filter("DemandGuid", FilterOperator.EQ, sSelectedDemand.Guid)];
+
+
 			return this._controller.getOwnerComponent().readData("/AssignmentSet", aFilterResource, "$select=Guid,ResourceGuid,NODE_ID,NODE_TYPE").then(function (oData) {
-				
 				if (oData.results.length > 0) {
 					this.oViewModel.setProperty("/Scheduling/sReSchAssignGuid", oData.results[0].Guid);
 					this.oViewModel.setProperty("/Scheduling/oReSchResourceObj", oData.results[0]);
 				}
-				
 				return true;
-				
 			}.bind(this));
 		},
+
+		/**
+		 * Method to show list of existing demands which are violated in scheduling operation 
+		 * opens the dialog
+		 */
 		showViolationError: function () {
 
 			if (!this.oOwnerComponent.ViolationDisplayDialog) {
@@ -726,6 +724,10 @@ sap.ui.define([
 				this.oOwnerComponent.ViolationDisplayDialog.open();
 			}
 		},
+
+		/**
+		 * Method to close the violation list dialog
+		 */
 		closeViolationDisplayDialog: function () {
 			this.oOwnerComponent.ViolationDisplayDialog.close();
 		},
@@ -735,17 +737,19 @@ sap.ui.define([
 		/* =========================================================== */
 		/**
 		 * This method will check for the Allowed flag for each selected Demands
-		 * @return {Object} - Array of allowed and not allowed demands in separate properties
+		 * @param {object} oTable - Demand table object
+		 * @param {object} aSelectedRowsIdx - Array of indices selected demands
+		 * @return {Object} - Array of assignable and non-assignable demands path and data
 		 */
 		_checkAllowedDemands: function (oTable, aSelectedRowsIdx) {
-
-
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				oData, oContext, sPath, aSelection = [], nDuration;
 
+			// clearing table selection
 			oTable.clearSelection();
 
+			// looping on selected indices to array to get the objects and check if allowed for scheduling or nor
 			for (var i = 0; i < aSelectedRowsIdx.length; i++) {
 				oContext = oTable.getContextByIndex(aSelectedRowsIdx[i]);
 				sPath = oContext.getPath();
@@ -762,6 +766,7 @@ sap.ui.define([
 
 					aSelection.push(aSelectedRowsIdx[i]);
 				} else {
+					// pushing the demand to array if demand is not allowed to schedule
 					aNonAssignableDemands.push(this.getMessageDescWithOrderID(oData, null, true));
 				}
 			}
@@ -793,9 +798,9 @@ sap.ui.define([
 			};
 		},
 		/**
-		 * This method will check for the Allowed flag for each selected Demands
-		 * @param {object} oParamModel model to ge the 
-		 * @param {object} oSchedulingObj json object from
+		 * Method to check duplicate pool selection 
+		 * @param {object} oParamModel Data Model  
+		 * @param {object} oSchedulingObj object containing scheduling data | here it is used to get selected resources
 		 * @return {boolean} It will boolean based on conditon specidied in the logic.
 		 */
 		_checkDuplicatePoolSelection: function (oParamModel, oSchedulingObj) {
@@ -808,29 +813,31 @@ sap.ui.define([
 			return false;
 		},
 		/**
-		 * This method is used to create the data of the deamnds that will be used by CreateAssignmentSet.
-		 *  Here we will create array of all the demands with the service all using callfunctionImport with mParam as the 
-		 * demand detail. The array retured here will later later be used for promise.all.
-		 * @return {array} 
+		 * Creating payload for assignment creation or updation(in case of reschedule) after the scheduling process.
+		 * Batch would be created based on batch size defined in global config
+		 * @param {object} oParamModel Data Model  
+		 * @return {array} Array of promises for create/update service calll
 		 */
 		_getDemandsDataForAssignment: function (oModelDialog) {
 			var aData = oModelDialog.getProperty("/step2/dataSet"),
 				sSchedulingType = this.oViewModel.getProperty("/Scheduling/sScheduleType"),
-				sSchType = this.oViewModel.getProperty("/Scheduling/sType"),
+				sOperationType = this.oViewModel.getProperty("/Scheduling/sType"),
 				iBatchCount = this.oUserModel.getProperty("/DEFAULT_PTV_SCHEDUL_BATCH_SIZE"),
 				sGroupId,
 				mParams,
 				i = 0,
 				oBjectInitial,
-				aNewArray = [],
+				aPromises = [],
 				bIsLast = false,
-				aPropReq,
-				sFunctionImp,
-				mParam2="Scheduling";
+				aRequiredProperties,
+				sEntitySet;
 
-
+			// check if global config is defined, if not then 100 would be default size.
 			iBatchCount = iBatchCount ? parseInt(iBatchCount) : 100;
+
 			for (var x = 0; x < aData.length; x++) {
+
+				// generating Batch id based on batch size
 				if (x % iBatchCount === 0) {
 					sGroupId = "groupId" + i;
 					mParams = {
@@ -838,18 +845,23 @@ sap.ui.define([
 					};
 					i++;
 				}
+
+				// updating flag for last demand
 				if (x === aData.length - 1) {
 					bIsLast = true;
 				}
+
+				//check if demand is planned the proceed for assignment creation or updation 
 				if (aData[x].PLANNED) {
-					if (sSchType === Constants.SCHEDULING.AUTOSCHEDULING) {
-						sFunctionImp = "CreateAssignment";
-						aPropReq = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+					// check whether the operation is Auto-schedule or Re-schedule
+					if (sOperationType === Constants.SCHEDULING.AUTOSCHEDULING) {
+						sEntitySet = "CreateAssignment";
+						aRequiredProperties = ["DemandGuid", "ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
 						oBjectInitial = Object.assign({}, aData[x]);
 						Object.keys(oBjectInitial).forEach(function (key) {
-							if (aPropReq.indexOf(key) < 0) {
+							if (aRequiredProperties.indexOf(key) < 0) {
 								delete oBjectInitial[key];
 							}
 						});
@@ -858,15 +870,15 @@ sap.ui.define([
 						// converting it into minutes as in Backend travel time unit is hardcoded as 'MIN'
 						oBjectInitial.TravelTime = (aData[x].TRAVEL_TIME * 60).toFixed(2);
 						oBjectInitial.TravelBackTime = (aData[x].TRAVEL_BACK_TIME * 60).toFixed(2);
-						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams,bIsLast));
+						aPromises.push(this._callFunctionImportScheduling(oBjectInitial, sEntitySet, "POST", mParams,bIsLast));
 					} else {
-						sFunctionImp = "UpdateAssignment";
-						aPropReq = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
+						sEntitySet = "UpdateAssignment";
+						aRequiredProperties = ["ResourceGroupGuid", "ResourceGuid", "DateFrom", "TimeFrom", "DateTo", "TimeTo", "Effort", "EffortUnit"];
 						aData[x].TimeFrom.ms = aData[x].DateFrom.getTime();
 						aData[x].TimeTo.ms = aData[x].DateTo.getTime();
 						oBjectInitial = Object.assign({}, aData[x]);
 						Object.keys(oBjectInitial).forEach(function (key) {
-							if (aPropReq.indexOf(key) < 0) {
+							if (aRequiredProperties.indexOf(key) < 0) {
 								delete oBjectInitial[key];
 							}
 						});
@@ -877,20 +889,21 @@ sap.ui.define([
 						// converting it into minutes as in Backend travel time unit is hardcoded as 'MIN'
 						oBjectInitial.TravelTime = (aData[x].TRAVEL_TIME * 60).toFixed(2);
 						oBjectInitial.TravelBackTime = (aData[x].TRAVEL_BACK_TIME * 60).toFixed(2);
-						aNewArray.push(this._callFunctionImportScheduling(oBjectInitial, sFunctionImp, "POST", mParams,bIsLast));
+						aPromises.push(this._callFunctionImportScheduling(oBjectInitial, sEntitySet, "POST", mParams,bIsLast));
 					}
 
 				}
 			}
 
-			return aNewArray;
+			return aPromises;
 		},
 		/**
      * This method is used to call function import and returns the function import as promise.
-     * @param {json} oParams -JSON that is passed as url parameter.
-     * @param {string} sFuncName - function name to be called.
+     * @param {json} oData -Input parameters for function import.
+     * @param {string} sFuncName - function import method name.
      * @param {string} sMethod - method it could be post or anyother.
-     * @param {object} mRefreshParam - this method is passed to afterUpdateOperations method
+     * @param {object} mParams - this method is passed to afterUpdateOperations method
+	 * @param {object} bIsLast - flag to check the last call to process further after service calls completed
      */
 		_callFunctionImportScheduling: function (oData, sFuncName, sMethod, mParams, bIsLast) {
 			// TODO. 1 check for utilization
@@ -932,6 +945,7 @@ sap.ui.define([
 		 * This method is used to convert Duration into seconds based on duration Unit 
 		 * @param {number} nDuration - Demand duration
 		 * @param {string} sDurationUnit - Demand duration Unit.
+		 * @return {number} converted duration based on duration unit
 		 */
 		_getDemandDurationInSeconds: function (nDuration, sDurationUnit) {
 			if (parseInt(nDuration)) {
@@ -950,17 +964,17 @@ sap.ui.define([
 		/**
 		 * This function is used for storing the updated resources so that 
 		 * it can be used to refresh the resources in Gantt view
-		 * @param {Object} oModelDialog - Dialog model; used for fetching the resource data 
+		 * @param {Object} oModelDialog - Scheduling Dialog model contains scheduled resource and demands data 
 		 */
 		_fnStoreUpdatedDemandResources: function(oModelDialog){
 			var aData = oModelDialog.getProperty("/step2/dataSet");
 			aData.forEach(function (item) {
-				this._updatedDmdResources(this.oViewModel, item);
+				this.updatedResources(this.oViewModel, this.oUserModel, item);
 			}.bind(this));				
 		},
 
 		/**
-		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the _updatedDmdResources Fn
+		 * This function is written to fetch the details of the resource containing the assignment and create the resource obj to pass in the updatedResources Fn
 		 */
 		_fnFetchAndRefreshAssnRes: function(){
 			var oAssignObj, oResObj;
@@ -971,7 +985,54 @@ sap.ui.define([
 				NodeId: oAssignObj.NODE_ID.split("//")[1] + "//" + oAssignObj.ResourceGuid,
 				NodeType: oAssignObj.NODE_TYPE
 			};
-			this._updatedDmdResources(this.oViewModel, oResObj);
+			this.updatedResources(this.oViewModel, this.oUserModel, oResObj);
+		},
+
+		/**
+		 * method to get duplicate resources to show in the error dialog
+		 * @param {Array} aResourceList - List of Selected resources (or available in selected group)
+		 * @param {Boolean} bIsPoolExist - flag to indicate if there are pool resources selected
+		 * @return {Object} Object containing resource validation data and duplicate resource name list to show in error dialog
+		 */
+		_fnGetDuplicateResources: function (aResourceList, bIsPoolExist, aPoolResource) {
+			var bValidateState = true,
+				aResourceNameList = [],
+				oUniqueResourceList = {},
+				sResourceGroupName = "",
+				sResourceFullName = "",
+				sResourceFullNameOld = "";
+
+			aResourceList.forEach(function (oResource) {
+				if (oResource.ResourceGuid) {
+					if (oUniqueResourceList[oResource.ResourceGuid]) {
+						//to check for the existing resource
+						sResourceFullNameOld = oResource.Description + " : " + oUniqueResourceList[oResource.ResourceGuid].Group;
+						aResourceNameList.indexOf(sResourceFullNameOld) === -1 && aResourceNameList.push(sResourceFullNameOld);
+						bValidateState = false;
+						sResourceGroupName = this.getResourceGroupName(oResource.ParentNodeId);
+						//to check the current resource
+						sResourceFullName = oResource.Description + " : " + sResourceGroupName;
+						aResourceNameList.indexOf(sResourceFullName) === -1 && aResourceNameList.push(sResourceFullName);
+
+					} else {
+						oUniqueResourceList[oResource.ResourceGuid] = {
+							Group: this.getResourceGroupName(oResource.ParentNodeId)
+						};
+					}
+				}
+			}.bind(this));
+			if (bValidateState) {
+				//storing the final resource list into view Model
+				this.oViewModel.setProperty("/Scheduling/resourceList", aResourceList);
+			}
+			//sorting the list
+			aResourceNameList.sort();
+			return {
+				bNoDuplicate: bValidateState,
+				resourceNames: aResourceNameList.join("\n"),
+				bIsPoolExist: bIsPoolExist,
+				poolResource: aPoolResource.join("\n")
+			};
 		}
 	});
 });

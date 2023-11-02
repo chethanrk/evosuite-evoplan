@@ -67,6 +67,7 @@ sap.ui.define([
          */
         onBusyStateChanged: function (oEvent) {
             var oParams = oEvent.getParameters();
+            //wait for the data to load so that the columns can be re-rendered accordingly
             if (oParams.busy === false) {
                 this._doColumnResize();
             }
@@ -85,6 +86,7 @@ sap.ui.define([
 
             //Delete right entry also when filters are set to table
             for (var i = 0, len = aDataSet.length; i < len; i++) {
+                //finding the clicked item and deleting it from the dataset
                 if (sDeleteGuid === aDataSet[i].Guid) {
                     //set counts for inside/outside date range again
                     if (aDataSet[i].dateRangeStatus === MessageType.Success) {
@@ -94,6 +96,7 @@ sap.ui.define([
                         var count = this._oSchedulingModel.getProperty("/outside");
                         this._oSchedulingModel.setProperty("/outside", --count);
                     }
+                    //removing demand from step1 dataset
                     aDataSet.splice(i, 1);
 
                     //removing demand from demand list as well
@@ -105,7 +108,7 @@ sap.ui.define([
             this._checkGeneratedResponse();
             this._oSchedulingModel.setProperty("/step1/dataSet", aDataSet);
             this._oViewModel.setProperty("/Scheduling/demandList", aDemandList);
-
+            //if the list is empty then hiding the next button
             if (aDemandList.length === 0) {
                 this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bNextButtonVisible", false);
             }
@@ -139,6 +142,7 @@ sap.ui.define([
         onChangeDateTo: function (oEvent) {
             var oDate = oEvent.getSource().getValue();
             oDate = new Date(moment(oDate, "DD MMM. YYYY, hh:mm:ss", sap.ui.getCore().getConfiguration().getLanguage())).toString();
+            //this is being checked if the dates are being manually changed/deleted. If done then it is being handled in the else part
             if (oDate && new Date(oDate) < oEvent.getSource().getMaxDate()) {
                 oDate = new Date(new Date(oDate).getTime() - 1000);
                 oEvent.getSource().setDateValue(oDate);
@@ -152,9 +156,8 @@ sap.ui.define([
         },
         /**
          * Called when utilization changes
-         * @param {object} oEvent 
          */
-        onUtilizationChange: function(oEvent){            
+        onUtilizationChange: function () {
             this._checkGeneratedResponse();
         },
 
@@ -181,8 +184,9 @@ sap.ui.define([
          * @param {*} oEvent 
          */
         onPressShowFilterbar: function (oEvent) {
-            this.getModel("viewModel").setProperty("/Scheduling/sFilterEntity", "ScheduleSelectSet");
-            this.getModel("viewModel").setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingSelectFilter");
+            this._oViewModel.setProperty("/Scheduling/sFilterEntity", "ScheduleSelectSet");
+            this._oViewModel.setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingSelectFilter");
+            //checking if the dialog is already instantiated
             if (!this._oDemandFilterDialog) {
                 this._oDemandFilterDialog = Fragment.load({
                     name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
@@ -215,14 +219,10 @@ sap.ui.define([
             }
         },
         /**
-         * Called when utilization changes
-         * @param {object} oEvent 
+         * Called when scheduling filter changes in step 1
          */
-        onUtilizationChange: function (oEvent) {
-            this._checkGeneratedResponse();
-        },
 
-        onSchedulingFilterChange: function (oEvent) {
+        onSchedulingFilterChange: function () {
             this._setCustomTableFilter(this._oSmartFilter);
         },
 
@@ -241,7 +241,7 @@ sap.ui.define([
          */
         _setCustomTableFilter: function (oSmartFilter) {
             var aFilter = [];
-
+            //checking if the passed SmartFilter is defined or not. If its defined then the filters are being combined with other filters
             if (oSmartFilter) {
                 aFilter = oSmartFilter.getFilters();
                 var sFilterCount = Object.keys(oSmartFilter.getFilterData()).length;

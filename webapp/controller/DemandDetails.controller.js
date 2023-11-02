@@ -88,7 +88,7 @@ sap.ui.define([
 					bFromDetail: true
 				});
 			} else {
-				this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
+				this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 			}
 		},
 
@@ -195,7 +195,7 @@ sap.ui.define([
 			if (aAssignmentList) {
 				for (let i = 0; i < aAssignmentList.length; i++) {
 					oAsgnObj = this.getModel().getData("/" + aAssignmentList[i]);
-					this._updatedDmdResources(this.getModel("viewModel"), oAsgnObj);
+					this.updatedResources(this.getModel("viewModel"), this.getModel("user"), oAsgnObj);
 				}
 			}
 		}

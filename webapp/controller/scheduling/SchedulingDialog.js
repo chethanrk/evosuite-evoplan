@@ -42,6 +42,7 @@ sap.ui.define([
 			this._oModel = this._component.getModel();
 
 			this._oSchedulingModel = this._component.getModel("SchedulingModel");
+			//checking if the scheduling model is already defined or not. If not then defining and setting to default values
 			if (!this._oSchedulingModel) {
 				this._oSchedulingModel = models.createSchedulingModel();
 				this._setJsonModelDefaults();
@@ -57,6 +58,7 @@ sap.ui.define([
 		 * @param {*} oView 
 		 * @param {*} mParams
 		 * @param {object} oMsgParam - To display message toast on Scheduling Dialog
+		 * @param {Object} oSchedulingActions - controller object passed here
 		 */
 		openSchedulingDialog: function (oView, mParams, oMsgParam, oSchedulingActions) {
 			this._oView = oView;
@@ -66,7 +68,7 @@ sap.ui.define([
 			this._initializeDialogModel();
 			this._resortSelectedDemands();
 
-			// create Dialog
+			// create Dialog if it is already not instantiated
 			if (!this._ScheduleDialog) {
 				this._ScheduleDialog = Fragment.load({
 					name: "com.evorait.evoplan.view.scheduling.fragments.SchedulingDialog",
@@ -85,6 +87,7 @@ sap.ui.define([
 				// validation added below so that user is not able to select the date and time less than current time.
 				this._oViewModel.setProperty("/Scheduling/minDate", new Date());
 				oDialog.open();
+				//if oMsgParam is not empty then display the message
 				if (!_.isEmpty(oMsgParam)) {
 					this._showSchedulingMessageToast(oDialog, oMsgParam);
 				}
@@ -111,6 +114,7 @@ sap.ui.define([
 		onSchedDialogClose: function () {
 			var sRoute = this._oViewModel.getProperty("/sViewRoute");
 			this.oSchedulingActions.resetSchedulingJson();
+			//if called from new gantt then reset the selections from the gantt model
 			if (sRoute === "NEWGANTT") {
 				this._oEventBus.publish("BaseController", "resetSelections", {});
 			} else {
@@ -126,6 +130,7 @@ sap.ui.define([
 			this._iSelectedStepIndex = 0;
 			var oNextStep = this._oWizard.getSteps()[this._iSelectedStepIndex + 1];
 
+			//in the step 1 if validations are not passed then return
 			if (this._iSelectedStepIndex === 0 && !this.step1Validation()) {
 				return;
 			}
@@ -133,6 +138,7 @@ sap.ui.define([
 			this._oViewModel.setProperty("/Scheduling/InputDataChanged", "");
 			this._component.ProgressBarDialog.open(this._oView);
 			this.oSchedulingActions.handleScheduleDemands().then(function (oResponse) {
+				//if selected data is valid then proceed to step 2
 				if (oResponse) {
 					if (this._oViewModel.getProperty("/sViewRoute") === "NEWGANTT") {
 						this._oViewModel.setProperty("/Scheduling/PTVResponse", oResponse[0].data);
@@ -145,34 +151,13 @@ sap.ui.define([
 					this._oWizard.setCurrentStep(this._oWizard.getSteps()[1]);
 					this._oWizard.goToStep(oNextStep, true);
 
-
-
 					this._handleButtonsVisibility();
-
-					this._designResponse(oResponse[0], oResponse[1], oResponse[2]); //(Response, Resources, Demands)
+					//(Response, Resources, Demands)
+					this._designResponse(oResponse[0], oResponse[1], oResponse[2]);
 
 					this._renderWizardStep2Binding();
 				}
 			}.bind(this));
-		},
-		/**
-		 * This method is used to handle the press event of 
-		 * back button in the dialog box
-		 */
-		onDialogBackButton: function () {
-			this._iSelectedStepIndex = this._oWizard.getSteps().indexOf(this._oSelectedStep);
-			var oPreviousStep = this._oWizard.getSteps()[this._iSelectedStepIndex - 1];
-
-			if (this._oSelectedStep) {
-				this._oWizard.goToStep(oPreviousStep, true);
-			} else {
-				this._oWizard.previousStep();
-			}
-
-			this._iSelectedStepIndex--;
-			this._oSelectedStep = oPreviousStep;
-
-			this._handleButtonsVisibility();
 		},
 		/**
 		 * Validates step1 fields, if error then return false, or else true
@@ -184,20 +169,6 @@ sap.ui.define([
 				bEndDateChanged = this._oViewModel.getProperty("/Scheduling/bDateChanged");
 			return this.oSchedulingActions.validateDateSchedule(startDate, endDate, bEndDateChanged);
 
-		},
-		/**
-		 * Tis method is used to handle the activation/validation of the 
-		 * first step of the wizard.
-		 */
-		additionalInfoValidation: function () {
-			// to be added code later;
-		},
-		/**
-		 * Tis method is used to handle the activation/validation of the 
-		 * second step of the wizard.
-		 */
-		optionalStepActivation: function () {
-			// to be added code later;
 		},
 		/**
 		 * This method is used to handle press event of the cancel button 
@@ -236,12 +207,14 @@ sap.ui.define([
 			oDialog.setBusyIndicatorDelay(0);
 			oDialog.setBusy(true);
 
+			//In case of Autoschedule, new entity is being used to fetch the annotations
 			if (this._mParams.isAutoSchedule) {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep1#AutoScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.LineItem";
 				this._mParams.modelName = "SchedulingModel";
 				this._mParams.modelDataSetPath = "/step1/dataSet";
 				this._mParams.entitySet = "ScheduleSelectSet";
+				//for reschedule, demandset is used along with qualifier
 			} else {
 				this._mParams.viewName = "com.evorait.evoplan.view.scheduling.ReScheduling.ReScheduleStep1#ReScheduleStep1";
 				this._mParams.annotationPath = "com.sap.vocabularies.UI.v1.FieldGroup#ReScheduleTable";
@@ -273,6 +246,7 @@ sap.ui.define([
 
 			// setting the dialog title based on flag in viewMiodel
 			let sDialogTitle = this._oResourceBundle.getText("xtit.AutoscheduleDialogTitle");
+			//changing the dialog title in case of rescheduling
 			if (this._mParams.isReschuduling) {
 				sDialogTitle = this._oResourceBundle.getText("xtit.RescheduleDialogTitle");
 			}
@@ -295,7 +269,7 @@ sap.ui.define([
 			this._oSchedulingModel.setProperty("btnInsidePressed", false);
 			this._oSchedulingModel.setProperty("btnOutsidePressed", false);
 
-			//reset filters in smartFilterBar
+			//resetting filters in both smartFilterBar if they are already instantiated
 			if (this._component.demandFilterDialog) {
 				this._component.demandFilterDialog.getContent()[0].clear();
 			}
@@ -386,10 +360,11 @@ sap.ui.define([
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === MessageBox.Action.YES) {
+						//on click of accept proposal, assignment(s) will be created
 						if (sOperationType === "createAssignment") {
 							this._ScheduleDialog.then(function (oDialog) {
 								oDialog.setBusy(true);
-								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function (oResponse) {
+								this.oSchedulingActions.handleCreateAssignment(this._oSchedulingModel).then(function () {
 									this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 									oDialog.close();
 									oDialog.setBusy(false);
@@ -397,7 +372,7 @@ sap.ui.define([
 								}.bind(this));
 
 							}.bind(this));
-
+							//in case of cancel the progress is discarded and the scheduling model is initialized
 						} else {
 							this._oWizard.discardProgress(this._oWizard.getSteps()[0]);
 							this._ScheduleDialog.then(function (oDialog) {
@@ -414,7 +389,7 @@ sap.ui.define([
 		},
 		/**
 		 * After step1 template rendering was completed
-		 * @param {*} oEvent 
+		 * @param {Object} oDialog - dialog to be used for setting busy indicator
 		 */
 		_afterStepRenderSuccess: function (oDialog) {
 			oDialog.setBusy(false);
@@ -422,8 +397,8 @@ sap.ui.define([
 
 		/**
 		 * set table title with counter for scheduling wizard
-		 * @param {*} isAutoSchedule 
-		 * @param {*} sCounter 
+		 * @param {Boolean} isAutoSchedule  - to set different table title depending on this flag
+		 * @param {String} sCounter - contains the count of the table items 
 		 */
 		_setScheduleTableTitle: function (isAutoSchedule, sCounter) {
 			if (isAutoSchedule) {
@@ -442,9 +417,11 @@ sap.ui.define([
 		 */
 		_showSchedulingMessageToast: function (oSource, mParam) {
 			var message = "";
+			//if POOL resource is selected
 			if (mParam.bIsPoolExist) {
 				message = message + this._oResourceBundle.getText("ymsg.poolResourceExist", mParam.sPoolNames);
 			}
+			//if message is defined then display messagetoast
 			if (message) {
 				this.showMessageToast(message, {
 					width: "auto",
@@ -460,9 +437,8 @@ sap.ui.define([
 		 * In template views the Json model and path to Json data are set instead of an entitySet
 		 * Table columns are rendered from EntitySet LineItems but Table data are from Json Model
 		 * 
-		 * @param {*} oDialog 
 		 */
-		_renderWizardStep2Binding: function (oDialog) {
+		_renderWizardStep2Binding: function () {
 			sContainerId = "ConfirmationStep";
 
 			this._mParams.viewName = "com.evorait.evoplan.view.scheduling.AutoScheduling.AutoScheduleStep2#AutoScheduleStep2";
@@ -488,6 +464,7 @@ sap.ui.define([
 		 * @param {aDemandsData} - Selected demands list
 		 */
 		_designResponse: function (oResponse, aResourceData, aDemandsData) {
+			//if the response and the data exists
 			if (oResponse && oResponse.data) {
 				var aDataSet = [],
 					aData = {},
@@ -502,7 +479,7 @@ sap.ui.define([
 					aListOfAssignments = this._oViewModel.getProperty("/Scheduling/aListOfAssignments"),
 					aViolationsTypes = [];
 
-				//Scheduled demands
+				//if tourReports are generated in the response
 				if (oResponse.data.tourReports) {
 					for (var i = 0; i < oResponse.data.tourReports.length; i++) {
 						oTour = oResponse.data.tourReports[i];
@@ -510,8 +487,10 @@ sap.ui.define([
 
 						oTour.tourEvents.forEach(function (tourItem, index) {
 							aViolationsTypes = [];
+							//check if any violations for each OrderId
 							if (tourItem.tourViolations && tourItem.orderId) {
 								for (var violationIndex in tourItem.tourViolations) {
+									//checking so that any duplicates shouldnt be pushed in the array
 									if (aViolationsTypes.indexOf(tourItem.tourViolations[violationIndex].$type) === -1) {
 										aViolationsTypes.push(tourItem.tourViolations[violationIndex].$type);
 									}
@@ -522,15 +501,20 @@ sap.ui.define([
 
 							//Saving travel times 
 							if (tourItem.eventTypes.indexOf("DRIVING") !== -1) {
-								if (oTour.tourEvents[index + 1].eventTypes.indexOf("TRIP_END") !== -1) { //Going back travel
+								//Going back travel
+								if (oTour.tourEvents[index + 1].eventTypes.indexOf("TRIP_END") !== -1) {
 									fTravelBackTime = tourItem.duration;
-								} else { //Forward travel
-									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
+									//Forward travel
+								} else {
+									// If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
+									fTravelTime = fTravelTime + tourItem.duration;
 								}
 							}
+							//condition for service event for existing assignments without violation
 							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && !aDemandsData[tourItem.orderId]) {
 								fTravelTime = 0.0;
 							}
+							//condition for service event for new planned demands
 							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && aDemandsData[tourItem.orderId]) {
 								aData = {};
 
@@ -572,11 +556,11 @@ sap.ui.define([
 								aDataSet.push(aData);
 							}
 
+							//Backward travel time
 							if (tourItem.eventTypes.indexOf("TRIP_END") !== -1) {
-								//Backward travel time
 								aData.TRAVEL_BACK_TIME = fTravelBackTime / 3600;
 								fTravelBackTime = 0.0;
-							}	
+							}
 						}.bind(this));
 					}
 				}
@@ -585,6 +569,7 @@ sap.ui.define([
 				if (oResponse.data.orderIdsNotPlannable) {
 					for (var h = 0; h < oResponse.data.orderIdsNotPlannable.length; h++) {
 						aOrder = oResponse.data.orderIdsNotPlannable[h];
+						//find the order in the array of demands
 						if (aDemandsData[aOrder]) {
 							aData = {};
 							aData.DemandGuid = aOrder;
@@ -603,11 +588,14 @@ sap.ui.define([
 					iNotPlanned = 0;
 					for (var j = 0; j < oResponse.data.orderIdsNotPlanned.length; j++) {
 						aOrder = oResponse.data.orderIdsNotPlanned[j];
+						// if the order exists in the demands list
 						if (aDemandsData[aOrder]) {
+							//incrementing the count of iNotPlanned index in case it is already not done
 							if (aNonPlannableIds.indexOf(aOrder) !== -1) {
 								iNotPlanned++;
 							}
-							if (aNonPlannableIds.indexOf(aOrder) === -1) { //Bcz non-plannable is subset of not-planned
+							//Bcz non-plannable is subset of not-planned
+							if (aNonPlannableIds.indexOf(aOrder) === -1) {
 								aData = {};
 								iNotPlanned++;
 								aData.DemandGuid = aOrder;
@@ -662,23 +650,24 @@ sap.ui.define([
 					// 	}
 					// }
 				}
-				
+
 				//Setting the values in Schdeuling model
 				this._oSchedulingModel.setProperty("/step2/iPlanned", iPlanned);
 				this._oSchedulingModel.setProperty("/step2/iNonPlanned", iNotPlanned);
 				this._oSchedulingModel.setProperty("/step2/iNonPlannedRes", iNotPlannedRes);
 				this._oSchedulingModel.setProperty("/step2/dataSet", aDataSet);
-					
+
 				//Setting button visibility for scheduling
 				if (!iPlanned) {
 					this._oViewModel.setProperty("/Scheduling/SchedulingDialogFlags/bFinishButtonVisible", false);
 				}
+				//preparing error message for the violated assignments
 				if (oResponse.data.violated) {
 					for (var sGuid in aListOfAssignments) {
-						if (aListOfAssignments[sGuid].ViolationType){
+						if (aListOfAssignments[sGuid].ViolationType) {
 							violatedAssignments.push(aListOfAssignments[sGuid]);
 						}
-					} 
+					}
 					this._oViewModel.setProperty("/Scheduling/aViolatedAssignments", violatedAssignments);
 					this.oSchedulingActions.showViolationError();
 				}
