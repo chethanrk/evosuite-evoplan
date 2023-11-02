@@ -1,21 +1,14 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttActions",
-	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
-	"com/evorait/evoplan/model/ganttFormatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem",
 	"com/evorait/evoplan/model/Constants",
-	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
-], function (AssignmentsController, JSONModel, formatter, ganttFormatter, Filter, FilterOperator, MessageToast, RowAction, RowActionItem,
-	Constants, Fragment, SchedulingActions) {
+], function (GanttActions, formatter, Filter, FilterOperator, Constants, SchedulingActions) {
 	"use strict";
 
-	return AssignmentsController.extend("com.evorait.evoplan.controller.gantt.GanttDemands", {
+	return GanttActions.extend("com.evorait.evoplan.controller.gantt.GanttDemands", {
 
 		formatter: formatter,
 		oSchedulingActions: undefined,
@@ -98,7 +91,6 @@ sap.ui.define([
 		 * On Drag start restrict demand having status other init
 		 * @param oEvent
 		 */
-
 		onDragStart: function (oEvent) {
 			var sMsg = this.getResourceBundle().getText("msg.notAuthorizedForAssign");
 			if (!this._viewModel.getProperty("/validateIW32Auth")) {
@@ -137,6 +129,7 @@ sap.ui.define([
 			this.localStorage.put("Evo-aPathsData", JSON.stringify(aPathsData));
 			this.localStorage.put("Evo-toolDrag", "");
 
+			//if the selectedPaths have unassignable data then show the error message
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
 				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
@@ -146,17 +139,17 @@ sap.ui.define([
 		/**
 		 * on press assign button in footer
 		 * show modal with user for select
-		 * @param oEvent
 		 */
-		onAssignButtonPress: function (oEvent) {
+		onAssignButtonPress: function () {
 			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 			this._viewModel.setProperty("/dragSession", oSelectedPaths.aPathsData);
 
 			if (oSelectedPaths.aPathsData.length > 0) {
-				// TODO comment
+				//if demands are selected
 				this.localStorage.put("Evo-Action-page", "splitDemands");
 				this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 			}
+			//if there are any unassignable data then show error dialog
 			if (oSelectedPaths.aNonAssignable.length > 0) {
 				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
@@ -171,14 +164,14 @@ sap.ui.define([
 				iMaxRowSelection = this.oUserModel.getProperty("/DEFAULT_DEMAND_SELECT_ALL"),
 				bEnable = this._viewModel.getProperty("/validateIW32Auth"),
 				index = oEvent.getParameter("rowIndex"),
-				sDemandPath, bComponentExist, sMsg, iLastIndex,
-				oViewModel=this.getModel("viewModel");
+				sDemandPath, bComponentExist, sMsg, iLastIndex;
 
 			this._aSelectedRowsIdx = _.clone(selected);
 			if (this._aSelectedRowsIdx.length > 0) {
 				this._aSelectedRowsIdx.length = this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection ? this._aSelectedRowsIdx
 					.length : iMaxRowSelection;
 			}
+			//setting the buttons enabled or disabled based on the selections 
 			if (this._aSelectedRowsIdx.length > 0 && this._aSelectedRowsIdx.length <= iMaxRowSelection) {
 				this.byId("assignButton").setEnabled(bEnable);
 				this.byId("changeStatusButton").setEnabled(bEnable);
@@ -213,10 +206,11 @@ sap.ui.define([
 				}
 				this.showMessageToast(sMsg);
 			} else {
-				if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+				//if select all is pressed then display the count of the selected demands
+				if (selected.length !== 0 && oEvent.getParameter("selectAll")) {
 					sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
 					this.showMessageToast(sMsg);
-				}				
+				}
 			}
 
 			//Enabling/Disabling the Material Status Button based on Component_Exit flag
@@ -237,8 +231,10 @@ sap.ui.define([
 			if (oEvent.getParameter("selectAll")) {
 				this._aSelectedIndices = oEvent.getParameter("rowIndices");
 			} else if (oEvent.getParameter("rowIndex") === -1) {
+				//empty the array when there is nothing selected
 				this._aSelectedIndices = [];
 			} else {
+				//if the selected demand index is not included in the array then pushing it or else removing it
 				if (!this._aSelectedIndices.includes(index)) {
 					this._aSelectedIndices.push(index);
 				} else {
@@ -248,15 +244,19 @@ sap.ui.define([
 
 			//Enabling or disabling Re-Schedule button based on status and flag
 			if (this._aSelectedRowsIdx && this._aSelectedRowsIdx.length > 0) {
-				oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
+				this._viewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 			} else {
-				oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
+				this._viewModel.setProperty("/Scheduling/selectedDemandPath", null);
 			}
-			oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
+			this._viewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
 			this.oSchedulingActions.validateScheduleButtons();
 			this.oSchedulingActions.validateReScheduleButton();
 			this._nSelectedDemandsCount = this._oDataTable.getSelectedIndices().length;
 		},
+
+		/**
+		 * Trigerred on press of Filter Gantt button
+		 */
 		onPressFilterGantChart: function () {
 			var aPplicationFilters = this.getView().byId("draggableList").getTable().getBinding("rows").aApplicationFilters;
 			var aFilters = [];
@@ -269,7 +269,11 @@ sap.ui.define([
 				this.showMessageToast(sMsg);
 			}.bind(this));
 		},
-		onClickSplit: function (oEvent) {
+
+		/**
+		 * Opens new window on click of Gantt Split
+		 */
+		onClickSplit: function () {
 			window.open("#Gantt/SplitDemands", "_blank");
 		},
 
@@ -281,17 +285,16 @@ sap.ui.define([
 		},
 		/**
 		 *On Change filters event in the Gantt Demands Filter Dialog 
+		 @param oEvent
 		 */
 		onGanttDemandFilterChange: function (oEvent) {
-			var oView = this.getView(),
-				oResourceBundle = oView.getModel("i18n").getResourceBundle(),
-				oViewModel = oView.getModel("viewModel"),
-				sFilterText = oResourceBundle.getText("xbut.filters"),
+			var sFilterText = this.getResourceBundle().getText("xbut.filters"),
 				sFilterCount = Object.keys(oEvent.getSource().getFilterData()).length;
+			//concatenating filter count with text in case the count is greater than 0
 			if (sFilterCount > 0) {
-				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
+				this._viewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText + "(" + sFilterCount + ")");
 			} else {
-				oViewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
+				this._viewModel.setProperty("/aFilterBtntextGanttDemandTbl", sFilterText);
 			}
 		},
 		/**
@@ -303,11 +306,11 @@ sap.ui.define([
 
 		/**
 		 * Event handler to switch between Demand and Tool list
-		 * @param oEvent
 		 */
-		handleViewSelectionChange: function (oEvent) {
+		handleViewSelectionChange: function () {
 			this.getOwnerComponent().bIsFromPRTSwitch = true;
 			var sSelectedKey = this._viewModel.getProperty("/PRT/btnSelectedKey");
+			//loading the right navigation based on the source of the selection
 			if (sSelectedKey === "tools" && this._mParameters.bFromNewGantt) {
 				this._oRouter.navTo("ganttTools", {});
 			} else if (sSelectedKey === "tools" && this._mParameters.bFromDemandSplit) {
