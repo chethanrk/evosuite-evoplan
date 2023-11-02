@@ -1,9 +1,8 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/Constants"
-], function (BaseController, formatter, Fragment, Constants) {
+], function (BaseController, formatter, Constants) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttAssignmentPopOver", {
