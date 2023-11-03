@@ -19,7 +19,7 @@ sap.ui.define([
 	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
 ], function (Controller, formatter, ganttFormatter, Filter, FilterOperator, Popup, Fragment, CoordinateUtils,
 	Constants,
-	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient, SchedulingActions) {
+	Utility, SlashPattern, BackSlashPattern, MapUtilities, Storage, Stop, LinearGradient, SchedulingActions, GanttLibrary) {
 	"use strict";
 
 	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttChart", {
@@ -44,6 +44,197 @@ sap.ui.define([
 		localStorage: new Storage(Storage.Type.local, "EvoPlan"),
 
 		_availabilityData: null,
+
+		// Custom timeline option
+		oTimelineOption: {
+			"FiveMinutes": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.minute,
+					span: 5,
+					range: 32
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.hour,
+					span: 1,
+					pattern: "HH / MMM d, yyyy, cccc"
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.minute,
+					span: 5,
+					pattern: "mm "
+				}
+			},
+			"FifteenMinutes": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.minute,
+					span: 15,
+					range: 48
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.hour,
+					span: 1,
+					pattern: "HH / MMM d, yyyy, cccc"
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.minute,
+					span: 15,
+					pattern: "mm "
+				}
+			},
+			"Hour": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.hour,
+					span: 1,
+					range: 48
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 1,
+					pattern: "MMMM dd, yyyy, cccc "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.hour,
+					span: 1,
+					pattern: "HH:mm "
+				}
+			},
+			"SixHours": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.hour,
+					span: 6,
+					range: 64
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 1,
+					pattern: "MMMM dd, yyyy, cccc "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.hour,
+					span: 6,
+					pattern: "HH:mm "
+				}
+			},
+			"DayDate": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 1,
+					range: 64
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.week,
+					span: 1,
+					pattern: "LLL yyyy, 'Week' ww  "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 1,
+					pattern: "EEE dd "
+				}
+			},
+			"Date": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 1,
+					range: 32
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.week,
+					span: 1,
+					pattern: "LLL yyyy, 'Week' ww  "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 1,
+					pattern: "dd "
+				}
+			},
+			"CWWeek": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.week,
+					span: 1,
+					range: 56
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.month,
+					span: 1,
+					pattern: "LLL yyyy "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.week,
+					span: 1,
+					pattern: "'CW' ww  "
+				}
+			},
+			"WeekOfYear": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.week,
+					span: 1,
+					range: 32
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.month,
+					span: 1,
+					pattern: "LLL yyyy "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.week,
+					span: 1,
+					pattern: "ww "
+				}
+			},
+			"Month": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 30,
+					range: 48
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.month,
+					span: 3,
+					pattern: "yyyy QQQ "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.month,
+					span: 1,
+					pattern: "LLL "
+				}
+			},
+			"Quarter": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 90,
+					range: 48
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.year,
+					span: 1,
+					pattern: "yyyy "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.month,
+					span: 3,
+					pattern: "QQQ "
+				}
+			},
+			"Year": {
+				innerInterval: {
+					unit: GanttLibrary.config.TimeUnit.day,
+					span: 360,
+					range: 48
+				},
+				largeInterval: {
+					unit: GanttLibrary.config.TimeUnit.year,
+					span: 5,
+					pattern: "yyyy "
+				},
+				smallInterval: {
+					unit: GanttLibrary.config.TimeUnit.year,
+					span: 1,
+					pattern: "yyyy "
+				}
+			}
+		},
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -111,6 +302,8 @@ sap.ui.define([
 				this._ganttChart.addStyleClass("resourceGanttWithTable");
 			}
 
+			this._axisTime.setTimeLineOptions(this.oTimelineOption); // Setting custom timeline option for optimizing in zoom level 9
+			
 			// dirty fix will be removed when evoplan completly moved to 1.84
 			if (parseFloat(sap.ui.getVersionInfo().version) === 1.71) {
 				this._axisTime.setZoomLevel(3);
