@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual"
-], function (GanttQualificationChecks,Fragment) {
+], function (GanttQualificationChecks, Fragment) {
 	"use strict";
 
 	return GanttQualificationChecks.extend("com.evorait.evoplan.controller.gantt.GanttRoute", {
@@ -227,8 +227,8 @@ sap.ui.define([
 				nEffort = bIsTravelBackTime ? (this.aData[nIndex].TRAVEL_BACK_TIME / 60).toFixed(1) : (this.aData[nIndex].TRAVEL_TIME / 60).toFixed(
 					1),
 				nTravelTime = bIsTravelBackTime ? parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME).toFixed(2) : parseFloat(this.aData[nIndex].TRAVEL_TIME)
-				.toFixed(2);
-				//setting the travel back time 
+					.toFixed(2);
+			//setting the travel back time 
 			if (bIsTravelBackTime) {
 				oTempDate = new Date(this.aData[nIndex].DateTo.toString());
 				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));

@@ -14,7 +14,7 @@ sap.ui.define([
 		/* Event & Public methods                                      */
 		/* =========================================================== */
 
-		init: function () {},
+		init: function () { },
 
 		/**
 		 * open Gantt Assignment Popover
@@ -86,9 +86,9 @@ sap.ui.define([
 		 */
 		_setPopOverData: function (oData) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
-					pattern: "dd MMM, hh:mm a",
-					interval: true
-				}),
+				pattern: "dd MMM, hh:mm a",
+				interval: true
+			}),
 				aDetails = {
 					title: oDateFormat.format([this._oShapeContext.getProperty("DateFrom"), this._oShapeContext.getProperty("DateTo")]),
 					status: oData.DEMAND_STATUS
