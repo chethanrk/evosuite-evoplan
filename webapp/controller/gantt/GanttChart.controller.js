@@ -1261,6 +1261,9 @@ sap.ui.define([
 				}
 				//Allowing Assignment Shape Drop Only on Resource Nodes when dragged from different resources
 				if (oTargetContext.getObject().NodeType === "RESOURCE" || bSameResourcePath) {
+				//Storing updated Resource info for refreshing only the updated Resources in Gantt
+				this.updatedResources(this.oViewModel, this.oUserModel, oTargetContext.getObject()); //Target Resource
+				this.updatedResources(this.oViewModel, this.oUserModel, oSourceData); //Dragged Resource
 					// Here we check below of the source is PR or not.
 					if (oSourceData.IS_PRT) {
 						var oDraggedShapeData = oParams.draggedShapeDates[key];
@@ -1649,14 +1652,14 @@ sap.ui.define([
 								this.oGanttOriginDataModel.setProperty(oData.sSourcePath, null);
 							}
 							this.oGanttOriginDataModel.setProperty(sPath, _.cloneDeep(oResData));
-							this._resetChanges(sPath);
+						this._refreshUpdatedResources();
 						}
 						this.oGanttModel.setProperty(sPath + "/busy", false);
 						resolve(oResData);
 					}.bind(this),
 					function (oError) {
 						this.oGanttModel.setProperty(sPath + "/busy", false);
-						this._resetChanges(sPath);
+						this._refreshUpdatedResources();
 						reject(oError);
 					}.bind(this));
 			}.bind(this));
