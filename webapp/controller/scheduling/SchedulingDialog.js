@@ -511,41 +511,7 @@ sap.ui.define([
 								}
 							}
 							//condition for service event for existing assignments without violation
-							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && aListOfAssignments[tourItem.orderId]) {
-								aData = {};
-								aData = _.clone(aListOfAssignments[tourItem.orderId]);
-								// Converting Travel/Travel_back time for existing assignment into hour from minute
-								aData.TRAVEL_TIME = parseFloat(aData.TRAVEL_TIME / 60).toFixed(2)
-								aData.TRAVEL_BACK_TIME = parseFloat(aData.TRAVEL_BACK_TIME / 60).toFixed(2);
-
-								// flag to identify if Travel/Travel_back time has been changed for existing assignment
-								bIsTravelTimeUpdated = false;
-
-								// check if travel time is changed
-								if (aListOfAssignments[tourItem.orderId].TRAVEL_TIME !== (fTravelTime / 60).toFixed(1)){
-									aData.TRAVEL_TIME = (fTravelTime / 3600);
-									aData.TRAVEL_TIME_UNIT = "H";   //Travel time unit will be hour
-									aData.ResourceGuid = sResourceGuid;
-									aData.ResourceGroupGuid = aResourceData[sResourceGuid].aData.ResourceGroupGuid;
-									bIsTravelTimeUpdated = true;	
-								}
-
-								// check if travel time has to be reset 
-								if ((oTour.tourEvents[index + 2].eventTypes.indexOf('TRIP_END') === -1 && parseFloat(aData.TRAVEL_BACK_TIME) > 0)) {
-									aData.TRAVEL_BACK_TIME = 0.0;
-									bIsTravelTimeUpdated = true;
-								} else if (oTour.tourEvents[index + 2].eventTypes.indexOf('TRIP_END') !== -1 && aData.TRAVEL_BACK_TIME !== (oTour.tourEvents[index + 1].duration / 3600).toFixed(2)) {
-									// travel back time is changed
-									aData.TRAVEL_BACK_TIME = (oTour.tourEvents[index + 1].duration / 3600);
-									bIsTravelTimeUpdated = true;
-								}
-
-								// adding the changed existing assignment to an array to call update service further
-								if (bIsTravelTimeUpdated){
-									aChangedExistingAssignments.push(aData);
-								}
-
-								// reset travel time for next assignment
+							if (tourItem.eventTypes.indexOf("SERVICE") !== -1 && !aDemandsData[tourItem.orderId]) {
 								fTravelTime = 0.0;
 							}
 							//condition for service event for new planned demands
@@ -705,7 +671,6 @@ sap.ui.define([
 					this._oViewModel.setProperty("/Scheduling/aViolatedAssignments", violatedAssignments);
 					this.oSchedulingActions.showViolationError();
 				}
-				this._oViewModel.setProperty("/Scheduling/aUpdatedExistingAssignments", aChangedExistingAssignments);
 			}
 		}
 	});
