@@ -86,7 +86,7 @@ sap.ui.define([
 
 				// non-fixed appointments
 				// creating function import calls for multi assignment for non-fixed appointments
-				for (var i in aSources) {
+				for (i in aSources) {
 					oParams = {
 						DemandGuid: "",
 						ResourceGroupGuid: oResourceData.ResourceGroupGuid,
