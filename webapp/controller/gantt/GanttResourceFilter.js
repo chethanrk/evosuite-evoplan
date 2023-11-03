@@ -3,10 +3,8 @@ sap.ui.define([
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/Token",
-	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment"
-], function (BaseController, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment) {
+], function (BaseController, formatter, Filter, FilterOperator, Fragment) {
 	"use strict";
 
 	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttResourceFilter", {
@@ -18,7 +16,8 @@ sap.ui.define([
 		_resourceMaster: null,
 		/**
 		 * Initialising the Gantt Resource Filter Dialog
-		 * @param Tree Table (To Apply filter)
+		 * @param {Object} oView - contains the view it is called from
+		 * @param {Object} Tree Table (To Apply filter)
 		 */
 		init: function (oView, oTreeTable) {
 			this._oView = oView;
@@ -67,39 +66,22 @@ sap.ui.define([
 		/**
 		 * Sets the necessary value as global to this controller
 		 * handle Opening of the popover
-		 * @param oView
-		 * @param Tree Table (To Apply filter)
+		 * @param {Object} oView - contains the view it is called from
 		 */
-		open: function (oView, oTreeTable) {
-			this.onOpen(this._oDialog, oView);
+		open: function () {
+			this._oDialog.open();
 		},
 		/**
 		 * On Initialization of Gantt Filter
 		 */
-		onGanttFilterInitialized: function (oEvent) {
+		onGanttFilterInitialized: function () {
 			this.onGanttResourceFilterChange();
-		},
-
-		/**
-		 * Sets the necessary value as global to this controller
-		 * Open's the popover
-		 * @param oView
-		 */
-		onOpen: function (oDialog, oView) {
-			this._oDialog.open();
-		},
-
-		/**
-		 * Clear the filter bar
-		 * @returns {null}
-		 */
-		onClear: function (oEvent) {
 		},
 
 		/**
 		 * Applying fiter to Tree on any change
 		 */
-		onGanttResourceFilterChange: function (oEvent) {
+		onGanttResourceFilterChange: function () {
 			var oFilters = this._oFilterBar.getFilters(),
 				sFilterCount = 0,
 				aResGroups = [],
@@ -108,6 +90,7 @@ sap.ui.define([
 				aFilters = [],
 				oFilter,
 				oFinalFilter;
+			//checking if there are any filters
 			if (oFilters.length > 0 && oFilters[0].aFilters.length) {
 				var aAppliedFilters = oFilters[0].aFilters;
 				for (var k in aAppliedFilters) {
@@ -118,13 +101,16 @@ sap.ui.define([
 			this._getResources().then(function (data) {
 				for (var j in aAllResources) {
 					for (var i in data.results) {
+						//checking for the resource groups and pushing the group guids into an array
 						if (aAllResources[j] === data.results[i].Description && data.results[i].ObjectType === "RES_GROUP") {
 							aResGroups.push(data.results[i].ResourceGroupGuid);
 						} else if (aAllResources[j] === data.results[i].Description) {
+							//checking for resource and pushing it into an array
 							aResources.push(data.results[i].ObjectId);
 						}
 					}
 				}
+				//if there are any resource groups then add the ResourceGroupGuid into the filter
 				if (aResGroups.length > 0) {
 					for (var m in aResGroups) {
 						aFilters.push(new Filter("ResourceGroupGuid", FilterOperator.EQ, aResGroups[m]));
@@ -132,6 +118,7 @@ sap.ui.define([
 					oFilter = new Filter(aFilters, false);
 					sFilterCount = aFilters.length;
 				}
+				// if there are any resources then adding them into the filter
 				if (aResources.length > 0) {
 					for (var n in aResources) {
 						aFilters.push(new Filter("NodeId", FilterOperator.EQ, aResources[n]));
@@ -155,10 +142,12 @@ sap.ui.define([
 		},
 		/**
 		 * Setting the Total count on filter button
+		 * @param {String} sFilterCount - contains the filter count in string format
 		 */
 		setFilterCount: function (sFilterCount) {
 			var oResourceBundle = this._oView.getModel("i18n").getResourceBundle(),
 				sFilterText = oResourceBundle.getText("xbut.filters");
+			//if filter count greater than 0 then display it along with text
 			if (sFilterCount > 0) {
 				this._oView.byId("idBtnGanttResourceFilter").setText(sFilterText + "(" + sFilterCount + ")");
 			} else {
@@ -170,6 +159,7 @@ sap.ui.define([
 		 * */
 		_getResources: function () {
 			return new Promise(function (resolve, reject) {
+				//if resources are not loaded then load the resources
 				if (!this._resourceMaster) {
 					this._component.readData("/ResourceSet").then(function (data) {
 						this._resourceMaster = data;

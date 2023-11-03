@@ -44,7 +44,7 @@ sap.ui.define([
 			this._mParams = mParams;
 			this._oSmartTable = mParams.smartTable;
 			this._component = this._oView.getController().getOwnerComponent();
-			this._IsTool = bIsTool
+			this._IsTool = bIsTool;
 				//set annotation path and other parameters
 			this.setTemplateProperties(mParams);
 
@@ -98,7 +98,7 @@ sap.ui.define([
 		_loadToolDialog: function (sDialogController, onDataReceived) {
 			if (!this._oToolsDialog) {
 				Fragment.load({
-					name: "com.evorait.evoplan.view.PRT.ToolFormDialog",
+					name: "com.evorait.evoplan.view.prt.ToolFormDialog",
 					controller: sDialogController || this,
 					type: "XML"
 				}).then(function (oFragment) {

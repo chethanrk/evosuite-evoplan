@@ -93,7 +93,7 @@ sap.ui.define([
 							}
 						}
 						this.onCloseDialog();
-						this._showAssignErrorDialog.call(this._oView.getController(), oData.aNonChangable, true);
+						this.showAssignErrorDialog.call(this._oView.getController(), oData.aNonChangable, true);
 						return;
 					}
 

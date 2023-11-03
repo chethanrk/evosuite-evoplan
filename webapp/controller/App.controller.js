@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/formatter",
 	"com/evorait/evoplan/model/Constants",
-	"com/evorait/evoplan/controller/scheduling/SchedulingActions"
-], function (AssignmentsController, JSONModel, Fragment, formatter, Constants,SchedulingActions) {
+	"com/evorait/evoplan/controller/scheduling/SchedulingActions",
+	"com/evorait/evoplan/controller/prt/PRTActions"
+], function (AssignmentsController, JSONModel, Fragment, formatter, Constants,SchedulingActions, PRTActions) {
 	"use strict";
 
 	return AssignmentsController.extend("com.evorait.evoplan.controller.App", {
@@ -57,6 +58,7 @@ sap.ui.define([
 			oRouter.attachRouteMatched(this._onAllRouteMatched, this);
 
 			this.oSchedulingActions = new SchedulingActions(this);
+			this.oPRTActions = new PRTActions(this);
 		},
 
 		onAfterRendering: function () {
@@ -303,14 +305,14 @@ sap.ui.define([
 				return;
 			}
 			this.oSchedulingActions.resetSchedulingJson();
-			var oViewModel = this.getModel("viewModel")
+			var oViewModel = this.getModel("viewModel");
 			//Reset scheduling buttons enability and stored data
 
 
 			if (sRoute === "gantt") {
 				this._eventBus.publish("BaseController", "refreshGanttChart", {});
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
-				oViewModel.setProperty("/sViewRoute","GANTT")
+				oViewModel.setProperty("/sViewRoute","GANTT");
 			} else if (sRoute === "newgantt") {
 				this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 				oViewModel.setProperty("/sViewRoute","NEWGANTT");
@@ -427,7 +429,7 @@ sap.ui.define([
 			this.executeFunctionImport(this.getModel(), {}, "RefreshSharedMemoryAreas", "POST").then(function () {
 				if (oSelectedRoute === oResourceBundleText.getText("xbut.pageDemands")) {
 					oComponent._getResourceGroups.call(oComponent);
-					if (this.getModel('viewModel').getProperty("/PRT/btnSelectedKey") === "demands") {
+					if (this.getModel("viewModel").getProperty("/PRT/btnSelectedKey") === "demands") {
 						this._eventBus.publish("BaseController", "refreshDemandTable", {});
 					} else {
 						this._eventBus.publish("BaseController", "refreshToolsTable", {});
@@ -455,7 +457,7 @@ sap.ui.define([
 					this._eventBus.publish("BaseController", "refreshDemandGanttTable", {});
 					this._eventBus.publish("BaseController", "refreshFullGantt", {});
 				}
-			}.bind(this), function (data) {}.bind(this)).catch(function (data) {}.bind(this));
+			}.bind(this), function (data) {}).catch(function (data) {});
 		},
 		_routeValidation: function (parameter) {
 			var oUserModel = this.getModel("user");

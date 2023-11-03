@@ -167,7 +167,7 @@ sap.ui.define([
 							text: sORDERID
 						})
 					});
-				},
+				}
 
 			},
 			assertions: {

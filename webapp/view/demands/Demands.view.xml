@@ -5,7 +5,7 @@
 	<Page id="listPage" title="{i18n>xtit.itemListTitle}" showFooter="false" showHeader="{user>/ENABLE_PRT}" enableScrolling="false">
 		<customHeader>
 			<Toolbar style="Clear">
-				<core:Fragment fragmentName="com.evorait.evoplan.view.PRT.SegmentedButton" type="XML"/>
+				<core:Fragment fragmentName="com.evorait.evoplan.view.prt.SegmentedButton" type="XML"/>
 			</Toolbar>
 		</customHeader>
 		<content>

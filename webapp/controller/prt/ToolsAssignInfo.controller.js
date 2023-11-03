@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/common/AssignmentsController",
+	"com/evorait/evoplan/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"com/evorait/evoplan/model/formatter",
 	"sap/ui/model/Filter",
@@ -14,7 +14,7 @@ sap.ui.define([
 	RowAction, RowActionItem, Fragment) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.PRT.Tools", {
+	return BaseController.extend("com.evorait.evoplan.controller.prt.ToolsAssignInfo", {
 
 		formatter: formatter,
 
@@ -36,25 +36,30 @@ sap.ui.define([
 
 		/**
 		 * trigger event for open select assign tree table dialog
-		 * @param oEvent
+		 * @param {object} oEvent this is trigerred when we click button in toolinfodialog view
 		 */
 		onPressReAssign: function (oEvent) {
 			this._eventBus.publish("AssignInfoDialog", "selectAssign", {
 				oView: this.oView,
 				isToolReAssign: true,
-				aSelectedPaths: ["/AssignmentSet('" + this.oView.getModel('assignment').getProperty('/Guid') + "')"]
+				aSelectedPaths: ["/AssignmentSet('" + this.oView.getModel("assignment").getProperty("/Guid") + "')"]
 			});
 		},
 		
-		/*
-		*Function is triggered when we change ToolInfoAsgn Dialog Date Fields
-		*For validating invalid date formats
+		/**
+		* Function is triggered when we change ToolInfoAsgn Dialog Date Fields
+		* For validating invalid date formats
+		* @param {object} oEvent this is trigerred when we click date change in toolinfodialog view
 		*/
 		onAssignmentDateChange: function (oEvent) {
 			var oSource = oEvent.getSource(),
 				bValidFormat = oEvent.getParameter("valid"),
 				oViewModel = this.oView.getModel("viewModel");
 			this.onValidateDateFormat(oSource, bValidFormat, oViewModel);
-		},
+		}
+		/* =========================================================== */
+		/* Private methods                                             */
+		/* =========================================================== */
+
 	});
 });

@@ -235,7 +235,7 @@ sap.ui.define(["sap/ui/model/odata/AnnotationHelper", "sap/base/Log"],
 				oProperty = oMetaModel.getODataProperty(oEntityType, sFieldName);
 
 			if(oProperty["com.sap.vocabularies.Common.v1.Label"]){
-				return oProperty["com.sap.vocabularies.Common.v1.Label"]["String"];
+				return oProperty["com.sap.vocabularies.Common.v1.Label"].String;
 			}else{
 				return oProperty["sap:label"];
 			}

@@ -1,12 +1,11 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/gantt/GanttActions",
+	"com/evorait/evoplan/controller/BaseController",
 	"com/evorait/evoplan/model/formatter",
-	"sap/ui/core/Fragment",
 	"com/evorait/evoplan/model/Constants"
-], function (BaseController, formatter, Fragment, Constants) {
+], function (BaseController, formatter, Constants) {
 	"use strict";
 
-	return BaseController.extend("com.evorait.evoplan.controller.common.AssignInfoDialog", {
+	return BaseController.extend("com.evorait.evoplan.controller.gantt.GanttAssignmentPopOver", {
 
 		formatter: formatter,
 
@@ -14,14 +13,15 @@ sap.ui.define([
 		/* Event & Public methods                                      */
 		/* =========================================================== */
 
-		init: function () {},
+		init: function () { },
 
 		/**
 		 * open Gantt Assignment Popover
-		 * trigger the Dialog rendorer for Responsive popover
-		 * @param oView
-		 * @param oSource
-		 * @param oShapeContext
+		 * trigger the Dialog renderer for Responsive popover
+		 * @param {Object} oView - contains the view it is called from
+		 * @param {Object} oSource - contains the source
+		 * @param {Object} oShapeContext - has the shape context
+		 * @param {Object} mParameters - contains some additional parameters required for dialog
 		 * since 2205
 		 */
 		open: function (oView, oSource, oShapeContext, mParameters) {
@@ -58,9 +58,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * on Close on pop over
+		 * on Close of pop over
 		 */
-		onCloseAssigmentsPopover: function (oEvent) {
+		onCloseAssigmentsPopover: function () {
 			if (this._component) {
 				this._component.DialogTemplateRenderer.closeResponsivePopOver();
 			}
@@ -73,24 +73,21 @@ sap.ui.define([
 		/**
 		 * event triggered after opening the Responsive Popover
 		 * setting the Title and Status
-		 * @param oDialog
-		 * @param oView
 		 */
 
-		_openPopOver: function (oDialog, oView, sPath, sEvent, data, mParams) {
+		_openPopOver: function () {
 			this._setPopOverData(this._oShapeContext.getObject());
 		},
 
 		/**
 		 * Setting up the Title and Status for responsive popover
-		 * @param oDialog
-		 * @param oView
+		 * @param {Object} oData - contains the object of the shape data
 		 */
 		_setPopOverData: function (oData) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
-					pattern: "dd MMM, hh:mm a",
-					interval: true
-				}),
+				pattern: "dd MMM, hh:mm a",
+				interval: true
+			}),
 				aDetails = {
 					title: oDateFormat.format([this._oShapeContext.getProperty("DateFrom"), this._oShapeContext.getProperty("DateTo")]),
 					status: oData.DEMAND_STATUS

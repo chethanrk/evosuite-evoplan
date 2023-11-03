@@ -1,18 +1,20 @@
 sap.ui.define([
 	"com/evorait/evoplan/controller/gantt/GanttQualificationChecks",
-	"com/evorait/evoplan/model/formatter",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/m/Token",
-	"sap/m/Tokenizer",
 	"sap/ui/core/Fragment",
-	"sap/m/MessageToast",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual"
-], function (GanttQualificationChecks, formatter, Filter, FilterOperator, Token, Tokenizer, Fragment, MessageToast) {
+], function (GanttQualificationChecks, Fragment) {
 	"use strict";
 
 	return GanttQualificationChecks.extend("com.evorait.evoplan.controller.gantt.GanttRoute", {
+		/**
+		 * Called when a controller is instantiated and its View controls (if available) are already created.
+		 * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
+		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
+		 */
+		onInit: function () {
+			GanttQualificationChecks.prototype.onInit.apply(this, arguments);
+		},
 		/*
 		 * Handle press of Calculate travel time Button in gantt toolbar
 		 * @param oEvent
@@ -26,6 +28,7 @@ sap.ui.define([
 				sSourceId = oEvent.getSource().getId();
 
 			this.routeOperation = sSourceId.includes("Optimize") ? "Optimize" : "Calculate";
+			//checking if the calendar popover is already instantiated
 			if (!this._oCalendarPopover) {
 				Fragment.load({
 					name: "com.evorait.evoplan.view.map.fragments.RouteDateFilter",
@@ -48,20 +51,19 @@ sap.ui.define([
 
 		/*
 		 * Closing the calendar popover for route calculation
-		 * @param oEvent
 		 * since 2205
 		 */
-		onCloseDialog: function (oEvent) {
+		onCloseDialog: function () {
 			this._oCalendarPopover.close();
 		},
 		/**
 		 * resetting the assignment and children node after route calculation/optimization
-		 * @param {Object} result
+		 * @param {Object} oResult
 		 * @param {Boolean} bNoChangeGanttView
 		 * @Author Rakesh Sahu
 		 */
-		updateResourceAfterRouting: function (result, bNoChangeGanttView) {
-			this.oResource.AssignmentSet = result;
+		updateResourceAfterRouting: function (oResult, bNoChangeGanttView) {
+			this.oResource.AssignmentSet = oResult;
 			if (this.oResource.AssignmentSet && this.oResource.AssignmentSet.results.length > 0) {
 				this.oResource.children = this.oResource.AssignmentSet.results;
 				this.oResource.children.forEach(function (oAssignItem, idx) {
@@ -75,6 +77,7 @@ sap.ui.define([
 					};
 				}.bind(this));
 			}
+			//setting gantt visible horizon when no change flag is false
 			if (!bNoChangeGanttView) {
 				this._setGanttVisibleHorizon(new Date(this.oSelectedDate));
 			}
@@ -113,6 +116,7 @@ sap.ui.define([
 		},
 		/**
 		 * getting the unavailibility of type "B" (Breaks) to pass into Route Calculation/Optimization PTV service
+		 * @returns {Array} list containing unavailabilities
 		 * since 2209
 		 */
 		getBreaks: function () {
@@ -122,6 +126,7 @@ sap.ui.define([
 				aUnavailability = [];
 
 			aAvailabilitySet.forEach(function (oItem) {
+				//in case of breaks and if its within the date range creating a blocker
 				if (oItem.AvailabilityTypeGroup === "B" && oItem.DateFrom >= oStartTime && oItem.DateTo <= oEndTime) {
 					aUnavailability.push({
 						sModelPath: "/ResourceAvailabilitySet" + "('" + oItem.Guid + "')",
@@ -134,7 +139,7 @@ sap.ui.define([
 						DateTo: oItem.DateTo
 					});
 				}
-			}.bind(this));
+			});
 			return aUnavailability;
 		},
 
@@ -161,13 +166,13 @@ sap.ui.define([
 
 		/**
 		 * setting Travel Time object to Gantt and updating new date time for assignments based on travel Time
-		 * @param {Array} results
+		 * @param {Array} aResults - contsins the returned results from PTV
 		 * since 2205
 		 */
-		_setTravelTimeToGantt: function (results) {
+		_setTravelTimeToGantt: function (aResults) {
 			var oAssignment;
 
-			this.aData = results;
+			this.aData = aResults;
 			this.aAssignmetsWithTravelTime = [];
 			this.aTravelTimes = [];
 
@@ -211,7 +216,8 @@ sap.ui.define([
 		/**
 		 * Create object for Travel time between the assignments to show in Gantt
 		 * @param {Integer} nIndex
-		 * @param {Boolean} bIsTravelBackTime
+		 * @param {Boolean} bIsTravelBackTime - flag to differentiate between travel time and travel back time
+		 * @returns {Object} travel time object to be set for gantt
 		 * since 2205
 		 */
 		_getTravelTimeObject: function (nIndex, bIsTravelBackTime) {
@@ -221,7 +227,8 @@ sap.ui.define([
 				nEffort = bIsTravelBackTime ? (this.aData[nIndex].TRAVEL_BACK_TIME / 60).toFixed(1) : (this.aData[nIndex].TRAVEL_TIME / 60).toFixed(
 					1),
 				nTravelTime = bIsTravelBackTime ? parseFloat(this.aData[nIndex].TRAVEL_BACK_TIME).toFixed(2) : parseFloat(this.aData[nIndex].TRAVEL_TIME)
-				.toFixed(2);
+					.toFixed(2);
+			//setting the travel back time 
 			if (bIsTravelBackTime) {
 				oTempDate = new Date(this.aData[nIndex].DateTo.toString());
 				oStartDate = new Date(oTempDate.setMinutes(oTempDate.getMinutes() + 1));
@@ -277,12 +284,13 @@ sap.ui.define([
 					Distance: aAssignments[i].DISTANCE,
 					DistanceBack: aAssignments[i].DISTANCE_BACK
 				};
+				//condition to check if its the last assignment then enablng the flag
 				if (i === aAssignments.length - 1) {
 					bIsLast = true;
 					oParams.TravelBackTime = aAssignments[i].TRAVEL_BACK_TIME;
 				}
 				this.callFunctionImport(oParams, "UpdateAssignment", "POST", this._mParameters, bIsLast);
 			}
-		},
+		}
 	});
 });

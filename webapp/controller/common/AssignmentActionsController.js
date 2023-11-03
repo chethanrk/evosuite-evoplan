@@ -131,7 +131,7 @@ sap.ui.define([
 
 			this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true).then(function (oData, oResponse) {
 
-			}.bind(this));
+			});
 			return;
 
 			this.clearMessageModel();

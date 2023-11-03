@@ -11,7 +11,8 @@
         "@ui5/cli": "^3.0.0",
         "@sap/ux-ui5-tooling": "1",
         "rimraf": "3.0.2",
-        "ui5-task-flatten-library": "0.2.5"
+        "ui5-task-flatten-library": "0.2.5",
+        "eslint": "^8.44.0" 
     },
     "scripts": {
         "build_old": "ui5 build --include-task=generateManifestBundle generateCachebusterInfo",
@@ -27,7 +28,8 @@
         "unit-tests": "fiori run --open 'test/unit/unitTests.qunit.html'",
         "int-tests": "fiori run --open 'test/integration/opaTests.qunit.html'",
         "undeploy": "fiori undeploy --config ui5-deploy.yaml",
-        "deploy-test": "npm run build && fiori deploy --config ui5-deploy.yaml --testMode true"
+        "deploy-test": "npm run build && fiori deploy --config ui5-deploy.yaml --testMode true",
+        "lint": "eslint webapp"
     },
     "ui5": {
         "dependencies": [

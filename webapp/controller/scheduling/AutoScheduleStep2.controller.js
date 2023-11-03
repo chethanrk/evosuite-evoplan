@@ -1,8 +1,8 @@
 sap.ui.define([
   "com/evorait/evoplan/controller/BaseController",
-  'sap/ui/model/Filter',
+  "sap/ui/model/Filter",
   "sap/ui/core/Fragment",
-  "sap/ui/model/FilterOperator",
+  "sap/ui/model/FilterOperator"
 ], function (BaseController, Filter, Fragment, FilterOperator) {
   "use strict";
 
@@ -31,10 +31,11 @@ sap.ui.define([
 
     /**
      * Return group header key for grouping in scheduled data on resource name
+     * @param {Object} oContext - context from table item
      */
     fnGetResName: function (oContext) {
       if (!this._oViewModel.getProperty("/Scheduling/iSelectedResponse")) {
-        return oContext.getProperty('ResourceName');
+        return oContext.getProperty("ResourceName");
       }
     },
 
@@ -50,14 +51,15 @@ sap.ui.define([
      */
     onShowFilters: function () {
       //To be changed when annotations for filters are added
-      this.getModel("viewModel").setProperty("/Scheduling/sFilterEntity", "ScheduleResponseSet");
-      this.getModel("viewModel").setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingResponseFilter");
+      this._oViewModel.setProperty("/Scheduling/sFilterEntity", "ScheduleResponseSet");
+      this._oViewModel.setProperty("/Scheduling/sFilterPersistencyKey", "com.evorait.evosuite.evoplan.SchedulingResponseFilter");
+      //checking if the ResponseFilterDialog is already instantiated or not
       if (!this._oResponseFilterDialog) {
         this._oResponseFilterDialog = Fragment.load({
           name: "com.evorait.evoplan.view.scheduling.fragments.DemandFilterDialog",
           controller: this,
           type: "XML",
-          id:this.getView().getId()
+          id: this.getView().getId()
         }).then(function (oDialog) {
           oDialog.addStyleClass(this._oViewModel.getProperty("/densityClass"));
           this.getView().addDependent(oDialog);
@@ -76,15 +78,18 @@ sap.ui.define([
      * close filter dialog and add all seleted filters 
      * to json response table
      */
-    onPressCloseFilterDialog: function(){
-      if(this._oResponseFilterDialog){
-          this._oResponseFilterDialog.then(function(oDialog){
-              oDialog.close();
-          }.bind(this));
+    onPressCloseFilterDialog: function () {
+      if (this._oResponseFilterDialog) {
+        this._oResponseFilterDialog.then(function (oDialog) {
+          oDialog.close();
+        });
       }
     },
 
-    onSchedulingFilterChange: function(oEvent){
+    /**
+      * Called when scheduling filter changes in step 2
+    */
+    onSchedulingFilterChange: function () {
       this._setCustomTableFilter(this._oSmartFilter);
     },
 
@@ -98,9 +103,11 @@ sap.ui.define([
      * The filter set is on "PLANNED" boolean field from local JSON model
      */
     _setDataFilter: function () {
-      if (!this._oViewModel.getProperty("/Scheduling/iSelectedResponse")) { //When scheduled demands
+      //When demands are scheduled
+      if (!this._oViewModel.getProperty("/Scheduling/iSelectedResponse")) {
         return this._mFilters.planned;
-      } else { //when non-scheduled demands
+        //when demands are not-scheduled
+      } else {
         return this._mFilters.nonPlanned;
       }
     },
@@ -112,7 +119,7 @@ sap.ui.define([
      */
     _setCustomTableFilter: function (oSmartFilter) {
       var aFilter = [];
-
+      //checking if the passed SmartFilter is defined or not. If its defined then the filters are being combined with other filters
       if (oSmartFilter) {
         aFilter = oSmartFilter.getFilters();
         var sFilterCount = Object.keys(oSmartFilter.getFilterData()).length;
@@ -122,7 +129,7 @@ sap.ui.define([
       aFilter.push(this._setDataFilter());
 
       this._oResponseTable.getBinding("items").filter(aFilter);
-    },
+    }
 
   });
-})
+});

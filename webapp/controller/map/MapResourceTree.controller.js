@@ -666,7 +666,7 @@ sap.ui.define([
 				oViewModel.setProperty("/mapSettings/assignedDemands", aAssignedDemands);
 				eventBus.publish("MapController", "showAssignedDemands", {});
 
-			}.bind(this));
+			});
 		},
 
 		/**
@@ -754,7 +754,7 @@ sap.ui.define([
 					if (oShowRouteButton.setPressed && typeof oShowRouteButton.setPressed === "function") {
 						oShowRouteButton.setPressed(false);
 					}
-				}.bind(this));
+				});
 		},
 
 		/**

@@ -46,7 +46,7 @@ sap.ui.define([
 			oDialog.bindElement({
 				path: oContext.getPath(),
 				parameters: {
-					"expand": "DemandToAssignment"
+					expand: "DemandToAssignment"
 				},
 				events:{
 					dataReceived:function(){
@@ -82,6 +82,6 @@ sap.ui.define([
 		 */
 		onAfterCloseAssigments: function(oEvent){
 			this._olistDialog.unbindElement();
-		},
+		}
 	});
 });

@@ -150,7 +150,7 @@ sap.ui.define([
 			var oChanges = this._getChangedData(oEvent),
 				bIsAbsenceUpadatePage = Fragment.byId(this._id, "idUpdateMangAbs").getVisible(),
 				bIsBlockerUpadatePage = Fragment.byId(this._id, "idUpdateTimeAllocation").getVisible();
-			if (!oChanges || (oChanges && bIsAbsenceUpadatePage && !this._bChangeAbsences) || (oChanges && bIsBlockerUpadatePage && !this._bChangeBlockers)) {
+			if (!oChanges || oChanges && bIsAbsenceUpadatePage && !this._bChangeAbsences || oChanges && bIsBlockerUpadatePage && !this._bChangeBlockers) {
 				this._resetChanges(oEvent);
 				this._oApp.back();
 				this.onTabSelectionChanged();
@@ -352,7 +352,7 @@ sap.ui.define([
 		_checkMandaoryFields: function (oChanges, sProperty) {
 			var bCheck = false;
 			if (sProperty === "DELETE")
-				return;
+				{return;}
 			// Check necessary condition common for Manage Absence & Time Allocation
 			if (oChanges.DateFrom !== "" && oChanges.DateTo !== "" && oChanges.AvailType !== "") {
 				bCheck = true;
@@ -599,10 +599,10 @@ sap.ui.define([
 					oListObject = aItems[i].getBindingContext();
 					oItemControl = aItems[i].getDeleteControl();
 					oItemControl ? oItemControl.setVisible(false) : "";
-					if (bEnableDeleteBlockers && oListObject && oListObject.getProperty("AvailabilityTypeGroup") === 'L') {
+					if (bEnableDeleteBlockers && oListObject && oListObject.getProperty("AvailabilityTypeGroup") === "L") {
 						oItemControl ? oItemControl.setVisible(true) : "";
 					}
-					if (bEnableDeleteAbsence && oListObject && oListObject.getProperty("AvailabilityTypeGroup") === 'N') {
+					if (bEnableDeleteAbsence && oListObject && oListObject.getProperty("AvailabilityTypeGroup") === "N") {
 						oItemControl ? oItemControl.setVisible(true) : "";
 					}
 				}
@@ -804,7 +804,7 @@ sap.ui.define([
 				oBtnCreateBlocker.setVisible(false);
 				oBtnCreateAbsence.setVisible(false);
 				oBtnBack.setVisible(true);
-				if ((sSourceView === "CreateBlocker" && this._bCreateBlockers) || (sSourceView === "CreateAbsence" && this._bCreateAbsences)) {
+				if (sSourceView === "CreateBlocker" && this._bCreateBlockers || sSourceView === "CreateAbsence" && this._bCreateAbsences) {
 					oBtnCreate.setVisible(true);
 				}
 			}
