@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/MessageBox"
-], function (Controller, formatter, Filter, FilterOperator, MessageBox) {
+], function (GanttRoute, formatter, Filter, FilterOperator, MessageBox) {
 	"use strict";
 
-	return Controller.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
+	return GanttRoute.extend("com.evorait.evoplan.controller.gantt.GanttActions", {
 
 		/**
 		 * Called when a controller is instantiated and its View controls (if available) are already created.
@@ -16,11 +16,14 @@ sap.ui.define([
 		 * @memberOf com.evorait.evoplan.view.gantt.view.newgantt
 		 */
 		onInit: function () {
-			Controller.prototype.onInit.apply(this, arguments);
+			GanttRoute.prototype.onInit.apply(this, arguments);
 		},
 
 		/**
-		 * formatter for for Gantt view
+		 * formatter for Gantt view
+		 * @param {Boolean} bAllowProperty - resize or drag enabled or not
+		 * @param {Boolean} bIsBusy - busy property passed from gantt model
+		 * @param {Boolean} bAuthCheck - authorization check from the view model
 		 */
 		isBusyShape: function (bAllowProperty, bIsBusy, bAuthCheck) {
 			return Boolean(bAllowProperty && !bIsBusy && bAuthCheck);
@@ -28,21 +31,22 @@ sap.ui.define([
 
 		/**
 		 * get full path off assignment 
-		 * @param {String} Guid
+		 * @param {String} sGuid
 		 */
-		_getAssignmentDataModelPath: function (Guid) {
+		_getAssignmentDataModelPath: function (sGuid) {
 			return "/" + this.getModel().createKey("AssignmentSet", {
-				Guid: Guid
+				Guid: sGuid
 			});
 		},
 		/**
 		 * multi assignments of demands
 		 * Preceed to assignment 
-		 * @param oResourceData
-		 * @param aSource
-		 * @param oTarget
-		 * @param oTargetDate
-		 * @param aFixedAppointmentObjects
+		 * @param {Object} oResourceData - contains resource object
+		 * @param {Array} aSources - contains the source array 
+		 * @param {Object} oTarget - target object
+		 * @param {Object} oTargetDate - contains the date object of the target
+		 * @param {Array} aFixedAppointmentObjects - array of fixed appointment objects
+		 * @returns promise for multiple assignment
 		 */
 		assignMultipleDemands: function (oResourceData, aSources, oTarget, oTargetDate, aFixedAppointmentObjects) {
 			var oModel = this.getModel(),
@@ -100,6 +104,7 @@ sap.ui.define([
 					}
 					oParams.DemandGuid = oDemandObj.Guid;
 
+					//checking if network assignment is allowed for the user and if the demands is of type Network
 					if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oDemandObj.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
 						oParams.Duration = oDemandObj.Duration;
 					} else {
@@ -109,6 +114,7 @@ sap.ui.define([
 					aAllAssignmentsParams.push(oParams);
 				}
 
+				//if the split assignment boolean is true then calling the function
 				if (bExecuteAssignmentSplitCode) {
 					this.checkAndExecuteSplitForGanttMultiAssign(aAllAssignmentsParams, {}, sResourceNodeType);
 				} else {
@@ -146,7 +152,9 @@ sap.ui.define([
 		 * then confirms if the user wants to split the assignments
 		 * on confirm/reject then calls the required function imports
 		 * 
-		 * @param {array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 * @param {Array} aAssignments array of demands for which resourceAvailabilty checks should happend before split
+		 * @param {Object} mParameters required parameters for multi assign
+		 * @param {String} sResourceNodeType - type of Resource node
 		 */
 		checkAndExecuteSplitForGanttMultiAssign: function (aAssignments, mParameters, sResourceNodeType) {
 			this.checkResourceUnavailabilty(aAssignments, mParameters, sResourceNodeType).catch(this.handlePromiseChainCatch.bind(this))
@@ -204,9 +212,12 @@ sap.ui.define([
 		 * save assignment after drop
 		 * Calls the function import of create assignment the returns the promise.
 		 * 
-		 * @param {Object} aSourcePaths
-		 * @param {String} sTargetPath
-		 * @return {Promise}
+		 * @param {Array} aSourcePaths - array of source paths
+		 * @param {String} sTargetPath - target path
+		 * @param {Object} oTargetDate - target date object
+		 * @param {Object} oNewEndDate - new end date object
+		 * @param {Array} aGuids - array containing guids
+		 * @return {Promise} containing the assignment should be resolved or rejected
 		 */
 		assignedDemands: function (aSourcePaths, sTargetPath, oTargetDate, oNewEndDate, aGuids) {
 			var oModel = this.getModel(),
@@ -370,7 +381,7 @@ sap.ui.define([
 		 *
 		 * @since 3.0
 		 * @param oModel Odata model
-		 * @param sAssignmentGuid
+		 * @param sAssignmentGuid - Assignment GUID of the assignment to be deleted
 		 * @return {Promise}
 		 */
 		deleteAssignment: function (oModel, sAssignmentGuid) {
@@ -380,7 +391,11 @@ sap.ui.define([
 		},
 		/**
 		 * update assignment 
-		 * @param {String} sPath
+		 * @param {oModel} oData model
+		 * @param {Object} Parameters required for updating the assignment
+		 * @param {Object} mParameters - additional parameters for the POST call if any
+		 * @returns {Promise}
+		 * 
 		 */
 		_updateAssignment: function (oModel, oParams, mParameters) {
 			return this.executeFunctionImport(oModel, oParams, "UpdateAssignment", "POST", mParameters, true);
@@ -414,9 +429,11 @@ sap.ui.define([
 
 		/**
 		 *
-		 * @param aSources - Demands as sources
-		 * @param oTarget - Resource as target
-		 * @param oTargetDate - date and time on which demand is dropped
+		 * @param {Array} aSources - Demands as sources
+		 * @param {Object} oTarget - Resource as target
+		 * @param {Object} oTargetDate - date and time on which demand is dropped
+		 * @param {Array} aGuids - Array of GUIDs
+		 * @returns {Promise}
 		 * Checking Availability of resource to stretch the assignment end date.
 		 * @private
 		 */
@@ -437,8 +454,9 @@ sap.ui.define([
 
 		/**
 		 * Creating Gantt Horizon for New Gant Layout
-		 * @param iZoomLevel - Gantt Axis ZoomLevel
-		 * @param oTotalHorizonDates {object} Dates
+		 * @param {Object} oAxisTimeStrategy - Axis Time variable
+		 * @param {Integer} iZoomLevel - Gantt Axis ZoomLevel
+		 * @param {Object} oTotalHorizonDates - Dates
 		 * @Author Chethan RK
 		 */
 		_createGanttHorizon: function (oAxisTimeStrategy, iZoomLevel, oTotalHorizonDates) {
@@ -456,8 +474,9 @@ sap.ui.define([
 		},
 		/**
 		 * Adjusting Visible Horizon for New Gant Layout
-		 * @param iZoomLevel - Gantt Axis ZoomLevel
-		 * @param oTotalHorizonDates {object} Dates
+		 * @param {Integer} iZoomLevel - Gantt Axis ZoomLevel
+		 * @param {Object} oTotalHorizonDates Dates
+		 * @returns {Object} Start date and end date
 		 * @Author Chethan RK
 		 */
 		_getVisibleHorizon: function (iZoomLevel, oTotalHorizonDates) {
@@ -491,14 +510,15 @@ sap.ui.define([
 		/**
 		 * Resets a changed data by model path
 		 * Or when bResetAll then all changes are resetted
-		 * @param sPath
-		 * @param bResetAll
+		 * @param {String} sPath - contains the path to be reset
+		 * @param {Boolean} bResetAll - when true all the pending changes have to be reset
 		 */
 		_resetChanges: function (sPath, bResetAll) {
 			var oGanttModel = this.getModel("ganttModel"),
 				oGanttOriginDataModel = this.getModel("ganttOriginalData");
 
 			var oPendingChanges = oGanttModel.getProperty("/pendingChanges");
+			//if the path exists in the pending changes then reset and delete from pending changes
 			if (oPendingChanges[sPath]) {
 				if (!this._resetNewPathChanges(oPendingChanges[sPath], oGanttModel, oGanttOriginDataModel)) {
 					var oOriginData = oGanttOriginDataModel.getProperty(sPath);
@@ -506,6 +526,7 @@ sap.ui.define([
 				}
 				delete oPendingChanges[sPath];
 			} else if (bResetAll) {
+				//resetting everything as bResetAll is true
 				for (var key in oPendingChanges) {
 					if (!this._resetNewPathChanges(oPendingChanges[sPath], oGanttModel, oGanttOriginDataModel)) {
 						oGanttModel.setProperty(key, _.cloneDeep(oGanttOriginDataModel.getProperty(key)));
@@ -520,6 +541,7 @@ sap.ui.define([
 		 * @param {Object} oPendings - GanttModel path /pendingChanges
 		 * @param {Object} oGanttModel
 		 * @param {Object} oGanttOriginDataModel
+		 * @returns {Boolean} true when there is new path assigned else false
 		 */
 		_resetNewPathChanges: function (oPendings, oGanttModel, oGanttOriginDataModel) {
 			if (oPendings.NewAssignPath) {
@@ -533,14 +555,18 @@ sap.ui.define([
 		/**
 		 * Promise for fetching details about assignment demand
 		 * coming from backend or alsready loaded data
-		 * @param oData
+		 * @param {Object} oData
+		 * @param {Boolean} bInvalidate 
+		 * @returns {Promise}
 		 * @private
 		 */
 		_getRelatedDemandData: function (oData, bInvalidate) {
 			return new Promise(function (resolve, reject) {
+				//checking if there is demand guid and a valid date then resolving the promise
 				if (oData.Demand && oData.Demand.Guid && !bInvalidate) {
 					resolve(oData);
 				} else {
+					//if data is not already loaded then loading the data from backend
 					var sPath = this.getModel().createKey("AssignmentSet", {
 						Guid: oData.Guid
 					}),
@@ -562,6 +588,10 @@ sap.ui.define([
 
 		/**
 		 * Unassign assignment with delete confirmation dialog. 
+		 * @param {Object} oModel = OData model
+		 * @param {String} sAssignGuid - Assignment GUID
+		 * @param {String} sPath - contains the path of the assignment to be deleted
+		 * @param {oEventBus} - Event Bus object
 		 */
 		_deleteAssignment: function (oModel, sAssignGuid, sPath, oEventBus) {
 			var oGanttModel = this.getModel("ganttModel"),
@@ -738,11 +768,13 @@ sap.ui.define([
 		/**
 		 * get appInfo to navigate from Gantt Popover to EvoOrder/EvoNotify
 		 * added method since 2205, by Rakesh Sahu
-		 * @param oEvent
+		 * @param {Array} aNavData - Array containing the navigation details
+		 * @param {String} sAppName - contains the app name
+		 * @returns {Object} requested Application information 
 		 */
-		getAppInfo: function (aNavData, AppName) {
+		getAppInfo: function (aNavData, sAppName) {
 			for (var i in aNavData) {
-				if (aNavData[i].ApplicationName === AppName) {
+				if (aNavData[i].ApplicationName === sAppName) {
 					return aNavData[i];
 				}
 			}
@@ -750,7 +782,7 @@ sap.ui.define([
 
 		/**
 		 * Hiding Relationships for the selected assignment path
-		 * @param sPath
+		 * @param {String} sPath - selected assignment path
 		 * since 2205
 		 */
 		_hideRelationships: function (sPath) {
@@ -762,8 +794,8 @@ sap.ui.define([
 
 		/**
 		 * Fetching Relationships and appending the data for the selected assignment path
-		 * @param sPath
-		 * @param oData
+		 * @param {String} sPath - Selected assignment path
+		 * @param {Object} oData - oData model
 		 * since 2205
 		 */
 		_showRelationships: function (sPath, oData) {
@@ -788,9 +820,10 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		/*
+		/**
 		 * Fetching Relationships for selected Assignments
-		 * @param aFilters
+		 * @param {Array} aFilters - contains the filters of the selected assignments
+		 * @returns {Promise}
 		 * since 2205
 		 */
 		_getRelationships: function (aFilters) {
@@ -809,7 +842,7 @@ sap.ui.define([
 
 		/**
 		 * Fetching Assignment Status for selected Assignments
-		 * @param sUri
+		 * @param {String} sUri - URL for fetching the assignments
 		 * since 2205
 		 */
 		_getAssignmentStatus: function (sUri) {
@@ -827,48 +860,50 @@ sap.ui.define([
 
 		/**
 		 * Updating Assignment Status for Assignmnets after changing
-		 * @param sPath
-		 * @param sAsgnStsFnctnKey
+		 * @param {String} sPath - assignment path of the one to be updated
+		 * @param {String} sAsgnStsFnctnKey - contains status
+		 * @param {Object} oData - containing rhe demand data
 		 * @since 2205
 		 */
-		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey, aData) {
+		_updateAssignmentStatus: function (sPath, sAsgnStsFnctnKey, oData) {
 			var oGanttModel = this.getModel("ganttModel"),
 				oGanttOriginDataModel = this.getModel("ganttOriginalData"),
 				sParentPath, sChildPath, sChildSplitPath, index;
 			if (sPath.length > 60) {
 				sParentPath = sPath.split("/AssignmentSet/results/")[0];
 				oGanttModel.setProperty(sParentPath + "/STATUS", sAsgnStsFnctnKey);
-				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
-				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS_COLOR", oData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sParentPath + "/DEMAND_STATUS", oData.DEMAND_STATUS);
 			} else {
 				sChildPath = sPath.substring(0, 27);
 				sChildSplitPath = sPath.split("/");
 				index = sChildSplitPath[sChildSplitPath.length - 1];
 				sChildPath = sChildPath + "/children/" + index;
 				oGanttModel.setProperty(sChildPath + "/STATUS", sAsgnStsFnctnKey);
-				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
-				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS_COLOR", oData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/DEMAND_STATUS", oData.DEMAND_STATUS);
 				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/STATUS", sAsgnStsFnctnKey);
-				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
-				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS", aData.DEMAND_STATUS);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS_COLOR", oData.DEMAND_STATUS_COLOR);
+				oGanttModel.setProperty(sChildPath + "/AssignmentSet/results/0/DEMAND_STATUS", oData.DEMAND_STATUS);
 			}
 			oGanttModel.setProperty(sPath + "/STATUS", sAsgnStsFnctnKey);
-			oGanttModel.setProperty(sPath + "/DEMAND_STATUS_COLOR", aData.DEMAND_STATUS_COLOR);
-			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", aData.DEMAND_STATUS);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS_COLOR", oData.DEMAND_STATUS_COLOR);
+			oGanttModel.setProperty(sPath + "/DEMAND_STATUS", oData.DEMAND_STATUS);
 			oGanttOriginDataModel.refresh(true);
 			oGanttModel.refresh(true);
 		},
 
 		/**
 		 * Combining Multiple Assignment Creation Response to a single array
-		 * @param [aResults]
-		 * @return [aCreatedAssignments]
+		 * @param {Array} aResults - contains the assignment creation response
+		 * @return {Array} aCreatedAssignments - combine all the created assignments and return
 		 * @since 2205
 		 */
 		_getCreatedAssignments: function (aResults) {
 			var aCreatedAssignments = [];
 			for (var a in aResults) {
 				var oCreatedAssignment = aResults[a].results;
+				//if there are any assignments created then push in the array
 				if (!oCreatedAssignment) {
 					aCreatedAssignments.push(aResults[a]);
 				} else {

@@ -1392,7 +1392,7 @@ sap.ui.define([
 				this._validateChangedData(sPath, oPendingChanges[sPath], oData, sType).then(function (results) {
 					if (this.oUserModel.getProperty("/ENABLE_QUALIFICATION")) {
 						//when user wants proceed check qualification
-						return this.checkQualificationForChangedShapes(sPath, oPendingChanges[sPath], oData);
+						return this.checkQualificationForChangedShapes(oPendingChanges[sPath], oData);
 					}
 				}.bind(this)).then(function () {
 					// in the case of gantt shape drag from POOL to RESOURCE cal the split checks

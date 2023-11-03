@@ -21,11 +21,10 @@ sap.ui.define([
 		/**
 		 * when shape was dragged to another place
 		 * validate qualification for this resource node
-		 * @param {String} sPath - path of assignment in Gantt Model
 		 * @param {Object} oChanges - pending changes of this assignment in GanttModel
 		 * @param {Object} oData - full assignment data with Demand data
 		 */
-		checkQualificationForChangedShapes: function (sPath, oChanges, oData) {
+		checkQualificationForChangedShapes: function (oChanges, oData) {
 			return new Promise(function (resolve, reject) {
 				var sTargetPath = oData.NewAssignPath ? oData.NewAssignPath : oChanges.OldAssignPath;
 				var oTargetData = this.oGanttModel.getProperty(sTargetPath);
@@ -41,6 +40,7 @@ sap.ui.define([
 		 * @param {Object} oNewEndDate new end date from streach validation
 		 * @param {Object} aGuids Array of demand paths in case of split window
 		 * @param {Object} mParameters parameters for function import
+		 * @returns {Promise} if resource has the qualification or not
 		 * @private
 		 */
 		checkResourceQualification: function (aSourcePaths, oTarget, oTargetDate, oNewEndDate, aGuids, mParameters) {
@@ -61,6 +61,7 @@ sap.ui.define([
 		 * @param {Object} oNewEndDate new end date from streach validation
 		 * @param {Object} aGuids Array of demand paths in case of split window
 		 * @param {Object} mParameters parameters for function import
+		 * @returns promise if resource has the matching qualification or opens qualification check popup
 		 */
 		_sendCheckQualification: function (aSourcePaths, oTargetObject, oTargetDate, oNewEndDate, aGuids, mParameters) {
 			return new Promise(function (resolve, reject) {
@@ -93,23 +94,28 @@ sap.ui.define([
 		 * @param {Object} oTargetDate - new start date 
 		 * @param {Object} oNewEndDate - new end date
 		 * @param {Array} aGuids - collection of IDs from Demands
+		 * @returns the qualifications fetched of the selected data
 		 **/
 		_checkQualification: function (aSourcePaths, oTargetObj, oTargetDate, oNewEndDate, aGuids) {
 			var oQualificationParameters,
 				oModel = this.getModel(),
 				sDemandGuids = "",
 				sObjectId,
+				sPath,
+				oDemandObj,
+				sDemandGuid,
 				aItems = aSourcePaths ? aSourcePaths : aGuids;
 			return new Promise(function (resolve, reject) {
 				//collect all demand Guids for function import
 				for (var i = 0; i < aItems.length; i++) {
-					var sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
+					sPath = aItems[i].sPath ? aItems[i].sPath : aItems[i];
 					if (sPath.indexOf("'") >= 0 && !aSourcePaths) {
 						sPath = sPath.split("'")[1];
 					}
 
-					var oDemandObj = oModel.getProperty(sPath);
-					var sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i];
+					oDemandObj = oModel.getProperty(sPath);
+					sDemandGuid = oDemandObj ? oDemandObj.Guid : aItems[i];
+					//if blank then assigning the guid fetched from model
 					if (sDemandGuids === "") {
 						sDemandGuids = sDemandGuid;
 					} else {
@@ -117,6 +123,7 @@ sap.ui.define([
 					}
 				}
 				sObjectId = oTargetObj.NodeId;
+				// if the target is of type assignment
 				if (oTargetObj.NodeType === "ASSIGNMENT") {
 					sObjectId = oTargetObj.ObjectId;
 					if (!sObjectId) {
