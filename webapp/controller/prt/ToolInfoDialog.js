@@ -227,28 +227,28 @@ sap.ui.define([
 		 *  @param {object} oNewAssign
 		 */
 		_getParentsDescription: function (oNewAssign) {
-			var resourceGroup = "",
-				resource = "",
-				nodeId = oNewAssign.Guid || oNewAssign.NodeId,
-				newAssignDesc = oNewAssign.Description,
-				aNodeId = nodeId.split("//");
+			var oResourceGroup = "",
+				oResource = "",
+				sNodeId = oNewAssign.Guid || oNewAssign.NodeId,
+				sNewAssignDesc = oNewAssign.Description,
+				aNodeId = sNodeId.split("//");
 
-			if (oNewAssign.ResourceGroupGuid && oNewAssign.ResourceGroupGuid !== "" && oNewAssign.ResourceGroupGuid !== nodeId) {
-				resourceGroup = this._getAssignResourceGroup(oNewAssign.ResourceGroupGuid);
+			if (oNewAssign.ResourceGroupGuid && oNewAssign.ResourceGroupGuid !== "" && oNewAssign.ResourceGroupGuid !== sNodeId) {
+				oResourceGroup = this._getAssignResourceGroup(oNewAssign.ResourceGroupGuid);
 			}
 
 			if (oNewAssign.ResourceGuid && oNewAssign.ResourceGuid !== "" && aNodeId[0] !== oNewAssign.ResourceGuid) {
-				resource = this._getAssignResource(oNewAssign.ResourceGuid + "%2F%2F" + oNewAssign.ResourceGroupGuid);
+				oResource = this._getAssignResource(oNewAssign.ResourceGuid + "%2F%2F" + oNewAssign.ResourceGroupGuid);
 			}
 
-			if (resource && resource.ResourceDesc !== "") {
-				newAssignDesc = resource.ResourceDesc + "\n" + newAssignDesc;
+			if (oResource && oResource.ResourceDesc !== "") {
+				sNewAssignDesc = oResource.ResourceDesc + "\n" + sNewAssignDesc;
 			}
 
-			if (resourceGroup && resourceGroup.ResourceGroupDesc !== "") {
-				newAssignDesc = resourceGroup.ResourceGroupDesc + "\n" + newAssignDesc;
+			if (oResourceGroup && oResourceGroup.ResourceGroupDesc !== "") {
+				sNewAssignDesc = oResourceGroup.ResourceGroupDesc + "\n" + sNewAssignDesc;
 			}
-			return newAssignDesc;
+			return sNewAssignDesc;
 		},
 
 		/** This method is used to set the reassignment details to the assignment data object
