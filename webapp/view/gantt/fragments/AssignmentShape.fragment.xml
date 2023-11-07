@@ -1,13 +1,14 @@
 <core:FragmentDefinition xmlns="sap.ui.table" xmlns:core="sap.ui.core" xmlns:gnt2="sap.gantt.simple">
 	<!-- Assignment shape -->
 	<gnt2:BaseRectangle shapeId="{ganttModel>OBJECT_ID_RELATION}" countInBirdEye="true" hoverable="true" time="{ganttModel>DateFrom}"
-		height="19" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" showTitle="true"
+		height="15" endTime="{ganttModel>DateTo}" title="{ganttModel>DemandDesc}" verticalTextAlignment="Bottom" showTitle="true"
 		tooltip="{parts: ['ganttModel>DemandDesc', 'ganttModel>STATUS', 'ganttModel>IS_PRT'], formatter: '.formatter.shapeTooltipDescription'}"
 		fill="{parts: ['ganttModel>DEMAND_STATUS_COLOR', 'ganttModel>DUPLICATE_ASSIGNMENT_FLAG'], formatter: '.fillGradient'}"
 		stroke="{parts: ['ganttModel>DEMAND_STATUS_COLOR',{value:'-20', model:'ganttModel'}], formatter: '.ganttFormatter.shadeColor'}"
-		strokeWidth="1" yBias="-1"
+		strokeWidth="1" yBias="4" 
 		resizable="{parts: ['user>/ENABLE_RESIZE', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"
 		selectable="{= ${ganttModel>busy} ? false : true}" strokeOpacity="{= ${ganttModel>busy} ? 0.5 : 1}"
 		opacity="{= ${ganttModel>busy} ? 0.5 : 1}" rx="4" ry="4"
-		draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}"/>
+		draggable="{parts: ['user>/ENABLE_DRAG_DROP', 'ganttModel>busy', 'viewModel>/validateIW32Auth'], formatter: '.isBusyShape'}" 
+		/>
 </core:FragmentDefinition>
