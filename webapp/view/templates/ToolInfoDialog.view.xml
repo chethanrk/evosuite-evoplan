@@ -15,11 +15,11 @@
 				labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0" columnsXL="2"
 				columnsL="2" columnsM="1" singleContainerFullSize="false">
 				<form:content>
-					<Label text="{/#Assignment/DateFrom/@sap:label}"/>
+					<Label text="{/AssignmentSet/DateFrom/##com.sap.vocabularies.Common.v1.Label/String}"/>
 					<DateTimePicker id="idDateFromAssignInf" name="DateFrom"
 						value="{path:'assignment>/DateFrom', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
 						change="onAssignmentDateChange" enabled="{assignment>/AllowChange}"/>
-					<Label text="{/#Assignment/DateTo/@sap:label}"/>
+					<Label text="{/AssignmentSet/DateTo/##com.sap.vocabularies.Common.v1.Label/String}"/>
 					<DateTimePicker id="idDateToAssignInf" name="DateTo"
 						value="{path:'assignment>/DateTo', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true} }"
 						change="onAssignmentDateChange" enabled="{assignment>/AllowChange}"/>
