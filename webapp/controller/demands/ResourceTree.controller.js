@@ -212,14 +212,14 @@ sap.ui.define([
 				bCheckRightTechnician = this._oViewModel.getProperty("/CheckRightTechnician");
 			if (!this.isLoaded) {
 				this.isLoaded = true;
-			}		
+			}
 			// Bug fix for some time tree getting collapsed
 			if (oUserModel.getProperty("/ENABLE_RESOURCE_TREE_EXPAND")) {
 				oBinding.parameters.numberOfExpandedLevels = nTreeExpandLevel ? nTreeExpandLevel : 1;
 			}
 
 			var aFilter = this.oFilterConfigsController.getAllCustomFilters();
-		
+
 			// setting filters in local model to access in assignTree dialog.
 			this._oViewModel.setProperty("/resourceFilterView", aFilter);
 			this.oSchedulingActions.setResourceTreeFilter(aFilter);
@@ -232,7 +232,7 @@ sap.ui.define([
 				this._oViewModel.setProperty("/CheckRightTechnician", false);
 				this._oViewModel.setProperty("/resourceFilterforRightTechnician", false);
 			}
-			
+
 		},
 
 		/**
@@ -315,8 +315,8 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment,
 				mParams, mParameter,
 				oView = this.getView(),
-				sResourceGuid =	oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
-			oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oDroppableTable.getTable().getFirstVisibleRow());	
+				sResourceGuid = oModel.getProperty(oDraggedContext.getPath()).ResourceGuid;
+			oViewModel.setProperty("/iFirstTreeTableVisibleindex", this._oDroppableTable.getTable().getFirstVisibleRow());
 
 			//don't drop on assignments
 			if (oTargetData.NodeType === "ASSIGNMENT") {
@@ -333,7 +333,7 @@ sap.ui.define([
 				bFromHome: true
 			};
 
-			if(this._bDragResourceTree){
+			if (this._bDragResourceTree) {
 				sResourceGuid = this._oDraggedResObj.ResourceGuid;
 			}
 			this._bDragResourceTree = false; //Resetting Resource Tree Drag State
@@ -489,10 +489,11 @@ sap.ui.define([
 		 */
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
-				oCustomData = oButton.getCustomData();
+				oCustomData = oButton.getCustomData(),
+				oBinding = this._oDataTable.getBindingInfo("rows");
 			this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
-				this._oDataTable.expandToLevel(1);
+				this._oDataTable.expandToLevel(5);
 			} else {
 				this._oDataTable.collapseAll();
 			}
