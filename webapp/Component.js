@@ -915,6 +915,7 @@ sap.ui.define([
 		fnSetDefaultDateTimePattern: function (oDefaultData) {
 			var oLocale, oDateFormat, oDateTimeFormat, oTimeFormat;
 			
+			//Check if app is running on Cloud Launchpad and if backend Fiori format set to true
 			if(!oDefaultData.ENABLE_READ_FIORI_FORMAT && sap.ushell?.cloudServices) {
 				oLocale = new sap.ui.core.Locale(sap.ui.getCore().getConfiguration().getLanguage()),
 				oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'],
@@ -922,9 +923,10 @@ sap.ui.define([
 				oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'];
 			} else {				
 				oDateFormat = oDefaultData.DEFAULT_DATE_FORMAT,
-				oTimeFormat = Constants.TIMEFORMATS[oDefaultData.DEFAULT_TIME_FORMAT],
+				oTimeFormat = Constants.TIMEFORMATS[oDefaultData.DEFAULT_TIME_FORMAT], //set time format through constants based on time format code
 				oDateTimeFormat = oDateFormat + ', ' + oTimeFormat;
 			}
+			//set default date pattern to viewModel
 			this.getModel("viewModel").setProperty("/sDatePattern", oDateFormat);
 			this.getModel("viewModel").setProperty("/sTimePattern", oTimeFormat);
 			this.getModel("viewModel").setProperty("/sDateTimePattern", oDateTimeFormat);
