@@ -523,7 +523,7 @@ sap.ui.define([
 							}
 
 							//Saving travel times 
-							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
+							if (tourItem.eventTypes.indexOf('DRIVING') !== -1 && !tourItem.tourViolations) {
 								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
 									fTravelBackTime = tourItem.duration;
 								} else { //Forward travel
@@ -613,6 +613,7 @@ sap.ui.define([
 								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
 								fTravelBackTime = 0.0;
 								fTravelTime = 0.0;
+								aData = {};//reset the demand data object after completing one tour
 							}	
 						}.bind(this));
 					}
