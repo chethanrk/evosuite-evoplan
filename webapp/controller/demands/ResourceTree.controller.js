@@ -489,8 +489,7 @@ sap.ui.define([
 		 */
 		onClickExpandCollapse: function (oEvent) {
 			var oButton = oEvent.getSource(),
-				oCustomData = oButton.getCustomData(),
-				oBinding = this._oDataTable.getBindingInfo("rows");
+				oCustomData = oButton.getCustomData();
 			this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
 				this._oDataTable.expandToLevel(5);
