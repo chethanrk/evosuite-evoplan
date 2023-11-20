@@ -1982,6 +1982,11 @@ sap.ui.define([
 				this.oViewModel.setProperty("/ganttSettings/visibleStartTime", sStartDate);
 				this.oViewModel.setProperty("/ganttSettings/visibleEndTime", sEndDate);
 			}
+
+			// Workaround for re-redering gantt after selecting date interval as 1 day due to scrolling issues
+			oAxisTimeStrategy.setZoomLevel(iZoomLevel + 1);
+			oAxisTimeStrategy.setZoomLevel(iZoomLevel);
+			
 			this.bGanttHorizonChange = false; // Resetting/Clearing Gantt Horizon Flag
 			this.bGanttFirstTime = false;
 		},
