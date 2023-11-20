@@ -20,6 +20,6 @@ builder:
           name: /EVORA/EP_UI5
           description: EvoPlan Deployment
           package: /EVORA/EP_UI_UI5
-          transport: ED1K920388
+          transport: ED1K921026 
         exclude:
           - /test/
