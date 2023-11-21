@@ -523,14 +523,14 @@ sap.ui.define([
 							}
 
 							//Saving travel times 
-							if (tourItem.eventTypes.indexOf('DRIVING') !== -1) {
+							if (tourItem.eventTypes.indexOf('DRIVING') !== -1 && !tourItem.tourViolations) {
 								if (oTour.tourEvents[index + 1].eventTypes.indexOf('TRIP_END') !== -1) { //Going back travel
 									fTravelBackTime = tourItem.duration;
 								} else { //Forward travel
 									fTravelTime = fTravelTime + tourItem.duration;      // If ['Driving' 'Break' 'Driving'] is the sequence then both driving times must be added
 								}
 							}
-							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aListOfAssignments[tourItem.orderId]) {
+							if (tourItem.eventTypes.indexOf('SERVICE') !== -1 && aListOfAssignments[tourItem.orderId] && !tourItem.tourViolations) {
 								aData = {};
 								aData = _.clone(aListOfAssignments[tourItem.orderId]);
 								// Converting Travel/Travel_back time for existing assignment into hour from minute
@@ -612,6 +612,8 @@ sap.ui.define([
 								//Backward travel time
 								aData.TRAVEL_BACK_TIME = (fTravelBackTime / 3600);
 								fTravelBackTime = 0.0;
+								fTravelTime = 0.0;
+								aData = {};//reset the demand data object after completing one tour
 							}	
 						}.bind(this));
 					}
