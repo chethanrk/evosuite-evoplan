@@ -688,10 +688,10 @@ sap.ui.define([
 				yearMatrix: [],
 				bEnableAsgnSave: true,
 				selectedAssignment: [],
-				sDatePattern: '',
-				sDateTimePattern: '',
-				sTimePattern: '',
-				sTimePatternCode: ''
+				sDatePattern: "",
+				sDateTimePattern: "",
+				sTimePattern: "",
+				sTimePatternCode: ""
 			});
 
 			oViewModel.setSizeLimit(999999999);

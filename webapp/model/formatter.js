@@ -1174,6 +1174,18 @@ sap.ui.define([
 				pattern: sDateTimePattern			
 			});
 			return oDateFormat.format(oDateValue);
+		},
+
+		/*
+		* For Formatting Violation Time value
+		* @param oDateValue, sTimePattern, sTimePatternCode
+		* @return Time
+		*/
+		setViolationDisplayTimeFormat: function (oDateValue, sTimePattern, sTimePatternCode) {
+			var oTimeFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+				pattern: sTimePattern			
+			});
+			return (sTimePatternCode === "1" || sTimePatternCode === "3") ? oTimeFormat.format(oDateValue).toUpperCase() : oTimeFormat.format(oDateValue).toLowerCase();
 		}
 	};
 });
