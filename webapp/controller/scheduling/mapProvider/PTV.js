@@ -544,7 +544,7 @@ sap.ui.define([
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern: "yyyy-MM-ddTHH:mm:ssXXX"
 			});
-			return oDateFormat.format(oDate);
+			return oDateFormat.format(new Date(oDate));
 		},
 
 		/**
@@ -556,7 +556,7 @@ sap.ui.define([
 			var aHorizonDateIntervals = [];
 
 			// loop to get all the dates in between a date range 
-			while (aStartDateTmp.getDate() != aEndDate.getDate()) {
+			while (aStartDateTmp.getDate() != new Date(aEndDate).getDate()) {
 				aHorizonDateIntervals.push(this._getFormattedDate(aStartDateTmp).substr(0, 10));
 				aStartDateTmp.setDate(aStartDateTmp.getDate() + 1);
 			}

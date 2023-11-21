@@ -3,7 +3,7 @@
 		<content>
 			<smartList:SmartList id="idResourceAvailList" entitySet="ResourceAvailabilitySet" showRowCount="false" enableAutoBinding="true"
 				dataReceived="afterListRefresh" fitContainer="true"
-				header="{path: 'viewModel>/timeAllocations/StartDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'MMM dd, yyyy' }} - {path: 'viewModel>/timeAllocations/EndDate', type: 'sap.ui.model.type.DateTime', formatOptions: { pattern: 'MMM dd, yyyy' }}"
+				header="{parts:[ 'viewModel>/timeAllocations/StartDate','viewModel>/timeAllocations/EndDate','viewModel>/sDatePattern'], formatter:'.formatter.onDisplayTimeAllocation'}"
 				selectFields="Description,DateFrom,DateTo,ResourceDescription,Guid,BlockPercentage,UI_DISABLE_ABSENCE_DELETE,UI_DISABLE_ABSENCE_EDIT,AVAILABLE_HOURS,BLOCKED_HOURS,AvailabilityTypeGroup,AVAILABILITY_GROUP_DESCR,ResourceGuid">
 				<smartList:listItemTemplate>
 					<StandardListItem title="{Description}" type="Active"

@@ -26,8 +26,9 @@ sap.ui.define([
 		 */
 		open: function (oView, oSource, oShapeContext, mParameters) {
 			var sQualifier = Constants.ANNOTATION_CONSTANTS.GANTT_POP_OVER_QUALIFIER,
+				sDateTimePattern = oView.getModel("viewModel").getProperty("/sDateTimePattern"),
 				oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
-					pattern: "dd MMM, hh:mm a",
+					pattern: sDateTimePattern,
 					interval: true
 				}),
 				mParams;
@@ -84,8 +85,9 @@ sap.ui.define([
 		 * @param {Object} oData - contains the object of the shape data
 		 */
 		_setPopOverData: function (oData) {
-			var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
-				pattern: "dd MMM, hh:mm a",
+			var sDateTimePattern = this._oView.getModel("viewModel").getProperty("/sDateTimePattern"),
+				oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+				pattern: sDateTimePattern,
 				interval: true
 			}),
 				aDetails = {
