@@ -776,11 +776,11 @@ sap.ui.define([
 				return true;
 			}
 		},
-		setDateFormatResourceTree: function (oDate) {
+		setDateFormatResourceTree: function (oDate, sDatePattern) {
 			if (oDate) {
 				var d = new Date(oDate);
 				var oDateFormat = DateFormat.getDateInstance({
-					pattern: "yyyy-MM-dd"
+					pattern: sDatePattern
 				});
 				var dateString = oDateFormat.format(d, true);
 				return dateString;
@@ -857,9 +857,9 @@ sap.ui.define([
 			}
 		},
 
-		onDisplayOperationTimes: function (oDate, oTimes) {
+		onDisplayOperationTimes: function (oDate, oTimes, sDateTimePattern) {
 			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-				pattern: "dd MMM yyyy hh:mm:ss a"
+				pattern: sDateTimePattern
 			});
 			if (oDate) {
 				oDate = new Date(oDate);
@@ -1149,6 +1149,43 @@ sap.ui.define([
 				}
 			}
 			return aViolationTexts.join(", ");
+		},
+
+		/*
+		* For Formatting Time Allcation date
+		* @param oStartDate, oEndDate, sDatePattern
+		* @return Date
+		*/
+		onDisplayTimeAllocation: function (oStartDate, oEndDate, sDatePattern) {
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+				pattern: sDatePattern,
+				interval: true
+			});
+			return oDateFormat.format([oStartDate, oEndDate]);
+		},
+
+		/*
+		* For Formatting Schedule Date Time value
+		* @param oDateValue, sDateTimePattern
+		* @return Date
+		*/
+		setScheduleDateTimeFormat: function (oDateValue, sDateTimePattern) {
+			var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+				pattern: sDateTimePattern			
+			});
+			return oDateFormat.format(oDateValue);
+		},
+
+		/*
+		* For Formatting Violation Time value
+		* @param oDateValue, sTimePattern, sTimePatternCode
+		* @return Time
+		*/
+		setViolationDisplayTimeFormat: function (oDateValue, sTimePattern, sTimePatternCode) {
+			var oTimeFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+				pattern: sTimePattern			
+			});
+			return (sTimePatternCode === "1" || sTimePatternCode === "3") ? oTimeFormat.format(oDateValue).toUpperCase() : oTimeFormat.format(oDateValue).toLowerCase();
 		}
 	};
 });

@@ -74,12 +74,10 @@
 						text="{viewModel>DemandDesc}" />
 						<Text
 						text="{path : 'viewModel>DateFrom', type : 'sap.ui.model.odata.type.Date'}"/>
-						<Text
-						text="{path : 'viewModel>DateFrom', type : 'sap.ui.model.odata.type.DateTime', formatOptions:{pattern:'hh:mm:ss a'}}"/>
+						<Text text="{parts:[ 'viewModel>DateFrom','viewModel>/sTimePattern', 'viewModel>/sTimePatternCode'],formatter:'.formatter.setViolationDisplayTimeFormat'}"/>
 						<Text
 						text="{path : 'viewModel>DateTo', type : 'sap.ui.model.odata.type.Date'}" />
-						<Text
-						text="{path : 'viewModel>DateTo', type : 'sap.ui.model.odata.type.DateTime', formatOptions:{pattern:'hh:mm:ss a'}}"/>
+						<Text text="{parts:[ 'viewModel>DateTo','viewModel>/sTimePattern', 'viewModel>/sTimePatternCode'],formatter:'.formatter.setViolationDisplayTimeFormat'}"/>
 						<Text
 						text="{path:'viewModel>ViolationType', formatter:'.formatter.getViolationType'}" />	
 						</cells>

@@ -28,9 +28,9 @@
 							<Text text="{viewModel>ORDERID}"/>
 							<Text text="{viewModel>DemandDesc}"/>
 							<Text
-								text="{parts:[ 'viewModel>FIXED_APPOINTMENT_START_DATE','viewModel>FIXED_APPOINTMENT_START_TIME'], formatter:'.formatter.onDisplayOperationTimes'}"/>
+								text="{parts:[ 'viewModel>FIXED_APPOINTMENT_START_DATE','viewModel>FIXED_APPOINTMENT_START_TIME', 'viewModel>/sDateTimePattern'], formatter:'.formatter.onDisplayOperationTimes'}"/>
 							<Text
-								text="{parts:[ 'viewModel>FIXED_APPOINTMENT_END_DATE','viewModel>FIXED_APPOINTMENT_END_TIME'], formatter:'.formatter.onDisplayOperationTimes'}"/>
+								text="{parts:[ 'viewModel>FIXED_APPOINTMENT_END_DATE','viewModel>FIXED_APPOINTMENT_END_TIME', 'viewModel>/sDateTimePattern'], formatter:'.formatter.onDisplayOperationTimes'}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
