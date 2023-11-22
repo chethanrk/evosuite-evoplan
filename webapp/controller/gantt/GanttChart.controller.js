@@ -32,7 +32,7 @@ sap.ui.define([
 		oGanttModel: null,
 		oGanttOriginDataModel: null,
 		oSchedulingActions: undefined,
-
+		bDroppedOnGantt: null,
 		mRequestTypes: {
 			update: "update",
 			resize: "resize",
@@ -523,11 +523,13 @@ sap.ui.define([
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				//Condition added and Method is modified for fixed Appointments			// since Release/2201
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
+				this.bDroppedOnGantt = true;
 				this._handleDemandDrop("Gantt", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oAxisTime.viewToTime(oSvgPoint.x));
 
 			} else if (oBrowserEvent.target.tagName === "rect" && !oDragContext) { // When we drop on gantt chart from split window
 				oSvgPoint = CoordinateUtils.getEventSVGPoint(oBrowserEvent.target.ownerSVGElement, oBrowserEvent);
 				oParams.DateFrom = oAxisTime.viewToTime(oSvgPoint.x);
+				this.bDroppedOnGantt = true;
 				this._handleDemandDrop("Gantt-Split", oParams, oDemandObj, sDragPath, oResourceData, oDropContext, oAxisTime.viewToTime(oSvgPoint.x));
 
 			} else if (oDragContext) { // When we drop on the resource 
@@ -1804,6 +1806,7 @@ sap.ui.define([
 
 			this.assignedDemands(aSources, oTarget, oTargetDate, oEndDate, aGuids).then(
 				function (aPromises) {
+					this.bDroppedOnGantt = null;
 					this.clearDragSession(this.getView());
 					return Promise.all(aPromises);
 				}.bind(this),
