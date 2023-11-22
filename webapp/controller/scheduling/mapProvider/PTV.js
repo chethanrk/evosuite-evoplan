@@ -461,8 +461,12 @@ sap.ui.define([
 				oMustStart,
 				oMustFinish,
 				nDuration,
-				aLocationIds = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds");
-
+				aLocationIds = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds"),
+				bDateConsResch = this.oUserModel.getProperty("/DEFAULT_PTV_RESCH_DATECONS"),
+				bDateConsAutosch = this.oUserModel.getProperty("/DEFAULT_PTV_AUTOSCH_DATECONS"),
+				sType = this.oViewModel.getProperty("/Scheduling/sType"),
+				bDateCons = sType === "AutoScheduling" ? bDateConsAutosch : bDateConsResch;
+				
 			for (let oDemandGuid in aDemandsData) {
 				oLocationObject = {
 					"$type": "CustomerSite",
@@ -477,7 +481,7 @@ sap.ui.define([
 				};
 				aLocationIds.push(oDemandGuid + "_location");
 				// adding opening intervals if must start time and must finished time is given for the demand
-				if (aDemandsData[oDemandGuid].data.START_CONS && aDemandsData[oDemandGuid].data.FIN_CONSTR) {
+				if (aDemandsData[oDemandGuid].data.START_CONS && aDemandsData[oDemandGuid].data.FIN_CONSTR && bDateCons) {
 					oMustStart = this._mergeDateTime(aDemandsData[oDemandGuid].data.START_CONS, aDemandsData[oDemandGuid].data.STRTTIMCON);
 					oMustFinish = this._mergeDateTime(aDemandsData[oDemandGuid].data.FIN_CONSTR, aDemandsData[oDemandGuid].data.FINTIMCONS);
 					nDuration = this._getDateDuration(oMustStart, oMustFinish) - aDemandsData[oDemandGuid].serviceTime;
