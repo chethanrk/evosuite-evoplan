@@ -245,7 +245,10 @@ sap.ui.define([
 							callbackFn();
 						}
 						if (callbackfn2) {
+							//Refreshing only when the dirty parameter is != true, for avoiding multiple calls when a template is rendered
+							if(!mParams.refreshParameters){
 								oEvent.getSource().refresh();	
+							}
 							callbackfn2("change", null, mParams);
 						}
 					},
