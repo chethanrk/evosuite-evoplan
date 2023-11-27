@@ -140,7 +140,7 @@ sap.ui.define([
 						oAssignmentModel.setProperty("/DateFrom", oAssignmentModel.getProperty("/RES_ASGN_START_DATE"));
 						oAssignmentModel.setProperty("/DateTo", oAssignmentModel.getProperty("/RES_ASGN_END_DATE"));
 					}
-				}.bind(this));
+				});
 			}
 			//}
 		},
@@ -201,7 +201,7 @@ sap.ui.define([
 			this.getOwnerComponent().readData("/AssignmentSet", [oFilter1], "Demand")
 				.then(function (data) {
 					callbackFn(data.results[0]);
-				}.bind(this));
+				});
 		},
 		/**
 		 * Method to validate Duration logic for PS Demands Network Assignment
@@ -213,7 +213,7 @@ sap.ui.define([
 				oContext = oSource.getBindingContext(),
 				oObject = oContext.getObject();
 			if (this.getModel("user").getProperty("/ENABLE_NETWORK_ASSIGNMENT") && oObject.OBJECT_SOURCE_TYPE === "DEM_PSNW") {
-				var sNewValue = oEvent.getParameter("newValue").replace(/[^0-9a-zA-Z. ]/g, ''),
+				var sNewValue = oEvent.getParameter("newValue").replace(/[^0-9a-zA-Z. ]/g, ""),
 					sEffort = oObject.Effort,
 					sRemainingDuration = oObject.REMAINING_DURATION,
 					sEffortUnit = oObject.EffortUnit,

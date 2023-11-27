@@ -851,7 +851,7 @@ sap.ui.define([
 			if (mCriticallyStates.hasOwnProperty(sValue)) {
 				return mCriticallyStates[sValue].state;
 			} else if (isInNavLinks === "true") {
-				return mCriticallyStates["info"].state;
+				return mCriticallyStates.info.state;
 			} else {
 				return mCriticallyStates["0"].state;
 			}
@@ -1068,7 +1068,7 @@ sap.ui.define([
 		formatSchedulingBtn: function (mParam1, mParam2) {
 			if (mParam1 === "DEMANDS" || mParam1 === "NEWGANTT" || mParam1 === "MAP") {
 				if (mParam2) {
-					return true
+					return true;
 				}
 			}
 			return false;

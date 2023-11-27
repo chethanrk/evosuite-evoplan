@@ -158,7 +158,7 @@ sap.ui.define([
 				});
 			}
 			if (oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 			}
 		},
 		/**

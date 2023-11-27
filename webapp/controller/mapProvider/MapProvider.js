@@ -96,7 +96,7 @@ sap.ui.define([
 		 */
 		optimizeRoute: function(oResource, aAssignments, aBreaks) {
 			Log.error("The 'optimizeRoute' method is not implemented!" );
-		},
+		}
 		
 		/* ============================================================================== */
 		/* Data types                                                                     */

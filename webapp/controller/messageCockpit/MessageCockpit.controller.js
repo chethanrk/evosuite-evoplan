@@ -269,7 +269,7 @@ sap.ui.define([
 				.then(function (data) {
 					mCounterModel.setProperty("/E", parseInt(data));
 				});
-		},
+		}
 	});
 
 });

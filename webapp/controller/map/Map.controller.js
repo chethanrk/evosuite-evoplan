@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	"com/evorait/evoplan/controller/map/MapUtilities",
 	"sap/ui/core/mvc/OverrideExecution",
-	"com/evorait/evoplan/model/Constants",
+	"com/evorait/evoplan/model/Constants"
 ], function (AssignmentActionsController, JSONModel, formatter, Filter, FilterOperator, MapConfig, PinPopover,
 	Fragment, Dialog, Button, MessageToast, GroupHeaderListItem, Calendar, MapUtilities, OverrideExecution,Constants) {
 	"use strict";
@@ -395,7 +395,7 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var oParams = oEvent.getParameter("bindingParams");
-			oParams["parameters"].batchGroupId = "DemandBatch";
+			oParams.parameters.batchGroupId = "DemandBatch";
 			
 			this._bDemandListScroll = false; //Flag to identify Demand List row is selected and scrolled or not
 
@@ -536,18 +536,18 @@ sap.ui.define([
 			this._isDemandDraggable = true;
 			//get all selected rows when checkboxes in table selected
 			if (aIndices.length > 0) {
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, aIndices, true);
+				oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, aIndices, true);
 				aPathsData = oSelectedPaths.aPathsData;
 			} else {
 				//table tr single dragged element
-				oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
+				oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, [oDraggedControl.getIndex()], true);
 				aPathsData = oSelectedPaths.aPathsData;
 			}
 			// keeping the data in drag session
 			this.getModel("viewModel").setProperty("/mapDragSession", aPathsData);
 			this.getModel("viewModel").setProperty("/dragSession", aPathsData);
 			if (oSelectedPaths && oSelectedPaths.aNonAssignable && oSelectedPaths.aNonAssignable.length > 0) {
-				this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+				this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				oEvent.preventDefault();
 			}
 		},
@@ -596,7 +596,7 @@ sap.ui.define([
 					this._oDataTable.removeSelectionInterval(iMaxRowSelection, iLastIndex);
 					sMsg = this.getResourceBundle().getText("ymsg.allSelect", [iMaxRowSelection]);
 				} else {
-					iLastIndex = oEvent.getParameter('rowIndex');
+					iLastIndex = oEvent.getParameter("rowIndex");
 					this._oDataTable.removeSelectionInterval(iLastIndex, iLastIndex);
 					sMsg = this.getResourceBundle().getText("ymsg.maxRowSelection", [iMaxRowSelection]);
 				}
@@ -664,17 +664,17 @@ sap.ui.define([
 				if (oData.ALLOW_ASSIGN) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedData, false, this._mParameters);
 				} else {
-					this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
+					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData)]);
 				}
 			} else {
 				//Operation performed from Demands Toolbar
-				var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
+				var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, true);
 				this.getModel("viewModel").setProperty("/dragSession", oSelectedPaths.aPathsData);
 				if (oSelectedPaths.aPathsData.length > 0) {
 					this.getOwnerComponent().assignTreeDialog.open(this.getView(), false, oSelectedPaths.aPathsData, false, this._mParameters);
 				}
 				if (oSelectedPaths.aNonAssignable.length > 0) {
-					this._showAssignErrorDialog(oSelectedPaths.aNonAssignable);
+					this.showAssignErrorDialog(oSelectedPaths.aNonAssignable);
 				}
 			}
 		},
@@ -747,7 +747,7 @@ sap.ui.define([
 			if (aSelectedDemands && aSelectedDemands.length) {
 				for (var i = 0; i < aSelectedDemands.length; i++) {
 					sPath = aSelectedDemands[i];
-					sSelectedGuid = this._oModel.getProperty(sPath + '/Guid');
+					sSelectedGuid = this._oModel.getProperty(sPath + "/Guid");
 					aMapSpots.map(function myFunction(oSpot) {
 						if (oSpot.Guid === sSelectedGuid) {
 							oSpot.IS_SELECTED = true;
@@ -760,7 +760,7 @@ sap.ui.define([
 					if (!aSelectedDemands.includes(sPath)) {
 						aSelectedDemands.push(sPath);
 					}
-					sSelectedGuid = this._oModel.getProperty(sPath + '/Guid');
+					sSelectedGuid = this._oModel.getProperty(sPath + "/Guid");
 					aMapSpots.map(function myFunction(oSpot) {
 						if (oSpot.Guid === sSelectedGuid) {
 							oSpot.IS_SELECTED = true;
@@ -787,7 +787,7 @@ sap.ui.define([
 				sSelectedGuid, sPath;
 			for (var i = 0; i < aSelectedDemands.length; i++) {
 				sPath = aSelectedDemands[i];
-				sSelectedGuid = this._oModel.getProperty(sPath + '/Guid');
+				sSelectedGuid = this._oModel.getProperty(sPath + "/Guid");
 				aMapSpots.map(function myFunction(oSpot) {
 					if (oSpot.Guid === sSelectedGuid) {
 						oSpot.IS_SELECTED = false;
@@ -807,7 +807,7 @@ sap.ui.define([
 			var selectedIndices = this._oDataTable.getSelectedIndices(),
 				index = oEvent.getParameter("rowIndex"),
 				sPath = oEvent.getParameter("rowContext").getPath(),
-				sSelectedGuid = oEvent.getParameter("rowContext").getProperty('Guid'),
+				sSelectedGuid = oEvent.getParameter("rowContext").getProperty("Guid"),
 				oGeoMap = this.getView().byId("idGeoMap"),
 				oModel = oGeoMap.getVos()[1].getModel(),
 				oViewModel = this.getModel("viewModel"),
@@ -1015,7 +1015,7 @@ sap.ui.define([
 				aSelectedDemands.forEach(function (entry) {
 					sPath = "/DemandSet('" + entry.split("'")[1] + "')";
 					aDemandGuidEntity.push(sPath);
-					sSelectedGuid = this._oModel.getProperty(sPath + '/Guid');
+					sSelectedGuid = this._oModel.getProperty(sPath + "/Guid");
 					aMapSpots.map(function myFunction(oSpot) {
 						if (oSpot.Guid === sSelectedGuid) {
 							oSpot.IS_SELECTED = false;
@@ -1042,7 +1042,7 @@ sap.ui.define([
 							oSpot.IS_SELECTED = true;
 						}
 					});
-				}.bind(this));
+				});
 			}
 		},
 
@@ -1233,7 +1233,7 @@ sap.ui.define([
 		 */
 		_getDemandsForMap: function () {
 			this.setMapBusy(true);
-			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE"
+			var sSelect="$select=Guid,IS_SELECTED,MAP_MARKER_COLOUR,DEMAND_KEY,LONGITUDE,LATITUDE";
 			this.getOwnerComponent().readData("/DemandSet",null,sSelect).then(function (response) {
 				this.setMapBusy(false);
 				this._viewModel.setProperty("/mapSettings/DemandSet", response.results);
@@ -1248,7 +1248,7 @@ sap.ui.define([
 			if (oSpot.getBindingContext()) {
 				return oSpot.getBindingContext().getPath(); //path for spots with odata binding 
 			} else {
-				return "/DemandSet('" + oSpot.getBindingContext('viewModel').getProperty('Guid') + "')"; //path for spots with JSON binding 
+				return "/DemandSet('" + oSpot.getBindingContext("viewModel").getProperty("Guid") + "')"; //path for spots with JSON binding 
 			}
 		}
 	});

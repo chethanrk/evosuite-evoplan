@@ -55,7 +55,7 @@ sap.ui.define(["sap/uxap/BlockBase"], function (BlockBase) {
 			} else {
 				return oBundle.getText("xtit.refreshTooltip");
 			}
-		},
+		}
 	});
 	return myBlock;
 }, true);

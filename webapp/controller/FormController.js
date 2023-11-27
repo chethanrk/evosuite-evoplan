@@ -276,7 +276,7 @@ sap.ui.define([
 					} else {
 						oModel.resetChanges();
 					}
-				}.bind(this),
+				},
 				error: function () {
 					oDialogCtrl.setBusy(false);
 				}
@@ -396,12 +396,12 @@ sap.ui.define([
 							return bValidate;
 						}
 
-					}.bind(this));
+					});
 				}
 				if (bValidate) {
 					return bValidate;
 				}
-			}.bind(this));
+			});
 			return bValidate;
 		},
 

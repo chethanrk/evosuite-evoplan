@@ -19,7 +19,7 @@
 			]
 		},
 		"applicationVersion": {
-			"version": "2309.0.2"
+			"version": "2402.0.0"
 		},
 		"dataSources": {
 			"mainService": {
@@ -378,7 +378,7 @@
 				"DemandTools": {
 					"viewType": "XML",
 					"viewName": "DemandTools",
-					"viewPath": "com.evorait.evoplan.view.PRT",
+					"viewPath": "com.evorait.evoplan.view.prt",
 					"viewLevel": 3,
 					"controlId": "rightPanel",
 					"parent": "splitHorNavigation"
@@ -386,7 +386,7 @@
 				"GanttTools": {
 					"viewType": "XML",
 					"viewName": "GanttTools",
-					"viewPath": "com.evorait.evoplan.view.PRT",
+					"viewPath": "com.evorait.evoplan.view.prt",
 					"viewLevel": 4,
 					"controlId": "bottomPanel",
 					"parent": "splitVerNavigation"
@@ -498,7 +498,7 @@
 				"ganttSplitTools": {
 					"viewType": "XML",
 					"viewId": "idFullGantt",
-					"viewPath": "com.evorait.evoplan.view.PRT",
+					"viewPath": "com.evorait.evoplan.view.prt",
 					"viewName": "GanttTools",
 					"parent": "fullNavigation",
 					"controlId": "fullPanel",

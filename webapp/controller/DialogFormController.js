@@ -1,5 +1,5 @@
 sap.ui.define([
-	"com/evorait/evoplan/controller/FormController",
+	"com/evorait/evoplan/controller/FormController"
 ], function (FormController) {
 	"use strict";
 
@@ -145,7 +145,7 @@ sap.ui.define([
 				label: sLabel ? this.getResourceBundle().getText(sLabel) : ""
 			});
 			oNewGroupElement.addElement(oControl);
-			oGroup.insertGroupElement(oNewGroupElement, (idx || 100));
+			oGroup.insertGroupElement(oNewGroupElement, idx || 100);
 		}
 
 	});

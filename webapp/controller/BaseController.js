@@ -103,7 +103,7 @@ sap.ui.define([
 		showMessageToast: function (sMsg, mParams) {
 			MessageToast.show(sMsg, {
 				duration: 5000,
-				width: mParams ? mParams.width : '15rem',
+				width: mParams ? mParams.width : "15rem",
 				at: "center bottom",
 				of: mParams ? mParams.source : window,
 				offset: "0 -60"
@@ -202,7 +202,7 @@ sap.ui.define([
 				oViewModel = this.getModel("appView"),
 				oResourceBundle = this.getResourceBundle();
 
-			if (mParameters === undefined || (mParameters && !mParameters.bCustomBusy)) {
+			if (mParameters === undefined || mParameters && !mParameters.bCustomBusy) {
 				oViewModel.setProperty("/busy", true);
 			}
 
@@ -239,9 +239,9 @@ sap.ui.define([
 		 * @param sMethod method of http operation ex: GET/POST/PUT/DELETE
 		 */
 		executeFunctionImport: function (oModel, oParams, sFuncName, sMethod, bFromMultiTimeAlloc) {
-	
+
 			var oResourceBundle = this.getResourceBundle();
-	
+
 			return new Promise(function (resolve, reject) {
 				oModel.callFunction("/" + sFuncName, {
 					method: sMethod || "POST",
@@ -351,7 +351,7 @@ sap.ui.define([
 		 * 
 		 */
 		onMaterialInfoButtonPress: function () {
-			var oSelectedPaths = this._getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
+			var oSelectedPaths = this.getSelectedRowPaths(this._oDataTable, this._aSelectedRowsIdx, false);
 			var iMaxSelcRow = this.getModel("user").getProperty("/DEFAULT_MAX_DEM_SEL_MAT_LIST");
 			if (oSelectedPaths.aPathsData.length > 0 && iMaxSelcRow >= this._aSelectedRowsIdx.length) {
 				this.getOwnerComponent().materialInfoDialog.open(this.getView(), false, oSelectedPaths.aPathsData);
@@ -372,23 +372,26 @@ sap.ui.define([
 				sDemandPath = this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[i]).getPath();
 				this.getOwnerComponent()._getData(sDemandPath).then(function (result) {
 					oViewModel.setProperty("/busy", false);
-				}.bind(this));
+				});
 			}
 		},
 
 		/**
 		 * get all selected rows from table and return to draggable helper function
-		 * @param aSelectedRowsIdx
-		 * @private
+		 * @param {Object} oTable - table from which the items are selected
+		 * @param {Array} aSelectedRowsIdx - index of the selected rows from the table
+		 * @param {Boolean} bCheckAssignAllowed - flag containing if assigning is allowed or not
+		 * @param {Array} aDemands - array of the selected demands
+		 * @param {Boolean} bIsForScheduling - flag to check if the funciton is being called for scheduling
 		 */
-		_getSelectedRowPaths: function (oTable, aSelectedRowsIdx, checkAssignAllowed, aDemands, bIsForScheduling) {
+		getSelectedRowPaths: function (oTable, aSelectedRowsIdx, bCheckAssignAllowed, aDemands, bIsForScheduling) {
 			var aPathsData = [],
 				aNonAssignableDemands = [],
 				aUnAssignableDemands = [],
 				aAssignmentWithDemands = [],
 				oData, oContext, sPath;
 
-			if (checkAssignAllowed) {
+			if (bCheckAssignAllowed) {
 				oTable.clearSelection();
 			}
 			if (!aDemands) {
@@ -416,9 +419,9 @@ sap.ui.define([
 					}
 
 					//on check on oData property ALLOW_ASSIGN when flag was given
-					if (checkAssignAllowed) {
+					if (bCheckAssignAllowed) {
 						//Added condition to check for number of assignments to plan demands via scheduling
-						if ((!bIsForScheduling && oData.ALLOW_ASSIGN) || (bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1)) {
+						if (!bIsForScheduling && oData.ALLOW_ASSIGN || bIsForScheduling && oData.ALLOW_ASSIGN && oData.NUMBER_OF_CAPACITIES <= 1) {
 							aPathsData.push({
 								sPath: sPath,
 								oData: oData,
@@ -465,15 +468,18 @@ sap.ui.define([
 		/**
 		 * show error dialog for demands which are not assignable or for which status transition
 		 * is not possible
-		 * @param aDemands {object} array of demand descriptions
-		 * @private
+		 * @param aDemands {Array} array of demand descriptions
+		 * @param {Boolean} isStatus - status change possible or not
+		 * @param {String} sMsg - message to be displayed
 		 */
-		_showAssignErrorDialog: function (aDemands, isStatus, msg) {
-			if (!msg) {
+		showAssignErrorDialog: function (aDemands, isStatus, sMsg) {
+			//is message already passed as a parameter
+			if (!sMsg) {
+				//check if the status change is possible or not
 				if (isStatus) {
-					msg = this.getResourceBundle().getText("changeStatusNotPossible");
+					sMsg = this.getResourceBundle().getText("changeStatusNotPossible");
 				} else {
-					msg = this.getResourceBundle().getText("assignmentNotPossible");
+					sMsg = this.getResourceBundle().getText("assignmentNotPossible");
 				}
 			}
 
@@ -482,7 +488,7 @@ sap.ui.define([
 				type: "Message",
 				state: "Error",
 				content: new FormattedText({
-					htmlText: "<strong>" + msg + "</strong><br/><br/>" + aDemands.join(",<br/>")
+					htmlText: "<strong>" + sMsg + "</strong><br/><br/>" + aDemands.join(",<br/>")
 				}),
 				beginButton: new Button({
 					text: "OK",
@@ -534,7 +540,7 @@ sap.ui.define([
 				endDate = oTargetObj.EndDate ? oTargetObj.EndDate.getTime() : new Date(formatter.date(new Date())).getTime(),
 				resAsgnEndDate = oTargetObj.RES_ASGN_END_DATE ? oTargetObj.RES_ASGN_END_DATE.getTime() : null,
 				bValid = startDate === resAsgnStartDate && oTargetObj.StartTime.ms === oTargetObj.RES_ASGN_START_TIME.ms && endDate ===
-				resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
+					resAsgnEndDate && oTargetObj.EndTime.ms === oTargetObj.RES_ASGN_END_TIME.ms;
 			return bValid;
 		},
 		/**
@@ -580,12 +586,12 @@ sap.ui.define([
 			var oController = this;
 			MessageBox.confirm(
 				message, {
-					styleClass: oController.getOwnerComponent().getContentDensityClass(),
-					icon: sap.m.MessageBox.Icon.CONFIRM,
-					title: this.getResourceBundle().getText("xtit.confirm"),
-					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-					onClose: fnCallback
-				}
+				styleClass: oController.getOwnerComponent().getContentDensityClass(),
+				icon: sap.m.MessageBox.Icon.CONFIRM,
+				title: this.getResourceBundle().getText("xtit.confirm"),
+				actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+				onClose: fnCallback
+			}
 			);
 		},
 
@@ -603,14 +609,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oController.getOwnerComponent().getContentDensityClass(),
-						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oController.getResourceBundle().getText("xtit.confirm"),
-						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						onClose: function (oEvent) {
-							resolve(oEvent);
-						}
+					styleClass: oController.getOwnerComponent().getContentDensityClass(),
+					icon: sap.m.MessageBox.Icon.CONFIRM,
+					title: oController.getResourceBundle().getText("xtit.confirm"),
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oEvent) {
+						resolve(oEvent);
 					}
+				}
 				);
 			});
 		},
@@ -628,14 +634,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				MessageBox.confirm(
 					message, {
-						styleClass: oComponent.getContentDensityClass(),
-						icon: sap.m.MessageBox.Icon.CONFIRM,
-						title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
-						actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-						onClose: function (oEvent) {
-							resolve(oEvent);
-						}
+					styleClass: oComponent.getContentDensityClass(),
+					icon: sap.m.MessageBox.Icon.CONFIRM,
+					title: oComponent.getModel("i18n").getResourceBundle().getText("xtit.confirm"),
+					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+					onClose: function (oEvent) {
+						resolve(oEvent);
 					}
+				}
 				);
 			});
 		},
@@ -792,14 +798,14 @@ sap.ui.define([
 				mParams = {};
 			mParams[sParameter] = [sParamValue];
 			sHash = oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-					target: {
-						semanticObject: sSemanticObject,
-						action: sAction
-					},
-					params: mParams
-				}) || "", // generate the Hash to display a Notification details app
+				target: {
+					semanticObject: sSemanticObject,
+					action: sAction
+				},
+				params: mParams
+			}) || "", // generate the Hash to display a Notification details app
 
-				sUrl = window.location.href.split('#')[0] + sHash;
+				sUrl = window.location.href.split("#")[0] + sHash;
 			window.open(sUrl, "_blank");
 
 		},
@@ -851,7 +857,7 @@ sap.ui.define([
 			var oTimeStampFrom = oDateFrom.getTime(),
 				oTimeStampTo = oDateTo.getTime(),
 				iDifference = oTimeStampTo - oTimeStampFrom,
-				iEffort = (((iDifference / 1000) / 60) / 60);
+				iEffort = iDifference / 1000 / 60 / 60;
 			return iEffort;
 		},
 
@@ -868,13 +874,13 @@ sap.ui.define([
 		 *	Display Response Message for OData call
 		 */
 		showResponseMessage: function (sMessage, sType) {
-			if (sType === 'S' || !sType) {
+			if (sType === "S" || !sType) {
 				MessageBox.success(sMessage);
-			} else if (sType === 'E') {
+			} else if (sType === "E") {
 				MessageBox.error(sMessage);
-			} else if (sType === 'I') {
+			} else if (sType === "I") {
 				MessageBox.information(sMessage);
-			} else if (sType === 'W') {
+			} else if (sType === "W") {
 				MessageBox.warning(sMessage);
 			}
 
@@ -946,9 +952,9 @@ sap.ui.define([
 						reject(oError);
 					}
 				});
-			}.bind(this)).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
+			}).then(this.handleResponsesToShowMessages.bind(this)).catch(function (oError) {
 				oModel.resetChanges();
-			}.bind(this));
+			});
 		},
 
 		/**
@@ -1134,7 +1140,7 @@ sap.ui.define([
 		 */
 		checkToShowAvailabilities: function (oNode) {
 			return (oNode.NodeType === "TIMEMONTH" || oNode.NodeType === "TIMEWEEK" || oNode.NodeType === "TIMEQUART" || oNode.NodeType ===
-					"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
+				"TIMEYEAR") && oNode.RES_ASGN_AVAILABILITY_FLAG ===
 				"P";
 		},
 
@@ -1167,14 +1173,14 @@ sap.ui.define([
 			Desc = Desc ? Desc : oData.DemandDesc;
 			// Condition to add number of assignments to display in error dialog for scheduling or auto scheduling.
 			if (bIsForScheduling || bIsForReScheduling) {
-				if (oData.OBJECT_SOURCE_TYPE === 'DEM_PMNO') {
+				if (oData.OBJECT_SOURCE_TYPE === "DEM_PMNO") {
 					return oData.NOTIFICATION_TYPE + ", " + oData.NOTIFICATION + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				} else {
 					return oData.ORDER_TYPE + ", " + oData.ORDERID + ", " + Desc + ", " + oData.OPERATIONID + ", " + oData.OPERATION_DESC + ", " + oData.Status + ", " + oData.NUMBER_OF_CAPACITIES + ", " + oData.DURATION + oData.DURATION_UNIT;
 				}
 			}
 			if (oData.ORDERID) {
-				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc
+				return oData.ORDERID + " / " + oData.OPERATIONID + "  " + Desc;
 			} else {
 				return oData.NOTIFICATION + "  " + Desc;
 			}
@@ -1440,7 +1446,7 @@ sap.ui.define([
 			oModel = this._mParameters.bFromHome || this._mParameters.bFromMap ? this.getModel() : this.getModel("ganttModel");
 			for (var i in this.selectedResources) {
 				if (oModel.getProperty(this.selectedResources[i] + "/NodeType") === "RES_GROUP" || oModel.getProperty(this.selectedResources[i] +
-						"/ResourceGuid") === "") {
+					"/ResourceGuid") === "") {
 					aRemoveItems.push(this.selectedResources[i]);
 				}
 			}
@@ -1507,25 +1513,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Storing the updated Resources Info in Demand and Map View
-		 * @param oViewModel
-		 * @param oResObj
+		 * Storing the updated Resources Info 
+		 * For refreshing only the updated resources assigments in Gantt
+		 * @param oViewModel	
+		 * @param oUserModel	 
+		 * @param oResObj 		Resource Data
+		 * Author Chethan RK
 		 */
-		_updatedDmdResources: function (oViewModel, oResObj) {
+		updatedResources: function (oViewModel, oUserModel, oResObj) {
 			var oUpdatedResObj,
 				aUpdatedResources = oViewModel.getProperty("/aUpdatedResources"),
-				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid,
-				sPoolPrefix = "";
-			//Considering as Pool Resources when Dropped on Resource Group
+				sPoolId = oUserModel.getProperty("/POOL_RESOURCE_PREFIX"),
+				sNodeId = oResObj.ResourceGuid + "//" + oResObj.ResourceGroupGuid;
+
+			//Considering as Pool Resources when NodeType is "RES_GROUP" or ResourceGuid is empty
 			if (oResObj.NodeType === "RES_GROUP" || oResObj.ResourceGuid === "") {
-				if (oResObj.NodeId && oResObj.NodeId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.NodeId.split(":")[0] + ":";
-				}else if (oResObj.ParentNodeId && oResObj.ParentNodeId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.ParentNodeId.split(":")[0] + ":";
-				}else if(oResObj.ObjectId && oResObj.ObjectId.indexOf(":") > -1){
-					sPoolPrefix = oResObj.ObjectId.split(":")[0] + ":";
-				}
-				sNodeId = sPoolPrefix + oResObj.ResourceGroupGuid;
+				sNodeId = sPoolId + oResObj.ResourceGroupGuid;
 			}
 			oUpdatedResObj = {
 				ResourceGuid: oResObj.ResourceGuid,
@@ -1538,14 +1541,14 @@ sap.ui.define([
 		/*
 		* Function to validate manually entered date format in Assignment Dialogs (For both Demand and PRT)
 		*/
-		onValidateDateFormat : function(oSource, bValidFormat, oViewModel){
+		onValidateDateFormat: function (oSource, bValidFormat, oViewModel) {
 			oSource.setValueState("None");
 			if (!bValidFormat) {
 				oSource.setValueState("Error");
 			}
 			var bValid = true,
-			eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
-			eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
+				eErrorDateFrom = this.getView().byId("idDateFromAssignInf").getValueState(),
+				eErrorDateTo = this.getView().byId("idDateToAssignInf").getValueState();
 			if (eErrorDateFrom === "Error" || eErrorDateTo === "Error") {
 				bValid = false;
 			}

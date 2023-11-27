@@ -248,14 +248,14 @@ sap.ui.define([
 			this.clearMessageModel();
 			this.mTreeState = this._getTreeState();
 			if (isCopy) {
-				this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {}.bind(this));
+				this.doCreateResource(this.getModel(), sEntitySetName, aPayload).then(function (oResponse) {});
 			} else if (!aPayload.AssignmentCount) {
 				this.doDeleteResource(this._oModel, sSourceItemPath, true).then(function (oResponse) {
 					return this.doCreateResource(this.getModel(), sEntitySetName, aPayload);
 				}.bind(this)).then(function (oResponse) {					
-				}.bind(this)).catch(function(oError){
+				}).catch(function(oError){
 					//To Do Handle Catch here
-				}.bind(this));
+				});
 			} else {
 				this._callAssignmentsPopUp("moveResource");
 			}
@@ -324,7 +324,7 @@ sap.ui.define([
 					if (nAssignmentCount) {
 						this._callAssignmentsPopUp("deleteResource");
 					} else {
-						this.doDeleteResource(this._oModel, sPath).then(function (oResponse) {}.bind(this));
+						this.doDeleteResource(this._oModel, sPath).then(function (oResponse) {});
 					}
 				}
 			}.bind(this));
@@ -448,7 +448,7 @@ sap.ui.define([
 			this._oEditFormPopover.then(function (oEditFormPopover) {
 				oEditFormPopover.unbindElement();
 				oEditFormPopover.close();
-			}.bind(this));
+			});
 		},
 		/**
 		 * map the current tree state with expand and collapse on each level

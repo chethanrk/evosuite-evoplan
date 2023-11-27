@@ -175,7 +175,7 @@ sap.ui.define([
 			if (this.assignmentRowContext) {
 				this.assignmentPath = "/AssignmentSet('" + this.assignmentRowContext.getObject().AssignmentGuid + "')";
 				if (this.assignmentRowContext.getObject().IS_PRT) {
-					this.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
+					this.oPRTActions.openToolsInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				} else {
 					this.openAssignInfoDialog(this.getView(), this.assignmentPath, this.assignmentRowContext, this._mParameters);
 				}
@@ -286,7 +286,7 @@ sap.ui.define([
 				oObject = oContext.getObject(),
 				vAssignGuid = oObject.AssignmentGuid;
 
-			if (oObject.NodeType !== "ASSIGNMENT" || (oObject.NodeType === "ASSIGNMENT" && oObject.IS_PRT)) {
+			if (oObject.NodeType !== "ASSIGNMENT" || oObject.NodeType === "ASSIGNMENT" && oObject.IS_PRT) {
 				// if not "ASSIGNMENT" type or if "ASSIGNMENT" is "PRT" type
 				oEvent.preventDefault();
 			}
@@ -619,7 +619,7 @@ sap.ui.define([
 			this._oViewModel.setProperty("/PRT/defaultStartDate", new Date());
 			this._oViewModel.setProperty("/PRT/defaultEndDate", new Date(endDate));
 
-			this.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters);
+			this.oPRTActions.checksBeforeAssignTools(aSources, oTargetObj, this._mParameters, null, this.getView());
 		}
 	});
 });
