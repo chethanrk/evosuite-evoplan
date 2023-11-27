@@ -477,7 +477,9 @@ sap.ui.define([
 					fTravelBackTime = 0.0,
 					violatedAssignments = [],
 					aListOfAssignments = this._oViewModel.getProperty("/Scheduling/aListOfAssignments"),
-					aViolationsTypes = [];
+					aViolationsTypes = [],
+					aChangedExistingAssignments = [],
+					bIsTravelTimeUpdated;
 
 				//if tourReports are generated in the response
 				if (oResponse.data.tourReports) {
