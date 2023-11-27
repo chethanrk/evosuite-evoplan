@@ -61,7 +61,7 @@
 									</table:customData>
 									<Label text="{/ResourceManagementSet/Start/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
-										<Text text="{path:'Start',formatter:'.formatter.setDateFormatResourceTree'}"/>
+										<Text text="{parts:[ 'Start','viewModel>/sDatePattern'],formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>
 								</table:Column>
 								<table:Column width="10rem">
@@ -70,7 +70,7 @@
 									</table:customData>
 									<Label text="{/ResourceManagementSet/End/##com.sap.vocabularies.Common.v1.Label/String}"></Label>
 									<table:template>
-										<Text text="{path:'End',formatter:'.formatter.setDateFormatResourceTree'}"/>
+										<Text text="{parts:[ 'End','viewModel>/sDatePattern'],formatter:'.formatter.setDateFormatResourceTree'}"/>
 									</table:template>
 								</table:Column>
 								<core:ExtensionPoint name="TableExtP|ManageResources|ResourceManagementSet|Resources|CustomColumn"/>

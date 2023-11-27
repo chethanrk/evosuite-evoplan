@@ -33,7 +33,7 @@ sap.ui.define([
 			BaseController.prototype.onInit.apply(this, arguments);
 
 			this._oDraggableTable = this.byId("draggableList");
-			this._viewModel  = this.getModel("viewModel");
+			this._viewModel = this.getModel("viewModel");
 			this._oDataTable = this._oDraggableTable.getTable();
 			this._configureDataTable(this._oDataTable);
 			this._aSelectedRowsIdx = [];
@@ -41,6 +41,7 @@ sap.ui.define([
 			this._eventBus.subscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.subscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
 			this._eventBus.subscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
+			this._eventBus.subscribe("DemandTable", "updateFirstVisibleRow", this._updateFirstVisibleDemandRow, this);
 			//toAdd busystete change event to the table
 			this._oDataTable.attachBusyStateChanged(this.onBusyStateChanged, this);
 			this._mParameters = {
@@ -49,7 +50,7 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 
 		},
-		
+
 
 		/* =========================================================== */
 		/* event handlers                                              */
@@ -63,12 +64,12 @@ sap.ui.define([
 			var tableTitle = this.getResourceBundle().getText("xtit.itemListTitle"),
 				noDataText = this.getResourceBundle().getText("tableNoDataText", [tableTitle]);
 
-			this._viewModel .setProperty("/PRT/btnSelectedKey", "demands");
-			this._viewModel .setProperty("/PRT/bIsGantt",false);
-			this._viewModel .setProperty("/subViewTitle", tableTitle);
-			this._viewModel .setProperty("/subTableNoDataText", noDataText);
-			this._viewModel .setProperty("/Show_Assignment_Status_Button", false);
-			this._viewModel .refresh();
+			this._viewModel.setProperty("/PRT/btnSelectedKey", "demands");
+			this._viewModel.setProperty("/PRT/bIsGantt", false);
+			this._viewModel.setProperty("/subViewTitle", tableTitle);
+			this._viewModel.setProperty("/subTableNoDataText", noDataText);
+			this._viewModel.setProperty("/Show_Assignment_Status_Button", false);
+			this._viewModel.refresh();
 		},
 
 		/**
@@ -112,10 +113,10 @@ sap.ui.define([
 						oViewModel.setProperty("/bDemandEditMode", false);
 						this._navToDetail(null, this.oRow);
 					} else
-						if (bResponse === sSave) {
-							oViewModel.setProperty("/bDemandEditMode", false);
-							this.submitDemandTableChanges();
-						}
+					if (bResponse === sSave) {
+						oViewModel.setProperty("/bDemandEditMode", false);
+						this.submitDemandTableChanges();
+					}
 				}.bind(this));
 
 			} else {
@@ -171,6 +172,7 @@ sap.ui.define([
 			this._eventBus.unsubscribe("BaseController", "refreshDemandTable", this._triggerDemandFilter, this);
 			this._eventBus.unsubscribe("AssignTreeDialog", "updateDemandTableSelection", this._deselectDemands, this);
 			this._eventBus.unsubscribe("DemandTableOperation", "clearDemandsSelection", this.clearDemandsSelection, this);
+			this._eventBus.unsubscribe("DemandTable", "updateFirstVisibleRow", this._updateFirstVisibleDemandRow, this);
 		},
 
 		/* =========================================================== */
@@ -200,7 +202,7 @@ sap.ui.define([
 				var selected = this._oDataTable.getSelectedIndices(),
 					bEnable = this.getModel("viewModel").getProperty("/validateIW32Auth"),
 					sDemandPath, bComponentExist, sMsg, iLastIndex,
-					oViewModel=this.getModel("viewModel");
+					oViewModel = this.getModel("viewModel");
 				var iMaxRowSelection = this.getModel("user").getProperty("/DEFAULT_DEMAND_SELECT_ALL");
 
 				this._aSelectedRowsIdx = _.clone(selected);
@@ -243,10 +245,10 @@ sap.ui.define([
 					}
 					this.showMessageToast(sMsg);
 				} else {
-					if(selected.length !== 0 && oEvent.getParameter("selectAll")) {
+					if (selected.length !== 0 && oEvent.getParameter("selectAll")) {
 						sMsg = this.getResourceBundle().getText("ymsg.allSelect", selected.length);
 						this.showMessageToast(sMsg);
-					}				
+					}
 				}
 
 				//Enabling/Disabling the Material Status Button based on Component_Exit flag
@@ -265,12 +267,12 @@ sap.ui.define([
 				}
 				//Enabling or disabling Re-Schedule button based on status and flag
 				//TODO - support multiple demands
-				if(this._aSelectedRowsIdx.length > 0){
+				if (this._aSelectedRowsIdx.length > 0) {
 					oViewModel.setProperty("/Scheduling/selectedDemandPath", this._oDataTable.getContextByIndex(this._aSelectedRowsIdx[0]).getPath());
 				} else {
 					oViewModel.setProperty("/Scheduling/selectedDemandPath", null);
 				}
-				oViewModel.setProperty("/Scheduling/aSelectedDemandPath",this._aSelectedRowsIdx);
+				oViewModel.setProperty("/Scheduling/aSelectedDemandPath", this._aSelectedRowsIdx);
 				this.oSchedulingActions.validateScheduleButtons();
 				this.oSchedulingActions.validateReScheduleButton();
 
@@ -444,7 +446,7 @@ sap.ui.define([
 				if (aEntityTypes[i].name === sEntity) {
 					for (var j in aEntityTypes[i].property) {
 						if (aEntityTypes[i].property[j].name === sKey && (aEntityTypes[i].property[j].name.type === "Edm.DateTime" || aEntityTypes[i].property[
-							j].name.type === "Edm.DateTimeOffset")) {
+								j].name.type === "Edm.DateTimeOffset")) {
 							return true;
 						}
 					}
@@ -556,6 +558,13 @@ sap.ui.define([
 			} else {
 				this._oRouter.navTo("demandTools", {});
 			}
+		},
+
+		/**
+		 * Set index of first visible row to avoid scrolling to top after drag n drop
+		 */
+		_updateFirstVisibleDemandRow: function (sChannel, oEvent, oData) {
+			this.getModel("viewModel").setProperty("/iFirstVisibleRowIndex", this._oDataTable.getFirstVisibleRow());
 		}
 
 	});
