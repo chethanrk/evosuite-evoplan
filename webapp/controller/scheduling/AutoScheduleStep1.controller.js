@@ -126,7 +126,7 @@ sap.ui.define([
             var oDate = oEvent.getSource().getValue();
             oDate = new Date(moment(oDate, "DD MMM. YYYY, hh:mm:ss", sap.ui.getCore().getConfiguration().getLanguage())).toString();
             this._oViewModel.setProperty("/Scheduling/sStartDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this._oViewModel.getProperty("/Scheduling/endDate"), false);
+            this.oSchedulingActions.validateDemandDateRanges(new Date(oDate), this.getView().byId("ScheduleDateTo").getDateValue(), false);
             this._checkGeneratedResponse();
             this._setCustomTableFilter(this._oSmartFilter);
         },
@@ -150,7 +150,7 @@ sap.ui.define([
                 oDate = new Date(oDate);
             }
             this._oViewModel.setProperty("/Scheduling/sEndDateValueState", "None");
-            this.oSchedulingActions.validateDemandDateRanges(this._oViewModel.getProperty("/Scheduling/startDate"), oDate, true);
+            this.oSchedulingActions.validateDemandDateRanges(this.getView().byId("ScheduleDateFrom").getDateValue(), oDate, true);
             this._checkGeneratedResponse();
             this._setCustomTableFilter(this._oSmartFilter);
         },

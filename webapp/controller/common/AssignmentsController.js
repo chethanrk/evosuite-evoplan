@@ -147,6 +147,7 @@ sap.ui.define([
 					sDemandGuids = this.getFormattedDemandGuids(oModel, aSourcePaths), //getting formatted DemandGuids to be passed in Qualification Service
 					oQualificationParameters = this.getQualificationCheckParameters(sDemandGuids, targetObj.NodeId, oParams.DateFrom, oParams.DateTo); //getting Parameters to passed in check Qualification service call
 
+				this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 				//Calling Funtion Import to Check Qualification
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					// Condition to Check if Qualification match service returns any result or Empty
@@ -184,6 +185,7 @@ sap.ui.define([
 				oQualificationParameters = this.getQualificationCheckParameters(oAssignmentData.DemandGuid, sObjectId, oAssignmentData.DateFrom,
 					oAssignmentData.DateTo, oAssignmentData.AssignmentGuid); //getting Parameters to passed in check Qualification service call
 
+				this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 				//Calling Funtion Import to Check Qualification
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					// Condition to Check if Qualification match service returns any result or Empty
@@ -216,6 +218,7 @@ sap.ui.define([
 					oParams = this.setDateTimeParams([], targetObj.StartDate, targetObj.StartTime, targetObj.EndDate, targetObj.EndTime),
 					oQualificationParameters = this.getQualificationCheckParameters(sDemandGuids, targetObj.NodeId, oParams.DateFrom, oParams.DateTo); //getting Parameters to passed in check Qualification service call;
 
+				this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 				//Calling Funtion Import to Check Qualification
 				this.executeFunctionImport(oModel, oQualificationParameters, "ValidateDemandQualification", "POST").then(function (oData, response) {
 					// Condition to Check if Qualification match service returns any result or Empty
@@ -401,6 +404,8 @@ sap.ui.define([
 					mParameters = oConfirmationDialogResponse.mParameters,
 					sResourceNodeType = oConfirmationDialogResponse.nodeType,
 					bIsLast;
+
+				this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 				for (var iIndex = 0; iIndex < aDemands.length; iIndex++) {
 					if (parseInt(iIndex, 10) === aDemands.length - 1) {
 						bIsLast = true;
@@ -467,8 +472,8 @@ sap.ui.define([
 			}
 			this.clearMessageModel();
 			if (isReassign && !this.isAssignable({
-				sPath: oData.NewAssignPath
-			})) {
+					sPath: oData.NewAssignPath
+				})) {
 				return;
 			}
 
@@ -565,6 +570,7 @@ sap.ui.define([
 
 			}
 
+			this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
 			if (this.aFixedAppointmentPayload && this.aFixedAppointmentPayload.length) {
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", this.aFixedAppointmentDemands);
@@ -593,6 +599,7 @@ sap.ui.define([
 			this.clearMessageModel();
 
 			this.oPRTActions.checkToolExists(aContexts).then(function (resolve) {
+				this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 				for (var i in aContexts) {
 					sPath = aContexts[i].getPath();
 					sAssignmentGuid = oModel.getProperty(sPath + "/Guid");
@@ -621,6 +628,7 @@ sap.ui.define([
 				var oParams = {
 					AssignmentGUID: sId
 				};
+				this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 				this.clearMessageModel();
 				this.callFunctionImport(oParams, "DeleteAssignment", "POST", mParameters, true);
 			}.bind(this));
@@ -633,10 +641,11 @@ sap.ui.define([
 		 */
 		updateFunctionDemand: function (aSelectedPaths, sFunctionKey, mParameters) {
 			var oParams = {
-				Function: sFunctionKey
-			},
+					Function: sFunctionKey
+				},
 				bIsLast = null;
 
+			this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 			for (var i = 0; i < aSelectedPaths.length; i++) {
 				oParams.DemandGuid = aSelectedPaths[i].oData.Guid;
 				if (parseInt(i, 10) === aSelectedPaths.length - 1) {
@@ -657,6 +666,7 @@ sap.ui.define([
 				aAbsences = oData.absences,
 				bIsLast = null;
 			this.clearMessageModel();
+			this._eventBus.publish("DemandTable", "updateFirstVisibleRow");
 			for (var i in aAssignments) {
 				bIsLast = null;
 				if (aAssignments[aAssignmentKeys[aAssignmentKeys.length - 1]] === aAssignments[i]) {
@@ -679,7 +689,7 @@ sap.ui.define([
 				// call function import
 				if (aAbsences[j]) {
 					this.callFunctionImport(aAbsences[j], "ManageAbsence", "POST", oData.mParameters, bIsLast);
-				} else { }
+				} else {}
 			}
 		},
 		/**
@@ -700,24 +710,24 @@ sap.ui.define([
 
 			MessageBox.warning(
 				sMessage, {
-				actions: [sAction, sap.m.MessageBox.Action.CANCEL],
-				styleClass: oComponent.getContentDensityClass(),
-				onClose: function (sValue) {
-					if (sValue === sAction && !bBulkReassign && !bUpdate) {
-						this.assignedDemands(aSources, sTargetPath, mParameters);
-					} else if (sValue === sAction && bBulkReassign) {
-						this.bulkReAssignment(sTargetPath, aContexts, mParameters);
-					} else if (sValue === sAction && bUpdate) {
-						//Proceed to check the Qualification for UpdateAssignment
-						this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
-					} else if (sValue === sap.m.MessageBox.Action.CANCEL) {
-						//when from new gantt shape busy state needs removed
-						if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
-							this.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
+					actions: [sAction, sap.m.MessageBox.Action.CANCEL],
+					styleClass: oComponent.getContentDensityClass(),
+					onClose: function (sValue) {
+						if (sValue === sAction && !bBulkReassign && !bUpdate) {
+							this.assignedDemands(aSources, sTargetPath, mParameters);
+						} else if (sValue === sAction && bBulkReassign) {
+							this.bulkReAssignment(sTargetPath, aContexts, mParameters);
+						} else if (sValue === sAction && bUpdate) {
+							//Proceed to check the Qualification for UpdateAssignment
+							this.checkQualificationUpdate(this.getModel("assignment").getData(), oParams, mParameters);
+						} else if (sValue === sap.m.MessageBox.Action.CANCEL) {
+							//when from new gantt shape busy state needs removed
+							if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
+								this.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
+							}
 						}
-					}
-				}.bind(this)
-			}
+					}.bind(this)
+				}
 			);
 		},
 		/**
@@ -798,7 +808,8 @@ sap.ui.define([
 		},
 
 		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
-			var sQualifier;
+			var sQualifier, 
+			bRefresh = this.getTemplateRefreshFlag(oView, sPath, mParameters, false);
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
 			} else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
@@ -818,7 +829,7 @@ sap.ui.define([
 				sDeepPath: "Demand",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
-				refreshParameters: mParameters
+				refreshParameters: bRefresh
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
@@ -1037,9 +1048,9 @@ sap.ui.define([
 			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
 				.then(function (oAssignData) {
 					if (!this.checkAssigmentIsReassignable({
-						assignment: oAssignData,
-						resource: oTargetData
-					})) {
+							assignment: oAssignData,
+							resource: oTargetData
+						})) {
 						return false;
 					}
 					this.getOwnerComponent().assignTreeDialog._assignPath = sResourcePath;
@@ -1144,7 +1155,7 @@ sap.ui.define([
 			}
 		},
 		/**
-		* Function for capturing updated Resource Contexts from Assignments
+		 * Function for capturing updated Resource Contexts from Assignments
 		 * @param aContexts
 		 * Since 2309
 		 */
