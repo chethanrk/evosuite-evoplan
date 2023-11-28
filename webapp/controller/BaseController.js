@@ -1499,6 +1499,35 @@ sap.ui.define([
 				bValid = false;
 			}
 			oViewModel.setProperty("/bEnableAsgnSave", bValid);
+		},
+		/*
+		* Function for handling Template Refresh Call
+		* Restricting Refresh Logic based on Dirty Flag
+		* This will be a temporary dirty workaround for the problem, 
+		* later we need to identify the root cause and fix it in standard template
+		* @param oView {oView}
+		* @param sPath String
+		* @param mParameters {mParameters}
+		* @param bIsPRTAssignment Boolean
+		* return Boolean
+		*/
+		getTemplateRefreshFlag: function (oView, sPath, mParameters, bIsPRTAssignment) {
+			var bTemplateRefresh,
+				aTemplateRefresh, bDuplicateExist;
+			if (!oView.getModel("viewModel").getProperty("/aTemplateRefresh")) {
+				oView.getModel("viewModel").setProperty("/aTemplateRefresh", [sPath]);
+				bTemplateRefresh = mParameters && (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) && bIsPRTAssignment ? false : true;
+			} else {
+				aTemplateRefresh = oView.getModel("viewModel").getProperty("/aTemplateRefresh");
+				bDuplicateExist = aTemplateRefresh.indexOf(sPath) > -1; 
+				bTemplateRefresh = bDuplicateExist ? false : true;
+				//Condition for handling PRT Assignments in Gantt and GanttSplit View  
+				bTemplateRefresh = mParameters && (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) && bIsPRTAssignment ? false : bTemplateRefresh;
+				//Condition for handling Demand Assignments in GanttSplit
+				bTemplateRefresh = mParameters && mParameters.bFromNewGanttSplit && !bIsPRTAssignment && !bDuplicateExist ? true : bTemplateRefresh;
+				aTemplateRefresh.push(sPath);
+			}
+			return bTemplateRefresh;
 		}
 
 	});
