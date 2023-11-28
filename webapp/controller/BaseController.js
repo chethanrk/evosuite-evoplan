@@ -739,7 +739,6 @@ sap.ui.define([
 			}
 
 		},
-
 		/**
 		 * Navigate to other apps as BSP Apps 
 		 * @param sUri
