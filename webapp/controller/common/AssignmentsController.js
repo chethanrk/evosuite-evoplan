@@ -808,7 +808,8 @@ sap.ui.define([
 		},
 
 		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
-			var sQualifier;
+			var sQualifier, 
+			bRefresh = this.getTemplateRefreshFlag(oView, sPath, mParameters, false);
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
 			} else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
@@ -828,7 +829,7 @@ sap.ui.define([
 				sDeepPath: "Demand",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
-				refreshParameters: mParameters
+				refreshParameters: bRefresh
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
