@@ -2755,13 +2755,13 @@ sap.ui.define([
 
 			this._oTargetResourcePath = sTargetPath.split("/").splice(0, 6).join("/");
 			aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
-			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters], {}, "sAssignmentId"));
 
 			if (sSourcePath) {
 				this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
 				oSourceResource = this.oGanttModel.getProperty(this._oSourceResourcePath);
 				aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
-				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters], {}, "sAssignmentId"));
 			}
 
 			this.oAppViewModel.setProperty("/busy", true);
