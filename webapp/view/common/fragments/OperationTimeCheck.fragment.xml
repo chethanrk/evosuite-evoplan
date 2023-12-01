@@ -36,8 +36,8 @@
 							<Text text="{viewModel>oData/ORDERID}"/>
 							<Text text="{viewModel>oData/OPERATIONID}"/>
 							<Text text="{viewModel>oData/SUBOPERATIONID}"/>
-							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_START_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_START_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
-							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_END_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_END_TIME'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
+							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_START_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_START_TIME'}, {path:'viewModel>/sDateTimePattern'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
+							<Text text="{parts:[ {path:'viewModel>oData/FIXED_ASSGN_END_DATE'}, {path:'viewModel>oData/FIXED_ASSGN_END_TIME'}, {path:'viewModel>/sDateTimePattern'} ], formatter:'.formatter.onDisplayOperationTimes'}"/>
 							<core:ExtensionPoint name="TableExtP|OperationTimeCheck|DraggedDemands|CustomCell" ></core:ExtensionPoint>
 						</cells>
 					</ColumnListItem>

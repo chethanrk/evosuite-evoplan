@@ -10,10 +10,12 @@
             id="ScheduleDateFrom"
             placeholder="{i18n>xtit.EnterDateFrom}"
             minDate="{viewModel>/Scheduling/minDate}"
-            value="{path: 'viewModel>/Scheduling/startDate',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
+            value="{viewModel>/Scheduling/startDate}"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sStartDateValueState}"
             valueStateText="{i18n>xtit.PlanHorizonStartMandatory}"
+            valueFormat="dd MMM yyyy, HH:mm:ss"
+            displayFormat="{viewModel>/sDateTimePattern}"
             change="onChangeDateFrom"/>
         <Label text="{i18n>xtit.DateTo}" labelFor="ScheduleDateto" required="true"/>
         <DateTimePicker
@@ -21,10 +23,12 @@
             placeholder="{i18n>xtit.EnterDateTo}"
             minDate="{viewModel>/Scheduling/minDate}"
             maxDate="{viewModel>/Scheduling/maxDate}"
-            value="{path: 'viewModel>/Scheduling/endDate',type: 'sap.ui.model.type.DateTime', formatOptions:{pattern:'dd MMM yyyy, HH:mm:ss'} }"
+            value="{viewModel>/Scheduling/endDate}"
             initialFocusedDateValue="{viewModel>/Scheduling/initialFocusedDateValue}"
             valueState="{viewModel>/Scheduling/sEndDateValueState}"
             valueStateText="{i18n>xtit.PlanHorizonEndMandatory}"
+            valueFormat="dd MMM yyyy, HH:mm:ss"
+            displayFormat="{viewModel>/sDateTimePattern}"
             change="onChangeDateTo"/>
         <Label text="{i18n>xtit.Utilization}  ({viewModel>/Scheduling/sUtilizationSlider})" labelFor="ScheduleUtilization"/>
         <Slider value="{viewModel>/Scheduling/sUtilizationSlider}"
