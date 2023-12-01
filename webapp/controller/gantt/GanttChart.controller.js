@@ -1690,14 +1690,14 @@ sap.ui.define([
 				}
 
 				//is re-assign allowed
-				if (this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) {
+				if ((this.mRequestTypes.reassign === sType || this.mRequestTypes.update === sType) && !oData.Demand.ALLOW_REASSIGN) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 					this._resetChanges(sPath);
 					reject();
 				}
 				//has it a new parent
-				if ((this.mRequestTypes.reassign === sType || this.mRequestTypes.update === sType ) && oChanges.ResourceGuid) {
+				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
 					var oNewParent = this.oGanttModel.getProperty(oChanges.NewAssignPath);
 					if (!this.isAssignable({
 							data: oNewParent
