@@ -1485,15 +1485,13 @@ sap.ui.define([
 			if (this.oUserModel.getProperty("/ENABLE_NETWORK_ASSIGN_GANTT") && sPath.length > 60 && !oData.IS_PRT) {
 				bEnableRelationships = true;
 			}
-			if (oData.DEMAND_STATUS !== "COMP") {
-				this._getRelatedDemandData(oData).then(function (oResult) {
-					oData.sPath = oContext.getPath();
-					this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
-					this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
-					this.oViewModel.setProperty("/ganttSettings/Enable_Relationships", bEnableRelationships);
-					this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.EndBottom, oShape);
-				}.bind(this));
-			}
+			this._getRelatedDemandData(oData).then(function (oResult) {
+				oData.sPath = oContext.getPath();
+				this.oGanttModel.setProperty(oData.sPath + "/Demand", oResult.Demand);
+				this.oViewModel.setProperty("/ganttSettings/shapeData", oData);
+				this.oViewModel.setProperty("/ganttSettings/Enable_Relationships", bEnableRelationships);
+				this._oContextMenu.open(true, oShape, Popup.Dock.BeginTop, Popup.Dock.EndBottom, oShape);
+			}.bind(this));
 		},
 
 		/**
@@ -1684,6 +1682,8 @@ sap.ui.define([
 						if (resolve1) {
 							return true;
 						} else {
+							sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
+							this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 							reject();
 						}
 					}));
@@ -1697,7 +1697,7 @@ sap.ui.define([
 					reject();
 				}
 				//has it a new parent
-				if (this.mRequestTypes.reassign === sType && oChanges.ResourceGuid) {
+				if ((this.mRequestTypes.reassign === sType || this.mRequestTypes.update === sType ) && oChanges.ResourceGuid) {
 					var oNewParent = this.oGanttModel.getProperty(oChanges.NewAssignPath);
 					if (!this.isAssignable({
 							data: oNewParent
@@ -1732,7 +1732,8 @@ sap.ui.define([
 					iNewEffort = iDifference / 1000 / 60 / 60,
 					bEnableResizeEffortCheck = this.oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK");
 				if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED) {
-					reject();
+					resolve(false);
+					return;
 				}
 				//resized effort needs validated
 				if (bEnableResizeEffortCheck && iNewEffort < oData.Effort) {

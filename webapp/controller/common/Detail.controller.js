@@ -271,13 +271,6 @@ sap.ui.define([
 			this.localStorage.put("Evo-Action-page", "DemandDetails");
 			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
 		},
-		getVisible: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;
-		},
-
-		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;
-		},
 		/**
 		 * Opens the StatusDialog to set status for demand 
 		 * @Author Chethan
