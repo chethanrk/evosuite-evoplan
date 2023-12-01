@@ -304,9 +304,23 @@ sap.ui.define([
 
 			oPayload.distanceMatrixOptions = {
 				//current default routing type
-				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL"
+				routingType: "HIGH_PERFORMANCE_ROUTING_WITH_FALLBACK_CONVENTIONAL",
+				geographicRestrictions: {
+					allowedCountries: [
+						"ZZ-EUR"
+					]
+				}
 			};
-
+			oPayload.requestProfile = {
+				featureLayerProfile: {
+					themes: [
+						{
+							id: "PTV_TruckAttributes",
+							enabled: true
+						}
+					]
+				}
+			};
 			return oPayload;
 		},
 
