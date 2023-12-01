@@ -492,7 +492,7 @@ sap.ui.define([
 				oCustomData = oButton.getCustomData();
 			this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
-				this._oDataTable.expandToLevel(5);
+				this._oDataTable.expandToLevel(1);
 			} else {
 				this._oDataTable.collapseAll();
 			}
