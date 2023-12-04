@@ -1683,10 +1683,10 @@ sap.ui.define([
 							return true;
 						} else {
 							sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
-							this._showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
+							this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 							reject();
 						}
-					}));
+					}.bind(this)));
 				}
 
 				//is re-assign allowed
