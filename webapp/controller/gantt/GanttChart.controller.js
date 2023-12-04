@@ -1040,6 +1040,62 @@ sap.ui.define([
 			}
 			this.oViewModel.setProperty("/ganttSettings/TravelTimes", aTravelTimes);
 		},
+
+		/**
+		 * Check and refresh the duplicate assignments assigned to different resources
+		 * @params {String} sDemandGUID - contains the demand guid of the current assignment
+		 * @params {String} sObjectId - contains the object id which is the resource guid and resource group guid
+		 * @params {String} sFromLocation - contains the location from which the function is being called
+		 * 
+		 */
+		checkMultipleAssignmentsOfDemand: function(sDemandGUID, sObjectId, sFromLocation){
+			var aFilters = [],
+			aGanttData = this.oGanttModel.getData().data.children,
+			aUpdateResources = [],
+			aPromise = [];
+			aFilters.push(new Filter("DemandGuid", FilterOperator.EQ, sDemandGUID));
+			this.getOwnerComponent().readData("/AssignmentSet/$count", aFilters).then(function(iAssignCount) {
+				//This will be called after an assignment is created or deleted. So for creation we are checking if count is greater than 1 as it is first
+				//for delete we will be checking if greater than 0 as the last deleted assignment might have a duplicate assignment
+				if((sFromLocation === "delete" && iAssignCount > 0) || (sFromLocation === "create" && iAssignCount > 1)){
+					this.getOwnerComponent().readData("/AssignmentSet", aFilters).then(function(aAssignments){
+						aFilters = [];
+						aGanttData.forEach(function (aChildren) {
+							aChildren.children.forEach(function (oResource) {
+								aAssignments.results.forEach(function(oAssignment) {
+									//current operated resource is already taken care so ignoring it
+									if((oResource.NodeId === oAssignment.ObjectId) && (oAssignment.ObjectId !== sObjectId)){
+										if(aUpdateResources.indexOf(oResource) === -1){
+											aUpdateResources.push(oResource);
+											//check for duplicate resource and call the duplicate function
+											if(oResource.DUPLICATE_RESOURCE){
+												this._updateDuplicateAssignment(oResource);
+											}
+											aFilters.push(new Filter("ObjectId", FilterOperator.EQ, oAssignment.ObjectId));
+											// Push promises for update resource's assignments list
+											aPromise.push(this.getOwnerComponent().readData("/AssignmentSet", aFilters)); 
+											//emptying the filter as it is already pushed in to the promise
+											aFilters = [];
+										}
+									}
+								}.bind(this));
+							}.bind(this));
+						}.bind(this));
+						
+						this.oAppViewModel.setProperty("/busy", true);
+						Promise.all(aPromise).then(function (aData) {
+							for (var i in aData) {
+								this.oResource = aUpdateResources[i];
+								this._updateAfterReAssignment([aData[i]], this.oResource); // Update assignment set and children of Resource in local model
+							}
+							this.oAppViewModel.setProperty("/busy", false);
+						}.bind(this));
+						
+					}.bind(this));
+				}	
+			}.bind(this));
+		},
+
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
@@ -1931,6 +1987,8 @@ sap.ui.define([
 					sDummyPath = sTargetPath + "/AssignmentSet/results/" + (aAssignments.length - 1);
 					this.oGanttModel.setProperty(sTargetPath + "/AssignmentSet/results", aAssignments);
 				} else {
+					//below function is executed when single demands are being assigned
+					this.checkMultipleAssignmentsOfDemand(data[i].DemandGuid, data[i].ObjectId, "create");
 					this.oGanttModel.setProperty(sDummyPath + "/busy", false);
 					this.oGanttModel.setProperty(sDummyPath, data[i]);
 
@@ -2698,13 +2756,13 @@ sap.ui.define([
 
 			this._oTargetResourcePath = sTargetPath.split("/").splice(0, 6).join("/");
 			aFilters = this._getFiltersToReadAssignments(oTargetResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
-			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+			aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters], {}, "sAssignmentId"));
 
 			if (sSourcePath) {
 				this._oSourceResourcePath = sSourcePath.split("/").splice(0, 6).join("/");
 				oSourceResource = this.oGanttModel.getProperty(this._oSourceResourcePath);
 				aFilters = this._getFiltersToReadAssignments(oSourceResource, oUserData.DEFAULT_GANT_START_DATE, oUserData.DEFAULT_GANT_END_DATE);
-				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters]));
+				aPromises.push(this.getOwnerComponent().readData("/AssignmentSet", [aFilters], {}, "sAssignmentId"));
 			}
 
 			this.oAppViewModel.setProperty("/busy", true);
@@ -2734,7 +2792,7 @@ sap.ui.define([
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, formatter.date(oUserData.DEFAULT_GANT_START_DATE)));
 
 					aGanttData.forEach(function (aChildren) {
-						if (aChildren.NodeId == aResGrps[i]) {
+						if (aChildren.NodeId == aResGrps[i]  && aChildren.children) {
 							aChildren.children.forEach(function (aResources) {
 								if (aResources.ResourceGuid == oTargetResource.ResourceGuid) {
 									aUpdateResources.push(aResources);

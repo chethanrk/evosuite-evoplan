@@ -611,6 +611,8 @@ sap.ui.define([
 
 			var fnDeleteAssignment = function () {
 				this.deleteAssignment(oModel, sAssignGuid).then(function () {
+					//check if demand contains multiple assignments to refresh the other resources
+					this.checkMultipleAssignmentsOfDemand(oGanttModel.getProperty(sPath).DemandGuid, oGanttModel.getProperty(sPath).ObjectId, "delete");
 					oGanttModel.setProperty(sPath + "/busy", false);
 					this.getModel("ganttModel").setProperty(sPath, null);
 					this.getModel("ganttOriginalData").setProperty(sPath, null);
