@@ -54,14 +54,6 @@ sap.ui.define([
 			this.openApp2AppPopover(oSource, oSource.data("url"));
 		},
 
-		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;
-		},
-
-		getVisible: function (a, b, c, d, e) {
-			return a && !b && c !== "COMP" && d && !e;
-		},
-
 		/**
 		 * Opens the AssignDialog to assign the demand to resources
 		 * @Author Rahul

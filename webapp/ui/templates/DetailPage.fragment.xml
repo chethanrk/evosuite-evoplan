@@ -17,10 +17,10 @@
 									</uxap:dependents>
 								</uxap:ObjectPageHeaderActionButton>
 								<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}" tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized"
-									hideIcon="false" hideText="false" press="onClickSetFunction" 	visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
+									hideIcon="false" hideText="false" press="onClickSetFunction" 	visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.formatter.getSetFunctionDetailFrag' }">
 								</uxap:ObjectPageHeaderActionButton>
 								<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
-									visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'}], formatter: '.getVisible' }"
+									visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path :'user>/ENABLE_CHANGE_STATUS'}], formatter: '.formatter.getVisibleDetailFrag' }"
 									hideIcon="false" hideText="false" press="onClickAction"/>
 								<Button text="{i18n>xbut.buttonBack}" tooltip="{i18n>xbut.buttonBack}" type="Default" press="navBack"/>
 							</uxap:actions>

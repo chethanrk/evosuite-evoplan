@@ -39,7 +39,7 @@
 			</u:Menu>
 		</u:MenuItem>
 		<u:MenuItem text="{i18n>xbut.changeStatus}"
-			visible="{= ${viewModel>/ganttSettings/shapeData/DEMAND_STATUS}!=='' &amp;&amp; ${user>/ENABLE_CHANGE_STATUS} &amp;&amp; !${user>/ENABLE_ASSIGNMENT_STATUS} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}">
+			visible="{= ${viewModel>/ganttSettings/shapeData/DEMAND_STATUS}!=='' &amp;&amp; ${user>/ENABLE_CHANGE_STATUS} &amp;&amp; !${user>/ENABLE_ASSIGNMENT_STATUS} &amp;&amp; ${viewModel>/ganttSettings/shapeData/Demand/ASGNMNT_CHANGE_ALLOWED} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}">
 			<u:Menu itemSelect="handleStatusItemPress">
 				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.ack}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_ACKNOWLDGE}">
 					<u:customData>
