@@ -700,6 +700,7 @@ sap.ui.define([
 
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
 				//change assignment
+				mParameters.bRefreshTemplate = true;
 				this.openAssignInfoDialog(this.getView(), sDataModelPath, oContext, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//unassign
