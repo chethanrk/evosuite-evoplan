@@ -679,13 +679,27 @@ sap.ui.define([
 				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
 				oOrder,
 				aDemandLocations = this.oViewModel.getProperty("/Scheduling/aDemandLocationIds"),
-				aExistingDemandQualification = this.oViewModel.getProperty("/Scheduling/aExistingDemandQualification");
-
+				aExistingDemandQualification = this.oViewModel.getProperty("/Scheduling/aExistingDemandQualification"),
+				oStartDate = this.oViewModel.getProperty("/Scheduling/startDate"),
+				oEndDate = this.oViewModel.getProperty("/Scheduling/endDate"),
+				bIsValidAssingment = true,
+				nTravelTime,
+				nTravelBackTime;
+				debugger;
 			aAssingments = oResource.assignments;
 			if (aAssingments && aAssingments.length) {
 				for (var oAssingnment of aAssingments) {
+					bIsValidAssingment = true;// flag to check whether the assignment has to be added in input plan or discard 
 					if (oAssingnment.DateFrom.getDate() === oAssingnment.DateTo.getDate()) {
-						if (aDemandLocations.indexOf(oAssingnment.DemandGuid + "_location") === -1) {
+						nTravelTime = oAssingnment.TRAVEL_TIME ? 60000 * parseFloat(oAssingnment.TRAVEL_TIME):0;
+						nTravelBackTime = oAssingnment.TRAVEL_BACK_TIME ? 60000 * parseFloat(oAssingnment.TRAVEL_BACK_TIME):0;
+						
+						// check if existing assignment is totally out of selected planning horizon dates
+						if ((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() && oStartDate.getTime() >= (oAssingnment.DateTo.getTime() + nTravelBackTime)) || (oEndDate.getTime() <= (oAssingnment.DateFrom.getTime() - nTravelTime) && oEndDate.getTime() <= oAssingnment.DateTo.getTime())) {
+							bIsValidAssingment = false;
+						}
+
+						if (aDemandLocations.indexOf(oAssingnment.DemandGuid + "_location") === -1 && bIsValidAssingment) {
 							aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
 							sAssignmentDate = this._getFormattedDate(oAssingnment.DateFrom).substring(0, 10);
 							if (aInputPlans.stops[sAssignmentDate]) {
