@@ -685,7 +685,7 @@ sap.ui.define([
 				bIsValidAssingment = true,
 				nTravelTime,
 				nTravelBackTime;
-				debugger;
+				
 			aAssingments = oResource.assignments;
 			if (aAssingments && aAssingments.length) {
 				for (var oAssingnment of aAssingments) {
