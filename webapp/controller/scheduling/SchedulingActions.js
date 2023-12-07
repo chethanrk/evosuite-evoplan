@@ -352,8 +352,6 @@ sap.ui.define([
 			var aResourceList = this.oViewModel.getProperty("/Scheduling/resourceList"),
 				oStartDate = this.oViewModel.getProperty("/Scheduling/startDate"),
 				oEndDate = this.oViewModel.getProperty("/Scheduling/endDate"),
-				oTimeForm = { ms: new Date(oStartDate).getTime() },
-				oTimeTo = { ms: new Date(oEndDate).getTime() },
 				aAssignmentPromise = [],
 				aAssignmentFilter = [],
 				aAvailabilityPromise = [],
@@ -365,9 +363,7 @@ sap.ui.define([
 				aAssignmentFilter = [
 					new Filter("ResourceGuid", "EQ", oResource.ResourceGuid),
 					new Filter("DateFrom", "GE", oStartDate),
-					new Filter("DateTo", "LE", oEndDate),
-					new Filter("TimeTo", "EQ", oTimeForm),
-					new Filter("TimeFrom", "EQ", oTimeTo)
+					new Filter("DateTo", "LE", oEndDate)
 				];
 				aAssignmentPromise.push(this._controller.getOwnerComponent().readData("/AssignmentSet", aAssignmentFilter, {}, "idAssignmentSet"));
 
