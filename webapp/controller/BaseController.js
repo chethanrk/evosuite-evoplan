@@ -1527,6 +1527,7 @@ sap.ui.define([
 				bTemplateRefresh = mParameters && mParameters.bFromNewGanttSplit && !bIsPRTAssignment && !bDuplicateExist ? true : bTemplateRefresh;
 				aTemplateRefresh.push(sPath);
 			}
+			bTemplateRefresh = mParameters.bRefreshTemplate ? false : bTemplateRefresh;
 			return bTemplateRefresh;
 		}
 
