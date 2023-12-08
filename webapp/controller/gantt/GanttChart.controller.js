@@ -1747,7 +1747,7 @@ sap.ui.define([
 				}
 
 				//is re-assign allowed
-				if ((this.mRequestTypes.reassign === sType || this.mRequestTypes.update === sType) && !oData.Demand.ALLOW_REASSIGN) {
+				if ((this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) || (this.mRequestTypes.update === sType && !oData.ASGNMNT_CHANGE_ALLOWED)) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 					this._resetChanges(sPath);
@@ -1788,7 +1788,7 @@ sap.ui.define([
 				var iDifference = moment(oData.DateTo).diff(moment(oData.DateFrom)),
 					iNewEffort = iDifference / 1000 / 60 / 60,
 					bEnableResizeEffortCheck = this.oUserModel.getProperty("/ENABLE_RESIZE_EFFORT_CHECK");
-				if (!oData.Demand.ASGNMNT_CHANGE_ALLOWED) {
+				if (!oData.ASGNMNT_CHANGE_ALLOWED) {
 					resolve(false);
 					return;
 				}
