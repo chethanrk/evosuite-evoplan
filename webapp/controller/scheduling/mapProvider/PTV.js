@@ -698,6 +698,18 @@ sap.ui.define([
 						if ((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() && oStartDate.getTime() >= (oAssingnment.DateTo.getTime() + nTravelBackTime)) || (oEndDate.getTime() <= (oAssingnment.DateFrom.getTime() - nTravelTime) && oEndDate.getTime() <= oAssingnment.DateTo.getTime())) {
 							bIsValidAssingment = false;
 						}
+						// check if existing assignment is partly inside the planning horizon dates
+						if((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() + nTravelTime) && (oAssingnment.DateTo.getTime() + nTravelBackTime <= oEndDate.getTime())){
+							bIsValidAssingment = false;
+						}
+						//check if existing assignment is completely inside the planning horizon
+						if((oStartDate.getTime() <= oAssingnment.DateFrom.getTime() + nTravelTime) && (oAssingnment.DateTo.getTime() + nTravelBackTime <= oEndDate.getTime())){
+							bIsValidAssingment = false;
+						}
+						//check if existing assignment has completely utilized the days capacity
+						if((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() + nTravelTime) && (oAssingnment.DateTo.getTime() + nTravelBackTime >= oEndDate.getTime())){
+							bIsValidAssingment = false;
+						}
 
 						if (aDemandLocations.indexOf(oAssingnment.DemandGuid + "_location") === -1 && bIsValidAssingment) {
 							aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
