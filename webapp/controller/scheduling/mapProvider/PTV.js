@@ -361,8 +361,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * set the resource data in the payload Structure to Pass to call PTV.
+		 * set the resource data into the payload Structure to Pass to call PTV.
 		 * Used in the Auto/Re-Schduling both.
+		 * @param {Object} oPayload - payload object to pass into PTV plan tour call
+		 * @param {string} aResourceData - array of all the resource data eg.. availability, breaks, workshift and qualifications
 		 * @return {object} Payload structure with resource data.
 		 */
 		_setResourceData: function (oPayload, aResourceData) {
@@ -380,7 +382,8 @@ sap.ui.define([
 				aFixations = [],
 				aDemandLocations = [],
 				aDemands = [],
-				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD");
+				bQualificationCheck = this.oUserModel.getProperty("/ENABLE_QUALIF_MASS_AUTO_SCHD"),
+				oScheduleData = {};
 
 
 			for (var sGuid in aResourceData) {
@@ -389,20 +392,25 @@ sap.ui.define([
 				aResourceLocations.push(this._getPTVLocationObject(sGuid, aResourceData, "DepotSite"));
 
 				// calculating breaks and availability/Unavailability and creating objects for Breaks, OperatingInterval 
-				aWorkSchedules = this._getFormattedWorkSchedules(aResourceData[sGuid], aHorizonDateIntervals);
+				oScheduleData = this._getFormattedWorkSchedules(aResourceData[sGuid], aHorizonDateIntervals);
+
+				// Adjust the workschedule based on horizon date and assignment collisions
+				aWorkSchedules = this.adjustWorkSchedules(aResourceData[sGuid], oScheduleData.aFormattedWorkSchedules, oScheduleData.aShiftTimes, oScheduleData.aProjectBlockers);
 
 				//Creation of Vehicles and Driver object for each in the planning horizon
 				aHorizonDateIntervals.forEach(function (sDate) {
+
+					// condition to check if there is operating interval for the resource for specific date
 					if (aWorkSchedules[sDate] && aWorkSchedules[sDate].aOperationIntervals.length) {
 						//Creating and adding vehicle ids to pass to vehicle object 
 						aVehicleIDs.push(sGuid + "_" + sDate);
 
 						//Adding vehicle objects for each day 
 						aDrivers.push({
-							"id": sGuid + "_" + sDate + "_driver",
-							"vehicleId": sGuid + "_" + sDate,
-							"operatingIntervals": aWorkSchedules[sDate].aOperationIntervals,
-							"breakIntervals": aWorkSchedules[sDate].aBreakIntervals
+							id: sGuid + "_" + sDate + "_driver",
+							vehicleId: sGuid + "_" + sDate,
+							operatingIntervals: aWorkSchedules[sDate].aOperationIntervals,
+							breakIntervals: aWorkSchedules[sDate].aBreakIntervals
 						});
 					}
 				});
@@ -410,24 +418,26 @@ sap.ui.define([
 				// Vehicle objects added as for the resource
 				if (aVehicleIDs && aVehicleIDs.length) {
 					oVehicle = {
-						"ids": _.cloneDeep(aVehicleIDs),
-						"startLocationId": sGuid + "_location",
-						"endLocationId": sGuid + "_location"
+						ids: _.cloneDeep(aVehicleIDs),
+						startLocationId: sGuid + "_location",
+						endLocationId: sGuid + "_location"
 					};
+
+					// check global config for qualification to add the qualification data
 					if (bQualificationCheck) {
-						oVehicle["equipment"] = aResourceData[sGuid].qualifications;
+						oVehicle.equipment = aResourceData[sGuid].qualifications;
 					}
 					aVehicles.push(oVehicle);
 				}
 
-				//Input Plan Data
+				// handling Input Plan Data to add into the payload
 				oInputPlanData = this._getInputPlans(aResourceData[sGuid]);
 				oInputPlan = this._getPTVInputPlanObject(sGuid, oInputPlanData, aVehicleIDs);
-				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations);
-				aDemands = aDemands.concat(oInputPlanData.demandOrders);
+				aDemandLocations = aDemandLocations.concat(oInputPlanData.demandLocations); //merging existing demand locations into payload 
+				aDemands = aDemands.concat(oInputPlanData.demandOrders); //merging existing demand Object into payload 
 				aTours = aTours.concat(oInputPlan.tours);
 				aFixations = aFixations.concat(oInputPlan.fixations);
-			};
+			}
 
 			// Adding all the generated data into payload
 			oPayload.locations = oPayload.locations.concat(aResourceLocations);
@@ -435,6 +445,7 @@ sap.ui.define([
 			oPayload.orders = oPayload.orders.concat(aDemands); // adding input plan demand data
 			oPayload.fleet.drivers = aDrivers;
 			oPayload.fleet.vehicles = aVehicles;
+
 			//checking if any input plan data is available, if not, removing "inputPlan" property from payload
 			if (aTours.length) {
 				oPayload.inputPlan.tours = aTours;
@@ -628,7 +639,55 @@ sap.ui.define([
 					}
 				}
 			}.bind(this));
-			return aFormattedWorkSchedules;
+			return {
+				aFormattedWorkSchedules: aFormattedWorkSchedules,
+				aProjectBlockers: aProjectBlockers,
+				aShiftTimes: aShiftTimes
+			};
+		},
+
+		/**
+		 * This method will adjust the work schedules by looking at planning horizon
+		 */
+		adjustWorkSchedules: function (oResource, aWorkSchedules, aShiftTimes, aProjectBlockers) {
+			var oStartDate = this.oViewModel.getProperty("/Scheduling/startDate"),
+				oEndDate = this.oViewModel.getProperty("/Scheduling/endDate"),
+				aExistingAssignments = oResource.assignments,
+				bIsValidAssingment = true,
+				nTravelTime,
+				nTravelBackTime,
+				oDate,
+				nDiff;
+			aExistingAssignments.forEach(function (oAssingnment) {
+				nTravelTime = oAssingnment.TRAVEL_TIME ? 60000 * parseFloat(oAssingnment.TRAVEL_TIME) : 0;
+				nTravelBackTime = oAssingnment.TRAVEL_BACK_TIME ? 60000 * parseFloat(oAssingnment.TRAVEL_BACK_TIME) : 0;
+
+				// check if existing assignment is totally out of selected planning horizon dates
+				if ((new Date(oStartDate).getTime() >= oAssingnment.DateFrom.getTime() && new Date(oStartDate).getTime() >= (oAssingnment.DateTo.getTime() + nTravelBackTime)) || (new Date(oEndDate).getTime() <= (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() <= oAssingnment.DateTo.getTime())) {
+					// Do nothing
+				} else if (((new Date(oStartDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() < (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() > oAssingnment.DateTo.getTime())) {
+					for (var i in aWorkSchedules) {
+						if (i === moment(oAssingnment.DateFrom.getTime()).format("YYYY-M-DD")) {
+							// Adjusting operating time to assigment ovalaped planning horizon time
+							oDate = new Date(oAssingnment.DateTo.getTime() + nTravelBackTime);
+							aWorkSchedules[i].aOperationIntervals[0].start = oDate;
+							aWorkSchedules[i].aOperationIntervals[0].duration = this._getAvailabilityDuration(oDate, aShiftTimes.DateTo, aProjectBlockers[i])
+						}
+					}
+				} else if (((new Date(oStartDate).getTime() < (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() < (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() < oAssingnment.DateTo.getTime())) {
+					for (var i in aWorkSchedules) {
+						if (i === moment(oAssingnment.DateFrom.getTime()).format("YYYY-M-DD")) {
+							// find the difference
+							nDiff = new Date(oEndDate).getTime() - (oAssingnment.DateFrom.getTime() - nTravelTime);
+							aWorkSchedules[i].aOperationIntervals[0].duration = aWorkSchedules[i].aOperationIntervals[0].duration - (nDiff / 1000);
+						}
+					}
+				} else if (((new Date(oStartDate).getTime() < (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() > (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() < oAssingnment.DateTo.getTime())) {
+					bIsValidAssingment = false;
+					delete aWorkSchedules[i];
+				}
+			}.bind(this));
+			return aWorkSchedules;
 		},
 
 		/**
@@ -695,21 +754,16 @@ sap.ui.define([
 						nTravelBackTime = oAssingnment.TRAVEL_BACK_TIME ? 60000 * parseFloat(oAssingnment.TRAVEL_BACK_TIME):0;
 						
 						// check if existing assignment is totally out of selected planning horizon dates
-						if ((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() && oStartDate.getTime() >= (oAssingnment.DateTo.getTime() + nTravelBackTime)) || (oEndDate.getTime() <= (oAssingnment.DateFrom.getTime() - nTravelTime) && oEndDate.getTime() <= oAssingnment.DateTo.getTime())) {
+						if ((new Date(oStartDate).getTime() >= oAssingnment.DateFrom.getTime() && new Date(oStartDate).getTime() >= (oAssingnment.DateTo.getTime() + nTravelBackTime)) || (new Date(oEndDate).getTime() <= (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() <= oAssingnment.DateTo.getTime())) {
+							bIsValidAssingment = false;
+						} else if (((new Date(oStartDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() < (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() > oAssingnment.DateTo.getTime())) {
+							bIsValidAssingment = false;
+						} else if (((new Date(oStartDate).getTime() < (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() < (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() < oAssingnment.DateTo.getTime())) {
+							bIsValidAssingment = false;
+						} else if (((new Date(oStartDate).getTime() < (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() > (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() < oAssingnment.DateTo.getTime())) {
 							bIsValidAssingment = false;
 						}
-						// check if existing assignment is partly inside the planning horizon dates
-						if((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() + nTravelTime) && (oAssingnment.DateTo.getTime() + nTravelBackTime <= oEndDate.getTime())){
-							bIsValidAssingment = false;
-						}
-						//check if existing assignment is completely inside the planning horizon
-						if((oStartDate.getTime() <= oAssingnment.DateFrom.getTime() + nTravelTime) && (oAssingnment.DateTo.getTime() + nTravelBackTime <= oEndDate.getTime())){
-							bIsValidAssingment = false;
-						}
-						//check if existing assignment has completely utilized the days capacity
-						if((oStartDate.getTime() >= oAssingnment.DateFrom.getTime() + nTravelTime) && (oAssingnment.DateTo.getTime() + nTravelBackTime >= oEndDate.getTime())){
-							bIsValidAssingment = false;
-						}
+
 
 						if (aDemandLocations.indexOf(oAssingnment.DemandGuid + "_location") === -1 && bIsValidAssingment) {
 							aListOfAssignments[oAssingnment.DemandGuid] = oAssingnment;
