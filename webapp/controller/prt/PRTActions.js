@@ -17,6 +17,7 @@ sap.ui.define([
 		oUserModel:undefined,
 		oResourceBundle:undefined,
 		_oEventBus:undefined,
+		_mParameters:undefined,
 		/**
 		 * Constructor for PRT Action
 		 * Constructor initializes reused object such as oComponent, oDataModel, oViewModel, oAppModel, oUserModel, oResourceBundle, oEventBus
@@ -31,6 +32,7 @@ sap.ui.define([
 			this.oUserModel = controller.getModel("user");
 			this.oResourceBundle = controller.getResourceBundle();
 			this._oEventBus = sap.ui.getCore().getEventBus();
+			this._mParameters = {};
 		},
 
 		/* =========================================================== */
