@@ -968,7 +968,7 @@ sap.ui.define([
 		 * @param {string} sDurationUnit - Demand duration Unit.
 		 */
 		_getDemandDurationInSeconds: function (nDuration, sDurationUnit) {
-			if (parseInt(nDuration)) {
+			if (parseFloat(nDuration)) {
 				if (sDurationUnit === 'H') {
 					return parseFloat(nDuration) * 3600;
 				} else if (sDurationUnit === 'MIN') {
