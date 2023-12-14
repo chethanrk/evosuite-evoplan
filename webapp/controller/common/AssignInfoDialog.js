@@ -380,6 +380,9 @@ sap.ui.define([
 			oModel.setProperty("/DemandGuid", oDemandData.DemandGuid);
 			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+			oModel.setProperty("/FIXED_APPOINTMENT", oDemandData.FIXED_APPOINTMENT);
+			oModel.setProperty("/FIXED_APPOINTMENT_START_DATE", oDemandData.FIXED_APPOINTMENT_START_DATE);
+			oModel.setProperty("/FIXED_APPOINTMENT_END_DATE", oDemandData.FIXED_APPOINTMENT_END_DATE);
 
 		},
 
