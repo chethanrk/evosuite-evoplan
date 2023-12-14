@@ -368,7 +368,7 @@ sap.ui.define([
 			oModel.setProperty("/RES_ASGN_START_DATE", data.RES_ASGN_START_DATE);
 			oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
 
-			var oDemandData = data.Demand;
+			var oDemandData = data;
 			oModel.setProperty("/Description", oDemandData.DemandDesc);
 			oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
 			oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
@@ -376,8 +376,8 @@ sap.ui.define([
 			oModel.setProperty("/OrderId", oDemandData.ORDERID);
 			oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
 			oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
-			oModel.setProperty("/DemandStatus", oDemandData.Status);
-			oModel.setProperty("/DemandGuid", oDemandData.Guid);
+			oModel.setProperty("/DemandStatus", oDemandData.STATUS);
+			oModel.setProperty("/DemandGuid", oDemandData.DemandGuid);
 			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
 			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
 
