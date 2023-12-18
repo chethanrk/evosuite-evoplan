@@ -831,6 +831,7 @@ sap.ui.define([
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
+				sDeepPath: "Demand",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
 				refreshParameters: bRefresh
@@ -947,7 +948,7 @@ sap.ui.define([
 		 * */
 		handleDropOnSameResource: function (assignmentPath, sResourcePath, updateParameters) {
 			var mParams = {
-				$expand: "Demand"
+				$expand: ""
 			};
 			this.getOwnerComponent()._getData(assignmentPath, null, mParams)
 				.then(function (oAssignData) {
@@ -1047,7 +1048,7 @@ sap.ui.define([
 				oTargetData = oModel.getProperty(sResourcePath);
 
 			mParams = {
-				$expand: "Demand"
+				$expand: ""
 			};
 			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
 				.then(function (oAssignData) {

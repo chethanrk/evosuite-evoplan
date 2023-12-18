@@ -584,7 +584,7 @@ sap.ui.define([
 					} else {
 						this.getModel().read("/" + sPath, {
 							urlParameters: {
-								$expand: "Demand"
+								$expand: ""
 							},
 							success: resolve,
 							error: reject
