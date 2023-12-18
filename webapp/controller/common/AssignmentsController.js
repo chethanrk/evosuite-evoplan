@@ -831,7 +831,7 @@ sap.ui.define([
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
-				sDeepPath: "Demand",
+				sDeepPath: "",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
 				refreshParameters: bRefresh
