@@ -39,6 +39,9 @@ sap.ui.define([
 			this.oDataTable.setRowActionCount(1);
 		},
 
+		/**
+		 * after rendering of view
+		 */
 		onAfterRendering:function(){
 			//to select All demands on table rebinde based on selected markers in map
 			this.getView().byId("idProcessTable").attachDataReceived(function () {
