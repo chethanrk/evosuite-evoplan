@@ -43,7 +43,7 @@ sap.ui.define([
 		 * after rendering of view
 		 */
 		onAfterRendering:function(){
-			//to select All demands on table rebinde based on selected markers in map
+			// to refresh the count for all the tabs
 			this.getView().byId("idProcessTable").attachDataReceived(function () {
 				this._refreshCounts();
 			}.bind(this));
