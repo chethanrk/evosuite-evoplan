@@ -220,6 +220,9 @@ sap.ui.define([
 						this.showMessage(oResponse);
 						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
+					if(["CreateAssignment", "UpdateAssignment", "CreateSplitStretchAssignments"].includes(sFuncName)){
+						this._updatePathAssignments(oData);
+					}
 				}.bind(this),
 				error: function (oError) {
 					//set first dragged index to set initial
@@ -229,6 +232,14 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
+		_updatePathAssignments : function(oData){
+            var sPath = "/AssignmentSet('" + oData.Guid + "')";
+            if (!this.getModel("viewModel").getProperty("/aTemplateRefresh")){
+                this.getModel("viewModel").setProperty("/aTemplateRefresh", [sPath]);
+            }else{
+                this.getModel("viewModel").getProperty("/aTemplateRefresh").push(sPath);
+            }
+        },
 		/**
 		 * @Athour Rahul
 		 * @since 3.0
