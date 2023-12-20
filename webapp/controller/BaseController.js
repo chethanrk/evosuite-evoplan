@@ -221,7 +221,7 @@ sap.ui.define([
 						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
 					if(["CreateAssignment", "UpdateAssignment", "CreateSplitStretchAssignments"].includes(sFuncName)){
-						this._updatePathAssignments(oData);
+						this.updatePathAssignments(oData);
 					}
 				}.bind(this),
 				error: function (oError) {
@@ -232,14 +232,6 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		_updatePathAssignments : function(oData){
-            var sPath = "/AssignmentSet('" + oData.Guid + "')";
-            if (!this.getModel("viewModel").getProperty("/aTemplateRefresh")){
-                this.getModel("viewModel").setProperty("/aTemplateRefresh", [sPath]);
-            }else{
-                this.getModel("viewModel").getProperty("/aTemplateRefresh").push(sPath);
-            }
-        },
 		/**
 		 * @Athour Rahul
 		 * @since 3.0
@@ -1540,7 +1532,21 @@ sap.ui.define([
 			}
 			bTemplateRefresh = mParameters.bRefreshTemplate ? false : bTemplateRefresh;
 			return bTemplateRefresh;
-		}
+		},
+		
+		/**
+		 * After assignment is created or updated, the path of the created assignment is stored in aTemplateRefresh array.
+		 * This array is checked in method getTemplateRefreshFlag and return boolean for triggering backend call when assignment is viewed
+		 * @param {object} oData 
+		 */
+		updateAssignmentPathsgit duff : function(oData){
+            var sPath = "/AssignmentSet('" + oData.Guid + "')";
+            if (!this.getModel("viewModel").getProperty("/aTemplateRefresh")){
+                this.getModel("viewModel").setProperty("/aTemplateRefresh", [sPath]);
+            }else{
+                this.getModel("viewModel").getProperty("/aTemplateRefresh").push(sPath);
+            }
+        },
 
 	});
 
