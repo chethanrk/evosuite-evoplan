@@ -221,7 +221,7 @@ sap.ui.define([
 						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
 					if(["CreateAssignment", "UpdateAssignment", "CreateSplitStretchAssignments"].includes(sFuncName)){
-						this.updatePathAssignments(oData);
+						this.updateTemplateRefreshPaths(oData);
 					}
 				}.bind(this),
 				error: function (oError) {
@@ -1539,7 +1539,7 @@ sap.ui.define([
 		 * This array is checked in method getTemplateRefreshFlag and return boolean for triggering backend call when assignment is viewed
 		 * @param {object} oData 
 		 */
-		updateAssignmentPathsgit duff : function(oData){
+		updateTemplateRefreshPaths : function(oData){
             var sPath = "/AssignmentSet('" + oData.Guid + "')";
             if (!this.getModel("viewModel").getProperty("/aTemplateRefresh")){
                 this.getModel("viewModel").setProperty("/aTemplateRefresh", [sPath]);
