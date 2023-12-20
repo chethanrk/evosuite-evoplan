@@ -91,18 +91,21 @@ sap.ui.define([
 		_refreshCounts: function (oEvent) {
 			var oCounterModel = this.getModel("messageCounter"),
 				oBinding = this.oDataTable.getBinding("rows"),
-				aAppFilters = oBinding ? oBinding.aApplicationFilters: [];
+				aAppFilters = oBinding ? oBinding.aApplicationFilters : [],
+				aFilters = [];
 			
-			if (aAppFilters.length >= 1 && aAppFilters[aAppFilters.length-1].sPath === "SyncStatus"){
-				aAppFilters.length = aAppFilters.length - 1;
+			for (var oFilter of aAppFilters) {
+				if (oFilter.sPath !== "SyncStatus") {
+					aFilters.push(oFilter);
+				}
 			}
 				
 			//Error Tab Count Call
-			this._onErrorCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "E")].concat(aAppFilters));
+			this._onErrorCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "E")].concat(aFilters));
 			//InProcess Tab Count Call
-			this._onInProcessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "Q")].concat(aAppFilters));
+			this._onInProcessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "Q")].concat(aFilters));
 			//Success Tab Count Call
-			this._onSuccessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "S")].concat(aAppFilters));
+			this._onSuccessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "S")].concat(aFilters));
 		},
 
 		/** 
@@ -114,32 +117,52 @@ sap.ui.define([
 			var oBinding = this.oDataTable.getBinding("rows"),
 				sSelectedKey = oEvent.getParameter("selectedKey"),
 				oSyncButton = this.getView().byId("idSyncButton"),
-				oFilters = [];
+				aAppFilters = oBinding ? oBinding.aApplicationFilters : [],
+				aFilters = [];
 
+			for (var oFilter of aAppFilters) {
+				if (oFilter.sPath !== "SyncStatus") {
+					aFilters.push(oFilter);
+				}
+			}
+
+			if (aAppFilters.length >= 1 && aAppFilters[aAppFilters.length - 1].sPath === "SyncStatus") {
+				aAppFilters.length = aAppFilters.length - 1;
+			}
 			if (sSelectedKey === "error") {
-				oFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				oSyncButton.setVisible(true);
 			} else if (sSelectedKey === "success") {
-				oFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
 				oSyncButton.setVisible(false);
 			} else {
-				oFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
 				oSyncButton.setVisible(true);
 			}
-			
-			oFilters.concat(oBinding.aApplicationFilters);
-			oBinding.filter(oFilters);
+			aAppFilters = aFilters;
+			this.getView().byId("idProcessTable").rebindTable()
 		},
 		/** 
 		 * Initially filtered by the error messages
 		 * @param oEvent
 		 */
 		onBeforeRebindTable: function (oEvent) {
-			var aFilters = oEvent.getParameter("bindingParams").filters;
+			var aFilters = oEvent.getParameter("bindingParams").filters,
+				oIconTab = this.getView().byId("idIconTabBar"),
+				sSelectedKey = oIconTab.getSelectedKey();
+
 			if (!this._firstTime) {
 				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				this._firstTime = true;
-			} 
+			} else {
+				if (sSelectedKey === "error") {
+					aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+				} else if (sSelectedKey === "success") {
+					aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+				} else {
+					aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+				}
+			}	
 		},
 
 		/** 
