@@ -18,11 +18,11 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this.getRouter().getRoute("messageCockpit").attachPatternMatched(this._refreshCounts, this);
-			var oDataTable = this.getView().byId("idProcessTable").getTable();
-			oDataTable.setVisibleRowCountMode("Auto");
+			this.oDataTable = this.getView().byId("idProcessTable").getTable();
+			this.oDataTable.setVisibleRowCountMode("Auto");
 			this.oComponent = this.getOwnerComponent();
 			this._oMessagePopover = this.oComponent._oMessagePopover;
-			var oTemplate = oDataTable.getRowActionTemplate();
+			var oTemplate = this.oDataTable.getRowActionTemplate();
 			if (oTemplate) {
 				oTemplate.destroy();
 				oTemplate = null;
@@ -35,8 +35,18 @@ sap.ui.define([
 					})
 				]
 			});
-			oDataTable.setRowActionTemplate(oTemplate);
-			oDataTable.setRowActionCount(1);
+			this.oDataTable.setRowActionTemplate(oTemplate);
+			this.oDataTable.setRowActionCount(1);
+		},
+
+		/**
+		 * after rendering of view
+		 */
+		onAfterRendering:function(){
+			// to refresh the count for all the tabs
+			this.getView().byId("idProcessTable").attachDataReceived(function () {
+				this._refreshCounts();
+			}.bind(this));
 		},
 		/**
 		 * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
@@ -79,13 +89,20 @@ sap.ui.define([
 		},
 
 		_refreshCounts: function (oEvent) {
-			var oCounterModel = this.getModel("messageCounter");
+			var oCounterModel = this.getModel("messageCounter"),
+				oBinding = this.oDataTable.getBinding("rows"),
+				aAppFilters = oBinding ? oBinding.aApplicationFilters: [];
+			
+			if (aAppFilters.length >= 1 && aAppFilters[aAppFilters.length-1].sPath === "SyncStatus"){
+				aAppFilters.length = aAppFilters.length - 1;
+			}
+				
 			//Error Tab Count Call
-			this._onErrorCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "E")]);
+			this._onErrorCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "E")].concat(aAppFilters));
 			//InProcess Tab Count Call
-			this._onInProcessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "Q")]);
+			this._onInProcessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "Q")].concat(aAppFilters));
 			//Success Tab Count Call
-			this._onSuccessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "S")]);
+			this._onSuccessCountCall(oCounterModel, [new Filter("SyncStatus", FilterOperator.EQ, "S")].concat(aAppFilters));
 		},
 
 		/** 
@@ -94,25 +111,24 @@ sap.ui.define([
 		 * @param sKey
 		 */
 		onSelect: function (oEvent) {
-			var oDataTable = this.getView().byId("idProcessTable").getTable(),
-				oBinding = oDataTable.getBinding("rows"),
+			var oBinding = this.oDataTable.getBinding("rows"),
 				sSelectedKey = oEvent.getParameter("selectedKey"),
-				oSyncButton = this.getView().byId("idSyncButton");
-
-			oBinding.aApplicationFilters = [];
+				oSyncButton = this.getView().byId("idSyncButton"),
+				oFilters = [];
 
 			if (sSelectedKey === "error") {
-				oBinding.filter(new Filter("SyncStatus", FilterOperator.EQ, "E"));
+				oFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				oSyncButton.setVisible(true);
 			} else if (sSelectedKey === "success") {
-				oBinding.filter(new Filter("SyncStatus", FilterOperator.EQ, "S"));
+				oFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
 				oSyncButton.setVisible(false);
 			} else {
-				oBinding.filter(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
+				oFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
 				oSyncButton.setVisible(true);
 			}
-			// Refresh message count
-			this._refreshCounts();
+			
+			oFilters.concat(oBinding.aApplicationFilters);
+			oBinding.filter(oFilters);
 		},
 		/** 
 		 * Initially filtered by the error messages
@@ -120,38 +136,10 @@ sap.ui.define([
 		 */
 		onBeforeRebindTable: function (oEvent) {
 			var aFilters = oEvent.getParameter("bindingParams").filters;
-			var oIconTab = this.getView().byId("idIconTabBar"),
-				sSelectedKey = oIconTab.getSelectedKey(),
-				oDataTable = this.getView().byId("idProcessTable").getTable(),
-				oBinding = oDataTable.getBinding("rows"),
-				mCounterModel = this.getModel("messageCounter");
-
-			// oBinding.aApplicationFilters = [];
 			if (!this._firstTime) {
 				aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
 				this._firstTime = true;
-			} else {
-				if (oBinding.aFilters.length === 0) {
-					if (sSelectedKey === "error") {
-						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "E"));
-						this._onErrorCountCall(mCounterModel, aFilters);
-					} else if (sSelectedKey === "success") {
-						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "S"));
-						this._onSuccessCountCall(mCounterModel, aFilters);
-					} else {
-						aFilters.push(new Filter("SyncStatus", FilterOperator.EQ, "Q"));
-						this._onInProcessCountCall(mCounterModel, aFilters);
-					}
-				} else {
-					if (sSelectedKey === "error") {
-						this._onErrorCountCall(mCounterModel, aFilters);
-					} else if (sSelectedKey === "success") {
-						this._onSuccessCountCall(mCounterModel, aFilters);
-					} else {
-						this._onInProcessCountCall(mCounterModel, aFilters);
-					}
-				}
-			}
+			} 
 		},
 
 		/** 
@@ -203,13 +191,12 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onClickReprocess: function (oEvent) {
-			var oDataTable = this.getView().byId("idProcessTable").getTable(),
-				aSelectedIndices = oDataTable.getSelectedIndices(),
+			var aSelectedIndices = this.oDataTable.getSelectedIndices(),
 				oModel = this.getModel(),
 				oRowContext, oRowData, aPromises = [];
 
 			for (var i in aSelectedIndices) {
-				oRowContext = oDataTable.getContextByIndex(aSelectedIndices[i]);
+				oRowContext = this.oDataTable.getContextByIndex(aSelectedIndices[i]);
 				oRowData = oModel.getProperty(oRowContext.getPath());
 				// returns the promise
 				aPromises.push(this.executeFunctionImport(oModel, {
