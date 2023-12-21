@@ -484,7 +484,7 @@ sap.ui.define([
 		getOperationDemands: function (aContexts) {
 			var aPathsData = [];
 			for (var c in aContexts) {
-				var sPath = "/" + aContexts[c].getObject().Demand.__ref;
+				var sPath = "/DemandSet('" + aContexts[c].getObject().DemandGuid + "')";
 				this.getAssignDemands(sPath).then(function (data) {
 					var oDemandObj = {
 						index: c,

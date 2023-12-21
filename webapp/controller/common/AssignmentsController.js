@@ -76,12 +76,13 @@ sap.ui.define([
 				sDemandGuids = "";
 			for (var i = 0; i < aSourcePaths.length; i++) {
 				oContext = aSourcePaths[i];
-				sPath = bIsBulkReassign ? oContext.sPath + "/Demand" : oContext.sPath;
+				// sPath = bIsBulkReassign ? oContext.sPath + "/Demand" : oContext.sPath;
+				sPath = oContext.sPath;
 				demandObj = oModel.getProperty(sPath);
 				if (sDemandGuids === "") {
-					sDemandGuids = demandObj.Guid;
+					sDemandGuids = demandObj.DemandGuid;
 				} else {
-					sDemandGuids = sDemandGuids + "//" + demandObj.Guid;
+					sDemandGuids = sDemandGuids + "//" + demandObj.DemandGuid;
 				}
 			}
 			return sDemandGuids;
