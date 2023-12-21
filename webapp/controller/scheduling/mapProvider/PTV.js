@@ -667,7 +667,7 @@ sap.ui.define([
 					// Do nothing
 				} else if (((new Date(oStartDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() < (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() > oAssingnment.DateTo.getTime())) {
 					for (var i in aWorkSchedules) {
-						if (i === moment(oAssingnment.DateFrom.getTime()).format("YYYY-M-DD")) {
+						if (i === this._getFormattedDate(oAssingnment.DateFrom).substr(0, 10)) {
 							// Adjusting operating time to assigment ovalaped planning horizon time
 							oDate = new Date(oAssingnment.DateTo.getTime() + nTravelBackTime);
 							aWorkSchedules[i].aOperationIntervals[0].start = oDate;
@@ -676,7 +676,7 @@ sap.ui.define([
 					}
 				} else if (((new Date(oStartDate).getTime() < (oAssingnment.DateFrom.getTime() - nTravelTime)) && new Date(oStartDate).getTime() < (oAssingnment.DateTo.getTime() + nTravelBackTime)) && (new Date(oEndDate).getTime() > (oAssingnment.DateFrom.getTime() - nTravelTime) && new Date(oEndDate).getTime() < oAssingnment.DateTo.getTime())) {
 					for (var i in aWorkSchedules) {
-						if (i === moment(oAssingnment.DateFrom.getTime()).format("YYYY-M-DD")) {
+						if (i === this._getFormattedDate(oAssingnment.DateFrom).substr(0, 10)) {
 							// find the difference
 							nDiff = new Date(oEndDate).getTime() - (oAssingnment.DateFrom.getTime() - nTravelTime);
 							aWorkSchedules[i].aOperationIntervals[0].duration = aWorkSchedules[i].aOperationIntervals[0].duration - (nDiff / 1000);
