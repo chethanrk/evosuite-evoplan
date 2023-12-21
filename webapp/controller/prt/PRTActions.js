@@ -229,6 +229,7 @@ sap.ui.define([
 		openToolsDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
 			var sQualifier = Constants.ANNOTATION_CONSTANTS.PRT_TOOLS_ASSIGN_DIALOG,
 			bRefresh = this.getTemplateRefreshFlag(oView, sPath, mParameters, true),
+			bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) ? false : bRefresh;
 			mParams = {
 				viewName: "com.evorait.evoplan.view.templates.ToolInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
@@ -241,7 +242,8 @@ sap.ui.define([
 				sDeepPath: null,
 				parentContext: oContext,
 				oDialogController: this.oComponent.toolInfoDialog,
-				refreshParameters: bRefresh
+				refreshParameters: bRefresh,
+				dialogRefresh: bDialogRefresh
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterToolsAssignDialogLoad.bind(this), true);
 		},
