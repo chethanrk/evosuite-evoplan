@@ -832,7 +832,6 @@ sap.ui.define([
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
-				sDeepPath: "",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
 				refreshParameters: bRefresh,
@@ -949,10 +948,7 @@ sap.ui.define([
 		 *			 updateParameters - To differentiate between Home and map screen
 		 * */
 		handleDropOnSameResource: function (assignmentPath, sResourcePath, updateParameters) {
-			var mParams = {
-				$expand: ""
-			};
-			this.getOwnerComponent()._getData(assignmentPath, null, mParams)
+			this.getOwnerComponent()._getData(assignmentPath, null)
 				.then(function (oAssignData) {
 					this._setAssignmentDetail(oAssignData, sResourcePath);
 					this.updateAssignment(false, updateParameters);
@@ -1049,10 +1045,7 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(oViewModel),
 				oTargetData = oModel.getProperty(sResourcePath);
 
-			mParams = {
-				$expand: ""
-			};
-			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
+			this.getOwnerComponent()._getData(sAssignmentPath, null)
 				.then(function (oAssignData) {
 					if (!this.checkAssigmentIsReassignable({
 							assignment: oAssignData,

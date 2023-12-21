@@ -583,9 +583,6 @@ sap.ui.define([
 						resolve(oAssignData);
 					} else {
 						this.getModel().read("/" + sPath, {
-							urlParameters: {
-								$expand: ""
-							},
 							success: resolve,
 							error: reject
 						});
