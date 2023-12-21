@@ -76,7 +76,6 @@ sap.ui.define([
 		onBeforeRebind: function (oEvent) {
 			var mBindingParams = oEvent.getParameter("bindingParams"),
 				oFilter;
-			// mBindingParams.parameters.expand = "Demand";
 			oFilter = new Filter(this._getResourceFilters(this._aSelectedResources), true);
 			mBindingParams.filters.push(oFilter);
 		},

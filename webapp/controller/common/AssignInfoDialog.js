@@ -369,20 +369,20 @@ sap.ui.define([
 			oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
 
 			var oDemandData = data;
-			oModel.setProperty("/Description", oDemandData.DemandDesc);
-			oModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
-			oModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
-			oModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
-			oModel.setProperty("/OrderId", oDemandData.ORDERID);
-			oModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
-			oModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
-			oModel.setProperty("/DemandStatus", oDemandData.STATUS);
-			oModel.setProperty("/DemandGuid", oDemandData.DemandGuid);
-			oModel.setProperty("/Notification", oDemandData.NOTIFICATION);
-			oModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
-			oModel.setProperty("/FIXED_APPOINTMENT", oDemandData.FIXED_APPOINTMENT);
-			oModel.setProperty("/FIXED_APPOINTMENT_START_DATE", oDemandData.FIXED_APPOINTMENT_START_DATE);
-			oModel.setProperty("/FIXED_APPOINTMENT_END_DATE", oDemandData.FIXED_APPOINTMENT_END_DATE);
+			oModel.setProperty("/Description", data.DemandDesc);
+			oModel.setProperty("/AllowReassign", data.ALLOW_REASSIGN);
+			oModel.setProperty("/AllowUnassign", data.ALLOW_UNASSIGN);
+			oModel.setProperty("/AllowChange", data.ASGNMNT_CHANGE_ALLOWED);
+			oModel.setProperty("/OrderId", data.ORDERID);
+			oModel.setProperty("/OperationNumber", data.OPERATIONID);
+			oModel.setProperty("/SubOperationNumber", data.SUBOPERATIONID);
+			oModel.setProperty("/DemandStatus", data.STATUS);
+			oModel.setProperty("/DemandGuid", data.DemandGuid);
+			oModel.setProperty("/Notification", data.NOTIFICATION);
+			oModel.setProperty("/objSourceType", data.OBJECT_SOURCE_TYPE);
+			oModel.setProperty("/FIXED_APPOINTMENT", data.FIXED_APPOINTMENT);
+			oModel.setProperty("/FIXED_APPOINTMENT_START_DATE", data.FIXED_APPOINTMENT_START_DATE);
+			oModel.setProperty("/FIXED_APPOINTMENT_END_DATE", data.FIXED_APPOINTMENT_END_DATE);
 
 		},
 
