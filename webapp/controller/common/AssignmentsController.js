@@ -73,15 +73,17 @@ sap.ui.define([
 			var oContext,
 				sPath,
 				demandObj,
-				sDemandGuids = "";
+				sDemandGuids = "",
+				sGuidProp="";
 			for (var i = 0; i < aSourcePaths.length; i++) {
 				oContext = aSourcePaths[i];
 				sPath = oContext.sPath;
+				sGuidProp = bIsBulkReassign ? "DemandGuid" : "Guid"
 				demandObj = oModel.getProperty(sPath);
 				if (sDemandGuids === "") {
-					sDemandGuids = demandObj.DemandGuid;
+					sDemandGuids = demandObj[sGuidProp];
 				} else {
-					sDemandGuids = sDemandGuids + "//" + demandObj.DemandGuid;
+					sDemandGuids = sDemandGuids + "//" + demandObj[sGuidProp];
 				}
 			}
 			return sDemandGuids;
