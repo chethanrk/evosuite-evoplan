@@ -822,6 +822,7 @@ sap.ui.define([
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
 			}
+			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) ? false : bRefresh;
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
@@ -834,7 +835,8 @@ sap.ui.define([
 				sDeepPath: "",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
-				refreshParameters: bRefresh
+				refreshParameters: bRefresh,
+				dialogRefresh: bDialogRefresh
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
