@@ -76,7 +76,6 @@ sap.ui.define([
 		onBeforeRebind: function (oEvent) {
 			var mBindingParams = oEvent.getParameter("bindingParams"),
 				oFilter;
-			mBindingParams.parameters.expand = "Demand";
 			oFilter = new Filter(this._getResourceFilters(this._aSelectedResources), true);
 			mBindingParams.filters.push(oFilter);
 		},
@@ -376,9 +375,9 @@ sap.ui.define([
 						this.selectAllSplitAssignments(oContext, oEvent.getSource().getItems(), false);
 					} else {
 						if (!this._isUnAssign) {
-							bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_REASSIGN");
+							bFlag = oModel.getProperty(sPath + "/ALLOW_REASSIGN");
 						} else {
-							bFlag = oModel.getProperty(sPath + "/Demand/ALLOW_UNASSIGN");
+							bFlag = oModel.getProperty(sPath + "/ALLOW_UNASSIGN");
 						}
 						oListItem.setSelected(bFlag);
 					}
@@ -484,7 +483,7 @@ sap.ui.define([
 		getOperationDemands: function (aContexts) {
 			var aPathsData = [];
 			for (var c in aContexts) {
-				var sPath = "/" + aContexts[c].getObject().Demand.__ref;
+				var sPath = "/DemandSet('" + aContexts[c].getObject().DemandGuid + "')";
 				this.getAssignDemands(sPath).then(function (data) {
 					var oDemandObj = {
 						index: c,

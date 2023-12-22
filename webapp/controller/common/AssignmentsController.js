@@ -73,15 +73,17 @@ sap.ui.define([
 			var oContext,
 				sPath,
 				demandObj,
-				sDemandGuids = "";
+				sDemandGuids = "",
+				sGuidProp="";
 			for (var i = 0; i < aSourcePaths.length; i++) {
 				oContext = aSourcePaths[i];
-				sPath = bIsBulkReassign ? oContext.sPath + "/Demand" : oContext.sPath;
+				sPath = oContext.sPath;
+				sGuidProp = bIsBulkReassign ? "DemandGuid" : "Guid"
 				demandObj = oModel.getProperty(sPath);
 				if (sDemandGuids === "") {
-					sDemandGuids = demandObj.Guid;
+					sDemandGuids = demandObj[sGuidProp];
 				} else {
-					sDemandGuids = sDemandGuids + "//" + demandObj.Guid;
+					sDemandGuids = sDemandGuids + "//" + demandObj[sGuidProp];
 				}
 			}
 			return sDemandGuids;
@@ -447,6 +449,9 @@ sap.ui.define([
 				return;
 			}
 
+			//calling DemandSet to fetch the demand data
+			
+
 			oParams = {
 				DateFrom: oData.DateFrom || 0,
 				TimeFrom: oData.TimeFrom || {
@@ -479,12 +484,12 @@ sap.ui.define([
 
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
 
-			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && (bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+			bShowFixedAppointmentDialog = oData.FIXED_APPOINTMENT && (bShowFutureFixedAssignments && oParams.DateFrom < oData.FIXED_APPOINTMENT_START_DATE ||
+				oParams.DateFrom > oData.FIXED_APPOINTMENT_START_DATE ||
+				oParams.DateFrom > oData.FIXED_APPOINTMENT_LAST_DATE);
 
 			if (bShowFixedAppointmentDialog) {
-				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oData]);
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
 			} else {
 				if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
@@ -494,6 +499,8 @@ sap.ui.define([
 					this.checkQualificationUpdate(oData, oParams, mParameters);
 				}
 			}
+
+			
 		},
 		/**
 		 * Calls the update assignment function import for selected assignment in order to
@@ -817,6 +824,7 @@ sap.ui.define([
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
 			}
+			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) ? false : bRefresh; //Always refresh when view is Gantt
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
@@ -826,10 +834,10 @@ sap.ui.define([
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
-				sDeepPath: "Demand",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
-				refreshParameters: bRefresh
+				refreshParameters: bRefresh,
+				dialogRefresh: bDialogRefresh
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
@@ -942,10 +950,7 @@ sap.ui.define([
 		 *			 updateParameters - To differentiate between Home and map screen
 		 * */
 		handleDropOnSameResource: function (assignmentPath, sResourcePath, updateParameters) {
-			var mParams = {
-				$expand: "Demand"
-			};
-			this.getOwnerComponent()._getData(assignmentPath, null, mParams)
+			this.getOwnerComponent()._getData(assignmentPath, null)
 				.then(function (oAssignData) {
 					this._setAssignmentDetail(oAssignData, sResourcePath);
 					this.updateAssignment(false, updateParameters);
@@ -1042,10 +1047,7 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(oViewModel),
 				oTargetData = oModel.getProperty(sResourcePath);
 
-			mParams = {
-				$expand: "Demand"
-			};
-			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
+			this.getOwnerComponent()._getData(sAssignmentPath, null)
 				.then(function (oAssignData) {
 					if (!this.checkAssigmentIsReassignable({
 							assignment: oAssignData,

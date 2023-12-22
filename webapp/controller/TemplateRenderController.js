@@ -246,7 +246,7 @@ sap.ui.define([
 						}
 						if (callbackfn2) {
 							//Refreshing only when the dirty parameter is != true, for avoiding multiple calls when a template is rendered
-							if(!mParams.refreshParameters){
+							if(!mParams.refreshParameters || !mParams.dialogRefresh){
 								oEvent.getSource().refresh();	
 							}
 							callbackfn2("change", null, mParams);
