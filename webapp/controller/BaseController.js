@@ -220,7 +220,7 @@ sap.ui.define([
 						this.showMessage(oResponse);
 						this.afterUpdateOperations(mParameters, oParams, oData);
 					}
-					if(["CreateAssignment", "UpdateAssignment", "CreateSplitStretchAssignments"].includes(sFuncName)){
+					if(["CreateAssignment", "UpdateAssignment", "CreateSplitStretchAssignments"].indexOf(sFuncName) !== -1){
 						this.updateTemplateRefreshPaths(oData);
 					}
 				}.bind(this),
