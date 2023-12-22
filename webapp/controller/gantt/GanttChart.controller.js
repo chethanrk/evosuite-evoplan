@@ -1747,7 +1747,7 @@ sap.ui.define([
 				}
 
 				//is re-assign allowed
-				if ((this.mRequestTypes.reassign === sType && !oData.Demand.ALLOW_REASSIGN) || (this.mRequestTypes.update === sType && !oData.ASGNMNT_CHANGE_ALLOWED)) {
+				if ((this.mRequestTypes.reassign === sType && !oData.ALLOW_REASSIGN) || (this.mRequestTypes.update === sType && !oData.ASGNMNT_CHANGE_ALLOWED)) {
 					sDisplayMessage = this.getResourceBundle().getText("reAssignFailMsg");
 					this.showAssignErrorDialog([this.getMessageDescWithOrderID(oData, oData.Description)], null, sDisplayMessage);
 					this._resetChanges(sPath);
