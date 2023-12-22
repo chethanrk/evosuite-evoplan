@@ -368,7 +368,6 @@ sap.ui.define([
 			oModel.setProperty("/RES_ASGN_START_DATE", data.RES_ASGN_START_DATE);
 			oModel.setProperty("/RES_ASGN_END_DATE", data.RES_ASGN_END_DATE);
 
-			var oDemandData = data;
 			oModel.setProperty("/Description", data.DemandDesc);
 			oModel.setProperty("/AllowReassign", data.ALLOW_REASSIGN);
 			oModel.setProperty("/AllowUnassign", data.ALLOW_UNASSIGN);

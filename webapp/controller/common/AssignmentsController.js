@@ -824,7 +824,7 @@ sap.ui.define([
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
 			}
-			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) ? false : bRefresh;
+			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) ? false : bRefresh; //Always refresh when view is Gantt
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
