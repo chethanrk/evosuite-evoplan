@@ -435,7 +435,6 @@ sap.ui.define([
 				sAssignmentGUID = oData.AssignmentGuid,
 				sDisplayMessage,
 				oResource,
-				oDemandObj = this.getModel().getProperty("/DemandSet('" + oData.DemandGuid + "')"),
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				bShowFixedAppointmentDialog, oParams;
 
@@ -446,6 +445,7 @@ sap.ui.define([
 				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
 					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
 				}
+				this.getModel("appView").setProperty("/busy", false);
 				return;
 			}
 
@@ -492,6 +492,7 @@ sap.ui.define([
 				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oData]);
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
 			} else {
+				this.getModel("appView").setProperty("/busy", false);
 				if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 					this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 				} else {
@@ -929,13 +930,13 @@ sap.ui.define([
 		checkAssigmentIsReassignable: function (mParameters) {
 			var oAssignmentData = mParameters.assignment,
 				oResourceData = mParameters.resource,
-				oDemandData = oAssignmentData.Demand,
 				oResourceBundle = this.getResourceBundle();
+
 			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid &&
-				!oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+				!oAssignmentData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotchangeable"));
 				return false;
-			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
+			} else if (!oAssignmentData.ASGNMNT_CHANGE_ALLOWED || !oAssignmentData.ALLOW_REASSIGN) { // validation for reassign
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotreassignable"));
 				return false;
 			}
@@ -1014,18 +1015,17 @@ sap.ui.define([
 			//Fetching Resource Start and End Date from AssignmentSet for validating on save
 			oAssignmentModel.setProperty("/RES_ASGN_START_DATE", oAssignData.RES_ASGN_START_DATE);
 			oAssignmentModel.setProperty("/RES_ASGN_END_DATE", oAssignData.RES_ASGN_END_DATE);
-			oDemandData = oAssignData.Demand;
-			oAssignmentModel.setProperty("/Description", oDemandData.DemandDesc);
-			oAssignmentModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
-			oAssignmentModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
-			oAssignmentModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
-			oAssignmentModel.setProperty("/OrderId", oDemandData.ORDERID);
-			oAssignmentModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
-			oAssignmentModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
-			oAssignmentModel.setProperty("/DemandStatus", oDemandData.Status);
-			oAssignmentModel.setProperty("/DemandGuid", oDemandData.Guid);
-			oAssignmentModel.setProperty("/Notification", oDemandData.NOTIFICATION);
-			oAssignmentModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+			oAssignmentModel.setProperty("/Description", oAssignData.DemandDesc);
+			oAssignmentModel.setProperty("/AllowReassign", oAssignData.ALLOW_REASSIGN);
+			oAssignmentModel.setProperty("/AllowUnassign", oAssignData.ALLOW_UNASSIGN);
+			oAssignmentModel.setProperty("/AllowChange", oAssignData.ASGNMNT_CHANGE_ALLOWED);
+			oAssignmentModel.setProperty("/OrderId", oAssignData.ORDERID);
+			oAssignmentModel.setProperty("/OperationNumber", oAssignData.OPERATIONID);
+			oAssignmentModel.setProperty("/SubOperationNumber", oAssignData.SUBOPERATIONID);
+			oAssignmentModel.setProperty("/DemandStatus", oAssignData.Status);
+			oAssignmentModel.setProperty("/DemandGuid", oAssignData.Guid);
+			oAssignmentModel.setProperty("/Notification", oAssignData.NOTIFICATION);
+			oAssignmentModel.setProperty("/objSourceType", oAssignData.OBJECT_SOURCE_TYPE);
 		},
 
 		/**
@@ -1052,7 +1052,8 @@ sap.ui.define([
 					if (!this.checkAssigmentIsReassignable({
 							assignment: oAssignData,
 							resource: oTargetData
-						})) {
+					})) {
+						this.getModel("appView").setProperty("/busy", false);
 						return false;
 					}
 					this.getOwnerComponent().assignTreeDialog._assignPath = sResourcePath;
@@ -1063,13 +1064,16 @@ sap.ui.define([
 					if (aSources) {
 						//Checking PS Demands for Network Assignment 
 						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+							this.getModel("appView").setProperty("/busy", false);
 							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, null);
 						} //Checking Vendor Assignment for External Resources
 						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 							iVendorAssignmentLen) {
+							this.getModel("appView").setProperty("/busy", false);
 							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, null);
 						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
 							"RESOURCE") {
+							this.getModel("appView").setProperty("/busy", false);
 							//Checking Operation Times
 							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sResourcePath);
 						} else {
