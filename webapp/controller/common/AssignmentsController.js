@@ -791,7 +791,7 @@ sap.ui.define([
 			return aOperationTimes.length;
 		},
 
-		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext, bIsFromAssignmentList) {
 			if (this.getOwnerComponent()) {
 				this.oComponent = this.getOwnerComponent();
 			} else {
@@ -803,19 +803,19 @@ sap.ui.define([
 				if (bIsPRT) {
 					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
-					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList);
 				}
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
 				if (oDemandContext.IS_PRT) {
 					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
-					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList);
 				}
 			}
 		},
 
-		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
+		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList) {
 			var sQualifier, 
 			bRefresh = this.getTemplateRefreshFlag(oView, sPath, mParameters, false);
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
@@ -825,7 +825,7 @@ sap.ui.define([
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
 			}
-			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt) ? false : bRefresh; //Always refresh when view is Gantt
+			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt || bIsFromAssignmentList) ? false : bRefresh; //Always refresh when view is Gantt
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
