@@ -28,7 +28,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var sTargetPath = oData.NewAssignPath ? oData.NewAssignPath : oChanges.OldAssignPath;
 				var oTargetData = this.oGanttModel.getProperty(sTargetPath);
-				this._sendCheckQualification(null, oTargetData, oData.DateFrom, oData.DateTo, [oData.Demand.Guid], null).then(resolve, reject);
+				this._sendCheckQualification(null, oTargetData, oData.DateFrom, oData.DateTo, [oData.DemandGuid], null).then(resolve, reject);
 			}.bind(this));
 		},
 
