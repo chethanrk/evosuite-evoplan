@@ -849,7 +849,7 @@ sap.ui.define([
 				if (this._mParameters && this._mParameters.bFromPlannCal) {
 					data = mParams.parentContext.getObject();
 				}
-				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, this._mParameters, sPath, data);
 			}
 		},
 
