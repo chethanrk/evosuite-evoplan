@@ -73,15 +73,17 @@ sap.ui.define([
 			var oContext,
 				sPath,
 				demandObj,
-				sDemandGuids = "";
+				sDemandGuids = "",
+				sGuidProp="";
 			for (var i = 0; i < aSourcePaths.length; i++) {
 				oContext = aSourcePaths[i];
-				sPath = bIsBulkReassign ? oContext.sPath + "/Demand" : oContext.sPath;
+				sPath = oContext.sPath;
+				sGuidProp = bIsBulkReassign ? "DemandGuid" : "Guid"
 				demandObj = oModel.getProperty(sPath);
 				if (sDemandGuids === "") {
-					sDemandGuids = demandObj.Guid;
+					sDemandGuids = demandObj[sGuidProp];
 				} else {
-					sDemandGuids = sDemandGuids + "//" + demandObj.Guid;
+					sDemandGuids = sDemandGuids + "//" + demandObj[sGuidProp];
 				}
 			}
 			return sDemandGuids;
@@ -433,7 +435,6 @@ sap.ui.define([
 				sAssignmentGUID = oData.AssignmentGuid,
 				sDisplayMessage,
 				oResource,
-				oDemandObj = this.getModel().getProperty("/DemandSet('" + oData.DemandGuid + "')"),
 				bShowFutureFixedAssignments = this.getModel("user").getProperty("/ENABLE_FIXED_APPT_FUTURE_DATE"),
 				bShowFixedAppointmentDialog, oParams;
 
@@ -444,8 +445,12 @@ sap.ui.define([
 				if (mParameters.bCustomBusy && (mParameters.bFromNewGantt || mParameters.bFromNewGanttSplit)) {
 					this._oView.getModel("ganttModel").setProperty(mParameters.sSourcePath + "/busy", false);
 				}
+				this.getModel("appView").setProperty("/busy", false);
 				return;
 			}
+
+			//calling DemandSet to fetch the demand data
+			
 
 			oParams = {
 				DateFrom: oData.DateFrom || 0,
@@ -479,14 +484,15 @@ sap.ui.define([
 
 			//Condition added and Method is modified for fixed Appointments			// since Release/2201
 
-			bShowFixedAppointmentDialog = oDemandObj.FIXED_APPOINTMENT && (bShowFutureFixedAssignments && oParams.DateFrom < oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_START_DATE ||
-				oParams.DateFrom > oDemandObj.FIXED_APPOINTMENT_LAST_DATE);
+			bShowFixedAppointmentDialog = oData.FIXED_APPOINTMENT && (bShowFutureFixedAssignments && oParams.DateFrom < oData.FIXED_APPOINTMENT_START_DATE ||
+				oParams.DateFrom > oData.FIXED_APPOINTMENT_START_DATE ||
+				oParams.DateFrom > oData.FIXED_APPOINTMENT_LAST_DATE);
 
 			if (bShowFixedAppointmentDialog) {
-				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oDemandObj]);
+				this.getModel("viewModel").setProperty("/aFixedAppointmentsList", [oData]);
 				this.getOwnerComponent().FixedAppointmentsList.open(this.getView(), oParams, [], mParameters, "reAssign", isReassign);
 			} else {
+				this.getModel("appView").setProperty("/busy", false);
 				if (isReassign && oData.NewAssignPath && !this.isAvailable(oData.NewAssignPath)) {
 					this.showMessageToProceed(null, null, null, null, true, oParams, mParameters);
 				} else {
@@ -494,6 +500,8 @@ sap.ui.define([
 					this.checkQualificationUpdate(oData, oParams, mParameters);
 				}
 			}
+
+			
 		},
 		/**
 		 * Calls the update assignment function import for selected assignment in order to
@@ -783,7 +791,7 @@ sap.ui.define([
 			return aOperationTimes.length;
 		},
 
-		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext) {
+		openAssignInfoDialog: function (oView, sPath, oContext, mParameters, oDemandContext, bIsFromAssignmentList) {
 			if (this.getOwnerComponent()) {
 				this.oComponent = this.getOwnerComponent();
 			} else {
@@ -795,20 +803,21 @@ sap.ui.define([
 				if (bIsPRT) {
 					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
-					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList);
 				}
 			} else {
 				var sObjectSourceType = oDemandContext.OBJECT_SOURCE_TYPE;
 				if (oDemandContext.IS_PRT) {
 					this.oPRTActions.openToolsInfoDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
 				} else {
-					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType);
+					this.openDialog(oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList);
 				}
 			}
 		},
 
-		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType) {
-			var sQualifier;
+		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList) {
+			var sQualifier, 
+			bRefresh = this.getTemplateRefreshFlag(oView, sPath, mParameters, false);
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
 			} else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
@@ -816,6 +825,7 @@ sap.ui.define([
 			} else {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.ORDER_QUALIFIER;
 			}
+			var bDialogRefresh = (mParameters.bFromNewGanttSplit || mParameters.bFromNewGantt || bIsFromAssignmentList) ? false : bRefresh; //Always refresh when view is Gantt
 			var mParams = {
 				viewName: "com.evorait.evoplan.view.templates.AssignInfoDialog#" + sQualifier,
 				annotationPath: "com.sap.vocabularies.UI.v1.Facets#" + sQualifier,
@@ -825,10 +835,10 @@ sap.ui.define([
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
-				sDeepPath: "Demand",
 				parentContext: oContext,
 				oDialogController: this.oComponent.assignInfoDialog,
-				refreshParameters: mParameters
+				refreshParameters: bRefresh,
+				dialogRefresh: bDialogRefresh
 			};
 			this.oComponent.DialogTemplateRenderer.open(oView, mParams, this._afterDialogLoad.bind(this));
 		},
@@ -839,7 +849,7 @@ sap.ui.define([
 				if (this._mParameters && this._mParameters.bFromPlannCal) {
 					data = mParams.parentContext.getObject();
 				}
-				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, mParams.refreshParameters, sPath, data);
+				this.oComponent.assignInfoDialog.onOpen(oDialog, oView, null, null, this._mParameters, sPath, data);
 			}
 		},
 
@@ -920,13 +930,13 @@ sap.ui.define([
 		checkAssigmentIsReassignable: function (mParameters) {
 			var oAssignmentData = mParameters.assignment,
 				oResourceData = mParameters.resource,
-				oDemandData = oAssignmentData.Demand,
 				oResourceBundle = this.getResourceBundle();
+
 			if (oAssignmentData.ResourceGroupGuid === oResourceData.ResourceGroupGuid && oAssignmentData.ResourceGuid === oResourceData.ResourceGuid &&
-				!oDemandData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
+				!oAssignmentData.ASGNMNT_CHANGE_ALLOWED) { // validation for change
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotchangeable"));
 				return false;
-			} else if (!oDemandData.ASGNMNT_CHANGE_ALLOWED || !oDemandData.ALLOW_REASSIGN) { // validation for reassign
+			} else if (!oAssignmentData.ASGNMNT_CHANGE_ALLOWED || !oAssignmentData.ALLOW_REASSIGN) { // validation for reassign
 				this.showMessageToast(oResourceBundle.getText("ymsg.assignmentnotreassignable"));
 				return false;
 			}
@@ -941,10 +951,7 @@ sap.ui.define([
 		 *			 updateParameters - To differentiate between Home and map screen
 		 * */
 		handleDropOnSameResource: function (assignmentPath, sResourcePath, updateParameters) {
-			var mParams = {
-				$expand: "Demand"
-			};
-			this.getOwnerComponent()._getData(assignmentPath, null, mParams)
+			this.getOwnerComponent()._getData(assignmentPath, null)
 				.then(function (oAssignData) {
 					this._setAssignmentDetail(oAssignData, sResourcePath);
 					this.updateAssignment(false, updateParameters);
@@ -1008,18 +1015,17 @@ sap.ui.define([
 			//Fetching Resource Start and End Date from AssignmentSet for validating on save
 			oAssignmentModel.setProperty("/RES_ASGN_START_DATE", oAssignData.RES_ASGN_START_DATE);
 			oAssignmentModel.setProperty("/RES_ASGN_END_DATE", oAssignData.RES_ASGN_END_DATE);
-			oDemandData = oAssignData.Demand;
-			oAssignmentModel.setProperty("/Description", oDemandData.DemandDesc);
-			oAssignmentModel.setProperty("/AllowReassign", oDemandData.ALLOW_REASSIGN);
-			oAssignmentModel.setProperty("/AllowUnassign", oDemandData.ALLOW_UNASSIGN);
-			oAssignmentModel.setProperty("/AllowChange", oDemandData.ASGNMNT_CHANGE_ALLOWED);
-			oAssignmentModel.setProperty("/OrderId", oDemandData.ORDERID);
-			oAssignmentModel.setProperty("/OperationNumber", oDemandData.OPERATIONID);
-			oAssignmentModel.setProperty("/SubOperationNumber", oDemandData.SUBOPERATIONID);
-			oAssignmentModel.setProperty("/DemandStatus", oDemandData.Status);
-			oAssignmentModel.setProperty("/DemandGuid", oDemandData.Guid);
-			oAssignmentModel.setProperty("/Notification", oDemandData.NOTIFICATION);
-			oAssignmentModel.setProperty("/objSourceType", oDemandData.OBJECT_SOURCE_TYPE);
+			oAssignmentModel.setProperty("/Description", oAssignData.DemandDesc);
+			oAssignmentModel.setProperty("/AllowReassign", oAssignData.ALLOW_REASSIGN);
+			oAssignmentModel.setProperty("/AllowUnassign", oAssignData.ALLOW_UNASSIGN);
+			oAssignmentModel.setProperty("/AllowChange", oAssignData.ASGNMNT_CHANGE_ALLOWED);
+			oAssignmentModel.setProperty("/OrderId", oAssignData.ORDERID);
+			oAssignmentModel.setProperty("/OperationNumber", oAssignData.OPERATIONID);
+			oAssignmentModel.setProperty("/SubOperationNumber", oAssignData.SUBOPERATIONID);
+			oAssignmentModel.setProperty("/DemandStatus", oAssignData.Status);
+			oAssignmentModel.setProperty("/DemandGuid", oAssignData.Guid);
+			oAssignmentModel.setProperty("/Notification", oAssignData.NOTIFICATION);
+			oAssignmentModel.setProperty("/objSourceType", oAssignData.OBJECT_SOURCE_TYPE);
 		},
 
 		/**
@@ -1041,15 +1047,13 @@ sap.ui.define([
 				aPSDemandsNetworkAssignment = this._showNetworkAssignments(oViewModel),
 				oTargetData = oModel.getProperty(sResourcePath);
 
-			mParams = {
-				$expand: "Demand"
-			};
-			this.getOwnerComponent()._getData(sAssignmentPath, null, mParams)
+			this.getOwnerComponent()._getData(sAssignmentPath, null)
 				.then(function (oAssignData) {
 					if (!this.checkAssigmentIsReassignable({
 							assignment: oAssignData,
 							resource: oTargetData
-						})) {
+					})) {
+						this.getModel("appView").setProperty("/busy", false);
 						return false;
 					}
 					this.getOwnerComponent().assignTreeDialog._assignPath = sResourcePath;
@@ -1060,13 +1064,16 @@ sap.ui.define([
 					if (aSources) {
 						//Checking PS Demands for Network Assignment 
 						if (oUserModel.getProperty("/ENABLE_NETWORK_ASSIGNMENT") && aPSDemandsNetworkAssignment.length !== 0) {
+							this.getModel("appView").setProperty("/busy", false);
 							this.getOwnerComponent().NetworkAssignment.open(this.getView(), sResourcePath, aPSDemandsNetworkAssignment, null);
 						} //Checking Vendor Assignment for External Resources
 						else if (oUserModel.getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && oTargetData.ISEXTERNAL && aSources.length !==
 							iVendorAssignmentLen) {
+							this.getModel("appView").setProperty("/busy", false);
 							this.getOwnerComponent().VendorAssignment.open(this.getView(), sResourcePath, null);
 						} else if (oUserModel.getProperty("/ENABLE_ASGN_DATE_VALIDATION") && iOperationTimesLen !== aSources.length && oTargetData.NodeType ===
 							"RESOURCE") {
+							this.getModel("appView").setProperty("/busy", false);
 							//Checking Operation Times
 							this.getOwnerComponent().OperationTimeCheck.open(this.getView(), null, sResourcePath);
 						} else {

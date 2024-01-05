@@ -4,11 +4,11 @@
 			<core:CustomData key="Path" value="{viewModel>/ganttSettings/shapeData/sPath}"/>
 		</u:customData>
 		<u:MenuItem text="{i18n>xbut.buttonChange}"
-			visible="{=${viewModel>/ganttSettings/shapeData/IS_PRT} || ${viewModel>/ganttSettings/shapeData/Demand/ASGNMNT_CHANGE_ALLOWED}}"/>
+			visible="{=${viewModel>/ganttSettings/shapeData/IS_PRT} || ${viewModel>/ganttSettings/shapeData/ASGNMNT_CHANGE_ALLOWED}}"/>
 		<u:MenuItem text="{i18n>xbut.buttonUnassign}"
-			visible="{=${viewModel>/ganttSettings/shapeData/IS_PRT} || ${viewModel>/ganttSettings/shapeData/Demand/ALLOW_UNASSIGN}}"/>
+			visible="{=${viewModel>/ganttSettings/shapeData/IS_PRT} || ${viewModel>/ganttSettings/shapeData/ALLOW_UNASSIGN}}"/>
 		<u:MenuItem text="{i18n>xbut.buttonReassign}"
-			visible="{=${viewModel>/ganttSettings/shapeData/PRT_ASSIGNMENT_TYPE} === 'PRTASGN' || ${viewModel>/ganttSettings/shapeData/Demand/ALLOW_REASSIGN}}"/>
+			visible="{=${viewModel>/ganttSettings/shapeData/PRT_ASSIGNMENT_TYPE} === 'PRTASGN' || ${viewModel>/ganttSettings/shapeData/ALLOW_REASSIGN}}"/>
 		<u:MenuItem text="{i18n>xbut.buttonExecuteFunction}"
 			visible="{=${user>/ENABLE_SET_FUNCTION} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}"/>
 		<u:MenuItem text="{i18n>xbut.showRelationships}"
@@ -39,59 +39,59 @@
 			</u:Menu>
 		</u:MenuItem>
 		<u:MenuItem text="{i18n>xbut.changeStatus}"
-			visible="{= ${viewModel>/ganttSettings/shapeData/DEMAND_STATUS}!=='' &amp;&amp; ${user>/ENABLE_CHANGE_STATUS} &amp;&amp; !${user>/ENABLE_ASSIGNMENT_STATUS} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}">
+			visible="{= ${viewModel>/ganttSettings/shapeData/DEMAND_STATUS}!=='' &amp;&amp; ${user>/ENABLE_CHANGE_STATUS} &amp;&amp; !${user>/ENABLE_ASSIGNMENT_STATUS} &amp;&amp; ${viewModel>/ganttSettings/shapeData/ASGNMNT_CHANGE_ALLOWED} &amp;&amp; !${viewModel>/ganttSettings/shapeData/IS_PRT}}">
 			<u:Menu itemSelect="handleStatusItemPress">
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.ack}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_ACKNOWLDGE}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.ack}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_ACKNOWLDGE}">
 					<u:customData>
 						<core:CustomData key="Function" value="ACKNOWLDGE"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.app}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_APPOINTMNT}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.app}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_APPOINTMNT}">
 					<u:customData>
 						<core:CustomData key="Function" value="APPOINTMNT"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.buttonClose}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_CLOSED}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.buttonClose}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_CLOSED}">
 					<u:customData>
 						<core:CustomData key="Function" value="CLOSED"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://complete" text="{i18n>xbut.comp}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_COMPLETE}">
+				<u:MenuItem icon="sap-icon://complete" text="{i18n>xbut.comp}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_COMPLETE}">
 					<u:customData>
 						<core:CustomData key="Function" value="COMPLETE"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://ipad" text="{i18n>xbut.tranMob}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_DEM_MOBILE}">
+				<u:MenuItem icon="sap-icon://ipad" text="{i18n>xbut.tranMob}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_DEM_MOBILE}">
 					<u:customData>
 						<core:CustomData key="Function" value="DEM_MOBILE"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.disp}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_DISPATCHED}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.disp}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_DISPATCHED}">
 					<u:customData>
 						<core:CustomData key="Function" value="DISPATCHED"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://shipping-status" text="{i18n>xbut.enroute}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_ENROUTE}">
+				<u:MenuItem icon="sap-icon://shipping-status" text="{i18n>xbut.enroute}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_ENROUTE}">
 					<u:customData>
 						<core:CustomData key="Function" value="ENROUTE"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.inComp}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_INCOMPLETE}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.inComp}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_INCOMPLETE}">
 					<u:customData>
 						<core:CustomData key="Function" value="INCOMPLETE"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.onhold}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_ONHOLD}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.onhold}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_ONHOLD}">
 					<u:customData>
 						<core:CustomData key="Function" value="ONHOLD"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.reject}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_REJECT}">
+				<u:MenuItem icon="sap-icon://email" text="{i18n>xbut.reject}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_REJECT}">
 					<u:customData>
 						<core:CustomData key="Function" value="REJECT"/>
 					</u:customData>
 				</u:MenuItem>
-				<u:MenuItem icon="sap-icon://begin" text="{i18n>xbut.start}" visible="{viewModel>/ganttSettings/shapeData/Demand/ALLOW_STARTED}">
+				<u:MenuItem icon="sap-icon://begin" text="{i18n>xbut.start}" visible="{viewModel>/ganttSettings/shapeData/ALLOW_STARTED}">
 					<u:customData>
 						<core:CustomData key="Function" value="STARTED"/>
 					</u:customData>

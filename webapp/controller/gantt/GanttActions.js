@@ -254,6 +254,8 @@ sap.ui.define([
 							ResourceGroupGuid: targetObj.ResourceGroupGuid,
 							ResourceGuid: targetObj.ResourceGuid
 						};
+					this.bIsFixedTime = false;
+						
 					// When we drop on the Gantt chart directly
 					if (oTargetDate) {
 						oParams.DateFrom = oTargetDate;
@@ -288,6 +290,7 @@ sap.ui.define([
 						oParams.TimeFrom.ms = oParams.DateFrom.getTime();
 						oParams.DateTo = formatter.mergeDateTime(aGanttDemandDragged.oData.FIXED_ASSGN_END_DATE, aGanttDemandDragged.oData.FIXED_ASSGN_END_TIME);
 						oParams.TimeTo.ms = oParams.DateTo.getTime();
+						this.bIsFixedTime = true;
 					}
 					//Cost Element, Estimate and Currency fields update for Vendor Assignment
 					if (this.getModel("user").getProperty("/ENABLE_EXTERNAL_ASSIGN_DIALOG") && targetObj.ISEXTERNAL && aGanttDemandDragged.oData.ALLOW_ASSIGNMENT_DIALOG) {
@@ -311,6 +314,11 @@ sap.ui.define([
 						oParams.DateTo = oDemandObj.FIXED_APPOINTMENT_END_DATE;
 						oParams.TimeTo = {};
 						oParams.TimeTo.ms = oDemandObj.FIXED_APPOINTMENT_END_DATE ? oDemandObj.FIXED_APPOINTMENT_END_DATE.getTime() : 0;
+						this.bIsFixedTime = true;
+					}
+
+					if (this.bDroppedOnGantt && !this.bIsFixedTime){
+						oParams.GanttCall = true;
 					}
 
 					// if global config enabled for split assignments
@@ -575,9 +583,6 @@ sap.ui.define([
 						resolve(oAssignData);
 					} else {
 						this.getModel().read("/" + sPath, {
-							urlParameters: {
-								$expand: "Demand"
-							},
 							success: resolve,
 							error: reject
 						});
@@ -603,6 +608,8 @@ sap.ui.define([
 
 			var fnDeleteAssignment = function () {
 				this.deleteAssignment(oModel, sAssignGuid).then(function () {
+					//check if demand contains multiple assignments to refresh the other resources
+					this.checkMultipleAssignmentsOfDemand(oGanttModel.getProperty(sPath).DemandGuid, oGanttModel.getProperty(sPath).ObjectId, "delete");
 					oGanttModel.setProperty(sPath + "/busy", false);
 					this.getModel("ganttModel").setProperty(sPath, null);
 					this.getModel("ganttOriginalData").setProperty(sPath, null);

@@ -194,7 +194,6 @@ sap.ui.define([
 					filters: aFilters,
 					groupId: sGroupId || "",
 					urlParameters: mUrlParams || {},
-					groupId: sGroupId || "",
 					success: function (oData, oResponse) {
 						resolve(oData);
 					},

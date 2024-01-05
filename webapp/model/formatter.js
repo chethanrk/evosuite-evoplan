@@ -1186,6 +1186,46 @@ sap.ui.define([
 				pattern: sTimePattern			
 			});
 			return (sTimePatternCode === "1" || sTimePatternCode === "3") ? oTimeFormat.format(oDateValue).toUpperCase() : oTimeFormat.format(oDateValue).toLowerCase();
+		},
+
+		/**
+		 * Used for handling the change status button visibility in DemandDetails
+		 * @param {Boolean} bShowStatusChangeButton, bAllowAssign, bEnableSetFunction
+		 * @return {Boolean}
+		 */ 
+		getSetFunction: function (bShowStatusChangeButton, bAllowAssign, bEnableSetFunction) {
+			return bShowStatusChangeButton && !bAllowAssign && bEnableSetFunction;
+		},
+		
+		/**
+		 * Used for handling the change status button visibility in DemandDetails
+		 * @param {Boolean} bShowStatusChangeButton, bAllowAssign, bEnableChangeStatus, bEnableAssignmentStatus, bAssignmentChangeAllowed
+		 * @return {Boolean}
+		 */
+		getVisible: function (bShowStatusChangeButton, bAllowAssign, bEnableChangeStatus, bEnableAssignmentStatus, bAssignmentChangeAllowed) {
+			//if the assignment change status is false then return false as change status should not be displayed
+			if(!bAssignmentChangeAllowed){
+				return false;
+			}
+			return bShowStatusChangeButton && !bAllowAssign && bEnableChangeStatus && !bEnableAssignmentStatus;
+		},
+		
+		/**
+		 * Used for handling the change status button visibility in Detail
+		 * @param {Boolean} bShowStatusChangeButton, bAllowAssign, bEnableSetFunction
+		 * @return {Boolean}
+		 */
+		 getVisibleDetailFrag: function (bShowStatusChangeButton, bAllowAssign, bEnableSetFunction) {
+			return bShowStatusChangeButton && !bAllowAssign && bEnableSetFunction;
+		},
+		
+		/**
+		 * Used for handling the change status button visibility in Detail
+		 * @param {Boolean} bShowStatusChangeButton, bAllowAssign, bEnableChangeStatus
+		 * @return {Boolean}
+		 */
+		getSetFunctionDetailFrag: function (bShowStatusChangeButton, bAllowAssign, bEnableChangeStatus) {
+			return bShowStatusChangeButton && !bAllowAssign && bEnableChangeStatus;
 		}
 	};
 });

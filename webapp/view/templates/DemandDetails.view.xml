@@ -17,10 +17,10 @@
 						</uxap:ObjectPageHeaderActionButton>
 						<uxap:ObjectPageHeaderActionButton id="idSetFunctionHeaderAction" text="{i18n>xbut.buttonExecuteFunction}"
 							tooltip="{i18n>xbut.buttonExecuteFunction}" type="Emphasized" hideIcon="false" hideText="false" press="onClickSetFunction"
-							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.getSetFunction' }">
+							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path :'user>/ENABLE_SET_FUNCTION'}], formatter: '.formatter.getSetFunction' }">
 						</uxap:ObjectPageHeaderActionButton>
 						<uxap:ObjectPageHeaderActionButton id="idStatusHeaderAction" text="{i18n>xbut.changeStatus}" tooltip="{i18n>xbut.changeStatus}"
-							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path:'Status'},{path :'user>/ENABLE_CHANGE_STATUS'},{path :'user>/ENABLE_ASSIGNMENT_STATUS'}], formatter: '.getVisible' }"
+							visible="{ parts:[{path:'viewModel>/showStatusChangeButton'},{path:'ALLOW_ASSIGN'},{path :'user>/ENABLE_CHANGE_STATUS'},{path :'user>/ENABLE_ASSIGNMENT_STATUS'},{path:'ASGNMNT_CHANGE_ALLOWED'}], formatter: '.formatter.getVisible' }"
 							hideIcon="false" hideText="false" press="onClickAction" enabled="{viewModel>/validateIW32Auth}"/>
 						<Button text="{i18n>xbut.buttonBack}" tooltip="{i18n>xbut.buttonBack}" type="Default" press="navBack"/>
 						<core:ExtensionPoint name="PageExt|DemandDetail|DemandSet|ObjectPageHeaderActionButton|After"/>

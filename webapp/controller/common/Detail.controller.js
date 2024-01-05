@@ -188,7 +188,6 @@ sap.ui.define([
 				type: "add",
 				smartTable: null,
 				sPath: sPath,
-				sDeepPath: "Demand",
 				oDialogController: this.getOwnerComponent().assignInfoDialog,
 				refreshParameters: {
 					bFromDetail: true
@@ -270,13 +269,6 @@ sap.ui.define([
 		onClickAction: function (oEvent) {
 			this.localStorage.put("Evo-Action-page", "DemandDetails");
 			sap.ui.getCore().byId("idStatusActionSheet").openBy(oEvent.getSource());
-		},
-		getVisible: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;
-		},
-
-		getSetFunction: function (a, b, c, d) {
-			return a && !b && c !== "COMP" && d;
 		},
 		/**
 		 * Opens the StatusDialog to set status for demand 

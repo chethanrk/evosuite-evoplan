@@ -47,6 +47,7 @@ sap.ui.define([
 			this.oFilterConfigsController = new ResourceTreeFilterBar();
 			this.oFilterConfigsController.init(this.getView(), "resourceTreeFilterBarFragment");
 			this._oViewModel = this.getModel("viewModel");
+			this._oAppViewModel = this.getModel("appView");
 
 			Fragment.load({
 				name: "com.evorait.evoplan.view.common.fragments.ResourceTreeTable",
@@ -343,6 +344,7 @@ sap.ui.define([
 				//call update
 				this.handleDropOnSameResource(this.assignmentPath, sPath, mParameter);
 			} else if (this._oViewModel.getProperty("/dragDropSetting/isReassign")) {
+				this._oAppViewModel.setProperty("/busy", true);
 				this.getOwnerComponent()._getData(this.sDemandPath)
 					.then(function (oData) {
 						oViewModel.setProperty("/dragSession", [{
@@ -492,7 +494,7 @@ sap.ui.define([
 				oCustomData = oButton.getCustomData();
 			this.mTreeState = {};
 			if (oCustomData[0].getValue() === "EXPAND" && this._oDataTable) {
-				this._oDataTable.expandToLevel(5);
+				this._oDataTable.expandToLevel(1);
 			} else {
 				this._oDataTable.collapseAll();
 			}

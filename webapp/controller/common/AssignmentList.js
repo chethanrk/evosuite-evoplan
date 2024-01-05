@@ -75,7 +75,7 @@ sap.ui.define([
 				oModel = oContext.getModel(),
 				sPath = oContext.getPath(),
 				oAssignmentData = oModel.getProperty(sPath);
-			this.openAssignInfoDialog(this._oView, sPath, oAssignmentData, this._mParameters);
+			this.openAssignInfoDialog(this._oView, sPath, oAssignmentData, this._mParameters, null, true);
 		},
 		/**
 		 * unbind after closing
