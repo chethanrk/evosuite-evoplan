@@ -571,7 +571,7 @@ sap.ui.define([
 		_getRelatedDemandData: function (oData, bInvalidate) {
 			return new Promise(function (resolve, reject) {
 				//checking if there is demand guid and a valid date then resolving the promise
-				if (oData.Demand && oData.Demand.Guid && !bInvalidate) {
+				if (oData.DemandGuid && !bInvalidate) {
 					resolve(oData);
 				} else {
 					//if data is not already loaded then loading the data from backend
@@ -579,7 +579,7 @@ sap.ui.define([
 						Guid: oData.Guid
 					}),
 						oAssignData = this.getModel().getProperty("/" + sPath);
-					if (oAssignData && oAssignData.Demand && oAssignData.Demand.Guid && !bInvalidate) {
+					if (oAssignData && oAssignData.DemandGuid && !bInvalidate) {
 						resolve(oAssignData);
 					} else {
 						this.getModel().read("/" + sPath, {
