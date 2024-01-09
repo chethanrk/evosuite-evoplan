@@ -673,11 +673,21 @@ sap.ui.define([
 				oShape = oEvent.getSource().getPopup()._oPosition.of,
 				oContext = oShape.getBindingContext("ganttModel"),
 				oRowContext = oShape.getParent().getParent().getBindingContext("ganttModel");
+			this._mParameters = {
+				bFromNewGantt: true,
+				sSourcePath: sPath,
+				bCustomBusy: true
+			};
 			//Storing updated Resource info for refreshing only the updated Resources in Gantt
 			this.updatedResources(this.oViewModel, this.oUserModel, oData);
 			//still needed?
 			if (oAppModel.getProperty("/currentRoute") === "ganttSplit") {
 				mParameters = {
+					bFromNewGantt: false,
+					bFromNewGanttSplit: true
+				};
+
+				this._mParameters = {
 					bFromNewGantt: false,
 					bFromNewGanttSplit: true
 				};
@@ -701,6 +711,7 @@ sap.ui.define([
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonChange")) {
 				//change assignment
 				mParameters.bRefreshTemplate = true;
+				this._mParameters.bRefreshTemplate = true;
 				this.openAssignInfoDialog(this.getView(), sDataModelPath, oContext, mParameters, null);
 			} else if (oSelectedItem.getText() === this.getResourceBundle().getText("xbut.buttonUnassign")) {
 				//unassign
