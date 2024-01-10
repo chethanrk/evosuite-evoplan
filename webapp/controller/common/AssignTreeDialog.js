@@ -77,7 +77,7 @@ sap.ui.define([
 			var oDemandsPaths, sMsg,
 				bCheckRightTechnician = this._oView.getModel("viewModel").getProperty("/CheckRightTechnician");
 
-			if (bCheckRightTechnician) {
+			if (bCheckRightTechnician && this._bulkReAssign) {
 				oDemandsPaths = this._getAllowedDemands(aSelectedPaths, isReassign, isBulkReAssign);
 				this._aSelectedPaths = oDemandsPaths.oAllowedSelectedPaths;
 				this._oFiltersRightTechnician = [this._getFormattedReqProfileId(this._aSelectedPaths, isReassign, isBulkReAssign)];
@@ -116,10 +116,10 @@ sap.ui.define([
 
 			for (var i = 0; i < aSelectedPaths.length; i++) {
 				if (isBulkReAssign) {
-					sPath = aSelectedPaths[i].getPath() + "/Demand";
+					sPath = aSelectedPaths[i].getPath();
 					oDemand = this._oView.getModel().getProperty(sPath);
 				} else if (isReassign) {
-					sPath = aSelectedPaths[i] + "/Demand";
+					sPath = aSelectedPaths[i];
 					oDemand = this._oView.getModel().getProperty(sPath);
 				} else {
 					oDemand = aSelectedPaths[i].oData;
