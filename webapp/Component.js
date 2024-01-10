@@ -498,7 +498,7 @@ sap.ui.define([
 					this.initializeMapProvider();
 					this.initializeSchedulingMapProvider();
 				}
-				
+
 				// Initialize websocket
 				if (data[0].ENABLE_PUSH_DEMAND) {
 					WebSocket.init(this);
@@ -674,13 +674,13 @@ sap.ui.define([
 					bReSchedBtnBusy: false,
 					sReSchAssignGuid: null,
 					oReSchResourceObj: null,
-					PTVResponse: {},  
+					PTVResponse: {},
 					InputDataChanged: "",
 					aListOfAssignments: [],
 					aViolatedAssignments: [],
 					aDemandLocationIds: [],
 					aExistingDemandQualification: [],
-					aUpdatedExistingAssignments:[]
+					aUpdatedExistingAssignments: []
 				},
 				sViewRoute: null,
 				aUpdatedResources: [],
@@ -913,17 +913,17 @@ sap.ui.define([
 		 */
 		fnSetDefaultDateTimePattern: function (oDefaultData) {
 			var oLocale, oDateFormat, oDateTimeFormat, oTimeFormat;
-			
+
 			//Check if app is running on Cloud Launchpad and if backend Fiori format set to true
-			if(!oDefaultData.ENABLE_READ_FIORI_FORMAT && sap.ushell?.cloudServices) {
-				oLocale = new sap.ui.core.Locale(sap.ui.getCore().getConfiguration().getLanguage()),
-				oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'],
-				oDateTimeFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'],
-				oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'];
-			} else {				
-				oDateFormat = oDefaultData.DEFAULT_DATE_FORMAT,
-				oTimeFormat = Constants.TIMEFORMATS[oDefaultData.DEFAULT_TIME_FORMAT], //set time format through constants based on time format code
-				oDateTimeFormat = oDateFormat + ', ' + oTimeFormat;
+			if (!oDefaultData.ENABLE_READ_FIORI_FORMAT && sap.ushell?.cloudServices) {
+					oLocale = new sap.ui.core.Locale(sap.ui.getCore().getConfiguration().getLanguage()),
+					oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'],
+					oDateTimeFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'],
+					oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({ style: "medium" }, oLocale).oFormatOptions['pattern'];
+			} else {
+				 	oDateFormat = Constants.DATEFORMATS[oDefaultData.DEFAULT_DATE_FORMAT], //Set DateFomat through Constants based on date format code
+					oTimeFormat = Constants.TIMEFORMATS[oDefaultData.DEFAULT_TIME_FORMAT], //Set TimeFormat through constants based on time format code
+					oDateTimeFormat = oDateFormat + ', ' + oTimeFormat;
 			}
 			//set default date pattern to viewModel
 			this.getModel("viewModel").setProperty("/sDatePattern", oDateFormat);
