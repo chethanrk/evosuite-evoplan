@@ -322,7 +322,7 @@ sap.ui.define([
 					}));
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
 					aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
-					aResources.push(new Filter("IS_PRT", FilterOperator.EQ, false));
+					aFilters.push(new Filter("IS_PRT", FilterOperator.EQ, false));
 				}
 			}
 			return aFilters;
