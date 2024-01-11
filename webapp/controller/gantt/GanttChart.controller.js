@@ -683,7 +683,7 @@ sap.ui.define([
 				};
 			}
 			this.localStorage.put("Evo-Action-page", "ganttSplit");
-			if (oSelectedItem.getText() !== this.getResourceBundle().getText("xbut.buttonExecuteFunction")){
+			if (oSelectedItem.getText() !== this.getResourceBundle().getText("xbut.changeStatus")){
 				//Do not make shape busy when "Change Status" button is clicked
 				this.oGanttModel.setProperty(sPath + "/busy", true);
 			}
