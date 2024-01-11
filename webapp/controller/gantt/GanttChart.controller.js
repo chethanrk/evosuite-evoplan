@@ -683,7 +683,9 @@ sap.ui.define([
 				};
 			}
 			this.localStorage.put("Evo-Action-page", "ganttSplit");
-			this.oGanttModel.setProperty(sPath + "/busy", true);
+			if (oSelectedItem.getText() !== this.getResourceBundle().getText("xbut.buttonExecuteFunction")){
+				this.oGanttModel.setProperty(sPath + "/busy", true);
+			}
 			//get demand details to assignment
 
 			if (sFunctionKey) {
