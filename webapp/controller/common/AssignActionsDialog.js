@@ -297,7 +297,6 @@ sap.ui.define([
 					} else if (obj.NodeType === "RES_GROUP") {
 						aResources.push(new Filter("ObjectId", FilterOperator.EQ, obj.ResourceGroupGuid));
 					}
-					aResources.push(new Filter("IS_PRT", FilterOperator.EQ, false));
 				}
 
 				if (oViewFilterSettings) {
@@ -323,6 +322,7 @@ sap.ui.define([
 					}));
 					aFilters.push(new Filter("DateTo", FilterOperator.GE, sDateControl1));
 					aFilters.push(new Filter("DateFrom", FilterOperator.LE, sDateControl2));
+					aFilters.push(new Filter("IS_PRT", FilterOperator.EQ, false));
 				}
 			}
 			return aFilters;
