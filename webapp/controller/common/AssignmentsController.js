@@ -818,6 +818,9 @@ sap.ui.define([
 		openDialog: function (oView, sPath, oContext, mParameters, sObjectSourceType, bIsFromAssignmentList) {
 			var sQualifier, 
 			bRefresh = this.getTemplateRefreshFlag(oView, sPath, mParameters, false);
+			this._mParameters = mParameters || {
+				bFromHome: true
+			};
 			if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NETWORK_OBJECTSOURCETYPE) {
 				sQualifier = Constants.ANNOTATION_CONSTANTS.NETWORK_QUALIFIER;
 			} else if (sObjectSourceType === Constants.ANNOTATION_CONSTANTS.NOTIFICATION_OBJECTSOURCETYPE) {
